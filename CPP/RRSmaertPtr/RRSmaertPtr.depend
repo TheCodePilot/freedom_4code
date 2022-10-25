@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1666703151 source:c:\users\az\documents\code_blocks\myprojects\rrsmaertptr\main.cpp
+	<iostream>
+	<memory>
+
