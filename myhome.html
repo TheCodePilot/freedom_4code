@@ -1,0 +1,696 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="myApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="css/ui.fancytree.css" rel="stylesheet" type="text/css" />
+    <link href="css/homelayout.css" rel="stylesheet" type="text/css" />
+    <link href="css/myhome.css" rel="stylesheet" type="text/css" />
+    <link href="css/mrupanel.css" rel="stylesheet" type="text/css" />
+    <link href="css/newpanel.css" rel="stylesheet" type="text/css" />
+    <link href="css/projectspanel.css" rel="stylesheet" type="text/css" />
+    <link href="css/propertiespanel.css" rel="stylesheet" type="text/css" />
+    <link href="css/shortcutspanel.css" rel="stylesheet" type="text/css" />
+    <script src="js/Autodesk.JavaScript.js" type="text/javascript">></script>
+    <script src="js/neutronJavaScriptObject.js" type="text/javascript">></script>
+    <script src="js/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="js/jquery.fancytree.min.js" type="text/javascript"></script>
+    <script src="js/angular.min-1.2.16.js" type="text/javascript"></script>
+    <script src="js/server.js" type="text/javascript"></script>
+    <script src="js/controllers.js" type="text/javascript"></script>
+    <script src="js/homelayout.js" type="text/javascript"></script>
+    <script src="js/myhome.js" type="text/javascript"></script>
+    <script src="js/projectspanel.js" type="text/javascript"></script>
+    <script src="js/mrupanel.js" type="text/javascript"></script>
+    <script src="js/newpanel.js" type="text/javascript"></script>
+    <script src="js/propertiespanel.js" type="text/javascript"></script>
+    <script src="js/shortcutspanel.js" type="text/javascript"></script>
+    <title>My Home</title>
+</head>
+<body oncontextmenu="return false" ng-controller="persistdataCtrl" ng-class="{'inventorLT': isLT}">
+<div id="orientationButtons">
+    <div class="maximizeMruButton orientButton">
+        <img class="orientIcon" src="imgs/MaximizeRecent.png" />
+        {{LC.maximize}}
+    </div>
+    <div class="resetOrientationButton orientButton">
+        <img class="orientIcon" src="imgs/Reset 16x16.png" />
+        {{LC.reset}}
+    </div>
+    <div class="flipButton orientButton">
+        <img class="orientIcon" src="imgs/Flip 16x16.png" />
+        {{LC.flip}}
+    </div>
+</div>
+<div id="p2Container">
+    <div class="wrapper">
+        <div class="innerWrapper basicActive">
+            <div class="header">
+                <div class="fade"></div>
+                <h1>{{LC.panel_new}}</h1>
+            </div>
+            <div id="basic" class="container">
+                <div class="helper">
+                    <ul>
+                        <li data-filetype="Part" class="newdoc tooltip" data-tooltiptext="{{LC.new_newpart}}" data-tooltiptimeout="500">
+                            <img src="imgs/part.png" />
+                            <h2>{{LC.part}}</h2>
+                        </li>
+                        <li ng-if="!isLT" data-filetype="Assembly" class="newdoc tooltip" data-tooltiptext="{{LC.new_newassembly}}" data-tooltiptimeout="500">
+                            <img src="imgs/Assembly_thumbnail.png" />
+                            <h2>{{LC.assembly}}</h2>
+                        </li>
+                        <li data-filetype="Drawing" class="newdoc tooltip" data-tooltiptext="{{LC.new_newdrawing}}" data-tooltiptimeout="500">
+                            <img ng-src={{drawingIcon}} />
+                            <h2>{{LC.drawing}}</h2>
+                        </li>
+                        <li ng-if="!isLT" data-filetype="Presentation" class="newdoc tooltip" data-tooltiptext="{{LC.new_newpresentation}}" data-tooltiptimeout="500">
+                            <img src="imgs/ipn_new.png" />
+                            <h2>{{LC.presentation}}</h2>
+                        </li>
+                    </ul>
+                </div>
+                <div class="collapseSegment">{{LC.basic}}</div>
+            </div>
+            <div id="panelSeparator">
+                <div id="arrow"></div>
+            </div>
+            <div id="advanced" ng-controller="advancedTemplateCtrl">
+                <h2>{{LC.advanced_templates}}</h2>
+                <h3 class="tooltip">({{templateFolder}})</h3>
+                <div id="treeControl"></div>
+                <div id="displayArea">
+                    <div id="thumbnail">
+                        <img ng-show="activeTemplate == null && activeFolder == null" src="imgs/thumbplaceholder.png" />
+                        <img ng-show="activeTemplate == null && activeFolder" src="imgs/folderthumbnail.png" />
+                        <img ng-show="activeTemplate && activeFolder == null" ng-src="{{activeTemplate.thumbnailPath}}" />
+                    </div>
+                    <div id="text">
+                        <span ng-show="activeTemplate == null && activeFolder == null">{{LC.notemplate}}</span>
+                        <table ng-show="activeTemplate == null && activeFolder">
+                            <tr>
+                                <td>{{LC.new_name}}</td>
+                                <td>{{activeFolder.name}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">{{LC.templatefolder}}</td>
+                            </tr>
+                        </table>
+                        <table ng-show="activeTemplate && activeFolder == null">
+                            <tr>
+                                <td>{{LC.new_name}}</td>
+                                <td>{{activeTemplate.fileName}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{LC.new_units}}</td>
+                                <td>{{activeTemplate.units}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{LC.new_material}}</td>
+                                <td>{{activeTemplate.material}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">{{activeTemplate.description}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="collapseSegment">{{LC.advanced}}</div>
+            </div>
+            <div id="dragToShow">{{LC.new_expand}}</div>
+            <div id="collapsedButtons">
+                <div class="newdoc button tooltip" data-filetype="Part" data-tooltiptext="{{LC.new_newpart}}" data-tooltiptimeout="500">
+                    <div class="icon-ipt"></div>
+                </div>
+                <div ng-if="!isLT" class="newdoc button tooltip" data-filetype="Assembly" data-tooltiptext="{{LC.new_newassembly}}" data-tooltiptimeout="500">
+                    <div class="icon-iam"></div>
+                </div>
+                <div class="newdoc button tooltip" data-filetype="Drawing" data-tooltiptext="{{LC.new_newdrawing}}" data-tooltiptimeout="500">
+                    <div ng-class="{'icon-idw': drawingStandard == 'idw', 'icon-dwg': drawingStandard == 'dwg'}"></div>
+                </div>
+                <div ng-if="!isLT" class="newdoc button tooltip" data-filetype="Presentation" data-tooltiptext="{{LC.new_newpresentation}}" data-tooltiptimeout="500">
+                    <div class="icon-ipn"></div>
+                </div>
+            </div>
+            <div id="configureTemplates">
+                <div class="button tooltip" data-tooltiptext="{{LC.configtemplates}}" data-tooltiptimeout="500">
+                    <div class="icon-cfg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="xSeparator"></div>
+<div id="p3Container">
+    <div class="wrapper">
+        <div class="innerWrapper">
+            <div class="header">
+                <div class="fade"></div>
+                <span id="headerContainer">
+                    <h1 ng-if="!isLT" data-body="projectBody" ng-class="{active: persistdata.tabView == 'projectBody'}">{{LC.panel_projects}}</h1>
+                    <h1 data-body="shortcutsBody" ng-class="{active: persistdata.tabView == 'shortcutsBody'}">{{LC.panel_shortcuts}}</h1>
+                    <h1 data-body="propertiesBody" ng-class="{active: persistdata.tabView == 'propertiesBody'}">{{LC.panel_properties}}</h1>
+                </span>
+                <span id="dropdownPlaceholder" class="tooltip" data-tooltiptext="{{LC.alt_panel}}">
+                    <h1 ng-if="!isLT">{{LC.panel_projects}}</h1>
+                    <h1 ng-if="isLT">{{LC.panel_shortcuts}}</h1>
+                    <span class="expandCaret">&#9660;</span>
+                    <span class="collapseCaret">&#9650;</span>
+                </span>
+            </div>
+            <div id="openExplorer">
+                <label>
+                    <input ng-model="persistdata.windowsShortcuts" ng-change="shortcutsToggle()" type="checkbox" value="explorer" />
+                    {{LC.explorer_open}}
+                </label>
+            </div>
+            <div ng-if="!isLT" class="bodyElem" id="projectBody" ng-show="persistdata.tabView == 'projectBody'" ng-controller="projectsCtrl">
+                <div id="collapsedViewButton">
+                    {{LC.projects_click}}
+                    <span class="collapseCaret">&#9650;</span>
+                    <span class="expandCaret">&#9660;</span>
+                </div>
+                <div id="expandedViewButton">
+                    {{LC.projects_close}}
+                    <span class="collapseCaret">&#9650;</span>
+                    <span class="expandCaret">&#9660;</span>
+                </div>
+                <ul id="projectSelect">
+                    <li ng-repeat="proj in projectsList" ng-click="viewProject($index)" ng-dblclick="activateProject($index)" data-projectid={{$index}} ng-class="{activeProject: proj.path == activeProject.path, viewedProject: proj.path == viewedProject.path}">
+                        <img ng-if="proj.vaultEnabled == 'true'" src="imgs/vaultproject.png">
+                        <span>{{proj.name}}</span>
+                        <div ng-if="!projectLock" class="check-icon tooltip" ng-click="activateProject($index); $event.stopPropagation();" data-tooltiptext="{{LC.projects_activatetooltip}}"></div>
+                        <div ng-if="projectLock" class="check-icon tooltip" data-tooltiptext="{{LC.projects_projectlock}}"></div>
+                    </li>
+                </ul>
+                <div id="projectDisplay">
+                    <div>
+                        <div>{{LC.projects_name}}</div>
+                        <div>{{viewedProject.name}}</div>
+                    </div>
+                    <div>
+                        <div>{{LC.projects_type}}</div>
+                        <div ng-if="viewedProject.vaultEnabled == 'false'">{{LC.projects_singleuser}}</div>
+                        <div ng-if="viewedProject.vaultEnabled == 'true'">{{LC.projects_vaulted}}</div>
+                    </div>
+                    <div>
+                        <div>{{LC.projects_location}}</div>
+                        <div>{{viewedProject.path}}</div>
+                    </div>
+                    <div>
+                        <div>{{LC.projects_workspace}}</div>
+                        <div ng-if="viewedProject.workspaceRelPath" >
+                            <div class="projectpath tooltip">
+                                <span class="shortcut" ng-click="folderClick(viewedProject.workspace)">{{LC.projects_workspace}}:</span>
+                                <span>{{viewedProject.workspaceRelPath}}</span>
+                            </div>
+                        </div>
+                        <div ng-if="!viewedProject.workspaceRelPath && viewedProject.workspace != ''" >
+                            <div class="projectpath tooltip">
+                                <span class="shortcut" ng-click="folderClick(viewedProject.workspace)">{{LC.projects_workspace}}:</span>
+                                <span>{{viewedProject.workspace}}</span>
+                            </div>
+                        </div>
+                        <div ng-if="!viewedProject.workspaceRelPath && viewedProject.workspace == ''" >
+                            {{LC.projects_none}}
+                        </div>
+                    </div>
+                    <div>
+                        <div>{{LC.projects_workgroup}}</div>
+                        <div ng-if="viewedProject.workgroup.length > 0">
+                            <div ng-repeat="workgroup in viewedProject.workgroup" class="projectpath tooltip">
+                                <span class="shortcut" ng-click="folderClick(workgroup.path)">{{workgroup.name}}:</span>
+                                <span>{{workgroup.relPath}}</span>
+                            </div>
+                        </div>
+                        <div ng-if="viewedProject.workgroup.length == 0">{{LC.projects_none}}</div>
+                    </div>
+                    <div>
+                        <div>{{LC.projects_libraries}}</div>
+                        <div ng-if="viewedProject.libraries.length > 0">
+                            <div ng-repeat="library in viewedProject.libraries" class="projectpath tooltip">
+                                <span class="shortcut" ng-click="folderClick(library.path)">{{library.name}}:</span>
+                                <span>{{library.relPath}}</span>
+                            </div>
+                        </div>
+                        <div ng-if="viewedProject.libraries.length == 0">{{LC.projects_none}}</div>
+                    </div>
+                    <div>
+                        <div>{{LC.projects_subfolders}}</div>
+                        <div ng-if="viewedProject.freqSubfolders.length > 0">
+                            <div ng-repeat="subfolder in viewedProject.freqSubfolders" class="projectpath tooltip">
+                                <span class="shortcut" ng-click="folderClick(subfolder.path)">{{subfolder.name}}:</span>
+                                <span>{{subfolder.relPath}}</span>
+                            </div>
+                        </div>
+                        <div ng-if="viewedProject.freqSubfolders.length == 0">{{LC.projects_none}}</div>
+                    </div>
+                </div>
+                <!--<select ng-model="activeProject" ng-change="activateProjectFromDropdown()" ng-disabled="projectLock" ng-options="proj.name for proj in projectsList"></select>-->
+            </div>
+            <div class="bodyElem" id="shortcutsBody" ng-show="persistdata.tabView == 'shortcutsBody'" ng-controller="shortcutsCtrl">
+                <div id="collapsedViewButton">
+                    {{LC.shortcuts_click}}
+                    <span class="collapseCaret">&#9650;</span>
+                    <span class="expandCaret">&#9660;</span>
+                </div>
+                <div id="expandedViewButton">
+                    {{LC.shortcuts_close}}
+                    <span class="collapseCaret">&#9650;</span>
+                    <span class="expandCaret">&#9660;</span>
+                </div>
+                <div id="shortcutsView">
+                    <div class="separator">
+                        <span id="customHeader" class="tooltip" ng-click="customFoldersToggle()" ng-class="{hidden: persistdata.customFoldersCollapse}" data-tooltiptext="{{LC.shortcuts_customtooltip}}">
+                        {{LC.shortcuts_custom}}
+                        <span class="expandCaret">&#9660;</span>
+                        <span class="collapseCaret">&#9650;</span>
+                    </span>
+                    </div>
+                    <ul id="customList" ng-class="{hidden: persistdata.customFoldersCollapse}" >
+                        <li ng-repeat="folder in persistdata.userShortcuts" ng-click="folderClick(folder.path)" class="shortcut tooltip" data-tooltiptext="{{folder.path}}">
+                            <img src="imgs/foldericon.png" />
+                            <span class="shortcut tooltip">{{folder.name}}</span>
+                        </li>
+                        <li>
+                            <div>+</div>
+                            <span>{{LC.shortcuts_addpath}}</span>
+                        </li>
+                    </ul>
+                    <div class="separator">
+                        <span id="linksHeader" class="tooltip" ng-click="customLinksToggle()" ng-class="{hidden: persistdata.customLinksCollapse}" data-tooltiptext="{{LC.shortcuts_linkstooltip}}">
+                        {{LC.shortcuts_links}}
+                        <span class="expandCaret">&#9660;</span>
+                        <span class="collapseCaret">&#9650;</span>
+                    </span>
+                    </div>
+                    <ul id="linksList" ng-class="{hidden: persistdata.customLinksCollapse}" >
+                        <li ng-repeat="link in persistdata.userLinks" ng-click="linkClick(link.path)" class="shortcut tooltip" data-tooltiptext="{{link.path}}">
+                            <img ng-src="{{link.icon}}" />
+                            <span class="shortcut tooltip">{{link.name}}</span>
+                        </li>
+                        <li>
+                            <div>+</div>
+                            <span>{{LC.shortcuts_addlink}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="bodyElem" id="propertiesBody" ng-show="persistdata.tabView == 'propertiesBody'" ng-controller="propertiesCtrl">
+                <div id="noDocs" ng-hide="selectedDocs.length">
+                    <img src="imgs/thumbplaceholder.png" />
+                    <div class="properties">
+                        <h3>{{LC.properties_nodocs}}</h3>
+                    </div>
+                </div>
+                <div id="oneDoc" ng-show="selectedDocs.length == 1">
+                    <img ng-src={{selectedDocs[0].thumbnailPath}} />
+                    <div class="properties">
+                        <h3>{{selectedDocs[0].fileName}}</h3>
+                        <div>
+                            <div>{{LC.properties_loc}}</div>
+                            <div class="shortcut" ng-click="folderClick(selectedDocs[0].fileLocation)">{{selectedDocs[0].fileLocation}}</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_type}}</div>
+                            <div>{{selectedDocs[0].fileType}}</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_date}}</div>
+                            <div>{{selectedDocs[0].dateModified}}</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_size}}</div>
+                            <div>{{selectedDocs[0].fileSize}}</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_editedby}}</div>
+                            <div ng-if="selectedDocs[0].lastEditedWith != ''">{{selectedDocs[0].lastEditedWith}}</div>
+                            <div ng-if="selectedDocs[0].lastEditedWith == ''">--</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_partnum}}</div>
+                            <div ng-if="selectedDocs[0].partNumber != ''">{{selectedDocs[0].partNumber}}</div>
+                            <div ng-if="selectedDocs[0].partNumber == ''">--</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_author}}</div>
+                            <div ng-if="selectedDocs[0].author != ''">{{selectedDocs[0].author}}</div>
+                            <div ng-if="selectedDocs[0].author == ''">--</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_stocknum}}</div>
+                            <div ng-if="selectedDocs[0].stockNumber != ''">{{selectedDocs[0].stockNumber}}</div>
+                            <div ng-if="selectedDocs[0].stockNumber == ''">--</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_revision}}</div>
+                            <div ng-if="selectedDocs[0].revisionNumber != ''">{{selectedDocs[0].revisionNumber}}</div>
+                            <div ng-if="selectedDocs[0].revisionNumber == ''">--</div>
+                        </div>
+                        <div>
+                            <div>{{LC.properties_desc}}</div>
+                            <div ng-if="selectedDocs[0].description != ''">{{selectedDocs[0].description}}</div>
+                            <div ng-if="selectedDocs[0].description == ''">--</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="multipleDocs" ng-show="selectedDocs.length > 1">
+                    <img src="imgs/multipledocsplaceholder.png" />
+                    <div class="properties">
+                        <h3>{{selectedDocs.length}} {{LC.properties_selecteddocs}}</h3>
+                        <ul>
+                            <li ng-repeat="doc in selectedDocs">
+                                <div>
+                                    <div>{{LC.properties_filename}}</div>
+                                    <div>{{doc.fileName}}</div>
+                                </div>
+                                <div>
+                                    <div>{{LC.properties_loc}}</div>
+                                    <div>{{doc.fileLocation}}</div>
+                                </div>
+                                <div>
+                                    <div>{{LC.properties_date}}</div>
+                                    <div>{{doc.dateModified}}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="ySeparator"></div>
+<div id="p1Container">
+    <div class="wrapper">
+        <div class="innerWrapper" ng-controller="MRUController">
+            <div class="header">
+                <div class="fade"></div>
+                <h1>
+                    {{LC.panel_recent}}
+                    <span ng-show="vaultEnabled" ng-click="updateMru()"><img src="imgs/refreshvault.png" />{{LC.refresh_vault}}</span>
+                </h1>
+                <input type="text" ng-model="searchText.fileName" placeholder="{{LC.mru_search}}" />
+                <span id="searchClear" ng-show="searchText.fileName.length > 0" ng-click="searchText.fileName = ''">x</span>
+                <ul id="viewControls">
+                    <li data-view="metalist" ng-class="{active: persistdata.mruViewType == 'metalist'}">{{LC.mru_tile}}</li>
+                    <li data-view="bigicons" ng-class="{active: persistdata.mruViewType == 'bigicons'}">{{LC.mru_large}}</li>
+                    <li data-view="smallicons" ng-class="{active: persistdata.mruViewType == 'smallicons'}">{{LC.mru_small}}</li>
+                    <li data-view="detail" ng-class="{active: persistdata.mruViewType == 'detail'}">{{LC.mru_list}}</li>
+                </ul>
+                <div id="collapsedView">35 {{LC.panel_recent}}</div>
+            </div>
+            <div id="mruContent" ng-class="{collapsedFilter: persistdata.collapseFilters}">
+                <div id="filterHeader">
+                    <div id="collapseButton" ng-click="collapseFilters(true)" class="tooltip" data-tooltiptext="{{LC.filter_minimize}}">&#9664;</div>
+                    <div id="resetFilters" ng-click="resetFilters()">{{LC.filter_reset}}</div>
+                </div>
+                <div id="filterPanel" ng-click="collapseFilters(false)" >
+                    <div class="filter" ng-repeat="filter in filters" ng-show="filter.show">
+                        <h2>{{filter.title}}</h2>
+                        <div ng-if="filter.name == 'projects'" class="tooltip disablePane" ng-show="projectsDisabled" data-tooltiptext="{{LC.filter_projectdefault}}"></div>
+                        <ul class="{{filter.type}}">
+                            <li ng-repeat="option in filter.values" ng-if="filter.type == 'checkbox' && filter.name != 'vault'">
+                                <label>
+                                <input ng-change="filter.handlingFunction(option.value)" type="{{filter.type}}" name="{{filter.name}}" value="{{option.value}}" ng-model="defaultChecks[filter.name][option.value]" />
+                                {{option.title}}
+                                </label>
+                            </li>
+                            <li ng-repeat="option in filter.values" ng-if="filter.type == 'checkbox' && filter.name == 'vault'">
+                                <label>
+                                <input ng-change="filter.handlingFunction(option.value)" type="{{filter.type}}" name="{{filter.name}}" value="{{option.value}}" ng-model="defaultChecks[filter.name][option.value]" />
+                                <img ng-if="option.value != 'all'" ng-src="{{option.value}}" />
+                                    <span class="tooltip">{{option.title}}</span>
+                                </label>
+                            </li>
+                            <li ng-repeat="option in filter.values" ng-if="filter.type == 'radio'">
+                                <label>
+                                <input ng-change="filter.handlingFunction(option.value)" type="{{filter.type}}" name="{{filter.name}}" value="{{option.value}}" ng-model="defaultChecks[filter.name]" />
+                                {{option.title}}
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="collapseSegment">{{LC.filter_title}}</div>
+                    <div id="collapseArrow"></div>
+                </div>
+                <div id="filterContainer">
+                </div>
+                <div id="listHeader" ng-show="persistdata.mruViewType == 'detail'">
+                    <div id="pinned">
+                        {{LC.mru_pin}}
+                        <div class="sortIcon"></div>
+                    </div>
+                    <div id="vault" ng-class="{sortdown: persistdata.mruSort == 'vault' && persistdata.mruSortOrder == 'ascending',
+                         sortup: defaultChecks.sortby == 'vault' && persistdata.mruSortOrder == 'descending'}">
+                        {{LC.mru_vault}}
+                        <div class="sortIcon"></div>
+                    </div>
+                    <div id="name" ng-class="{sortdown: defaultChecks.sortby == 'name' && persistdata.mruSortOrder == 'ascending',
+                         sortup: defaultChecks.sortby == 'name' && persistdata.mruSortOrder == 'descending'}">
+                        {{LC.mru_name}}
+                        <div class="sortIcon"></div>
+                    </div>
+                    <div id="location" ng-class="{sortdown: defaultChecks.sortby == 'location' && persistdata.mruSortOrder == 'ascending',
+                         sortup: defaultChecks.sortby == 'location' && persistdata.mruSortOrder == 'descending'}">
+                        {{LC.mru_location}}
+                        <div class="sortIcon"></div>
+                    </div>
+                    <div id="date" ng-class="{sortdown: defaultChecks.sortby == 'dateModified' && persistdata.mruSortOrder == 'ascending',
+                         sortup: defaultChecks.sortby == 'dateModified' && persistdata.mruSortOrder == 'descending'}">
+                        {{LC.mru_date}}
+                        <div class="sortIcon"></div>
+                    </div>
+                    <div id="size" ng-class="{sortdown: defaultChecks.sortby == 'size' && persistdata.mruSortOrder == 'ascending',
+                         sortup: defaultChecks.sortby == 'size' && persistdata.mruSortOrder == 'descending'}">
+                        {{LC.mru_size}}
+                        <div class="sortIcon"></div>
+                    </div>
+                </div>
+                <div id="viewPanel" ng-class="persistdata.mruViewType">
+                    <div id="pinnedFilesDiv">
+                    <div class="separator">
+                            <span id="pinnedHeader" class="tooltip" ng-click="pinnedFilesToggle()" ng-class="{hidden: persistdata.hidePinnedFiles}" data-tooltiptext="{{LC.mru_hideshowpinned}}">
+                            {{LC.mru_pinned + ' [' + filteredPinned.length + ' ' + LC.mru_pinunpinfiles + ']'}}
+                            <span class="expandCaret">&#9660;</span>
+                            <span class="collapseCaret">&#9650;</span>
+                        </span>
+                    </div>
+                        <ul id="pinnedFiles" ng-class="{hidden: persistdata.hidePinnedFiles}" >
+                        <li class="mruitem" ng-repeat="item in filteredPinned = (filteredList.pinned | filter:searchText)" ng-dblclick="openItem(item.filePath)">
+                                <div class="pinicon tooltip" ng-click="removeFromPinned(item.filePath); $event.stopPropagation();" data-tooltiptext="{{LC.mru_unpintooltip}}" >
+                                    <img src="imgs/pin.png" />
+                                </div>
+                            <div class="boxWrapper">
+                                <div class="options">
+                                    <div class="openIcon tooltip" data-tooltiptimeout="500" data-tooltiptext="{{LC.mru_open}}" ng-click="openItem(item.filePath)"></div>
+                                    <div class="trashIcon tooltip" data-tooltiptimeout="500" data-tooltiptext="{{LC.mru_remove}}" ng-click="removeItem(item.filePath)"></div>
+                                    <div class="actionsIcon tooltip" data-tooltiptimeout="500" data-tooltiptext="{{LC.mru_actions}}"></div>
+                                </div>
+                                <img class="thumbnail" ng-src="{{item.thumbnailPath}}" alt="{{item.fileName}}"/>
+                                <div class="information" data-filetype="{{item.fileTypeByNumber}}">
+                                    <div ng-if="mrufile.vault[item.filePath]" class="vaultBadge tooltip" data-tooltiptext="{{mrufile.vault[item.filePath].tooltip}}">
+                                        <img ng-src="{{vaultIcons[mrufile.vault[item.filePath].vaultsortorder]}}" />
+                                    </div>
+                                    <div ng-if="!mrufile.vault[item.filePath]" class="vaultBadge tooltip" data-tooltiptext="{{LC.mru_vaultnotexist}}">
+                                        <img ng-src="imgs/vaultsample.png" />
+                                    </div>
+                                    <div class="typeparam doctype{{item.fileTypeByNumber}}"></div>
+                                    <h3 class="filename tooltip" ng-bind-html="item.fileNameForDisplay | unsafe"></h3>
+                                    <div class="locationparam tooltip">{{item.fileLocation}}</div>
+                                    <div class="dateparam tooltip">{{item.dateModified}}</div>
+                                    <div class="sizeparam tooltip">{{item.fileSize}}</div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    </div>
+                    <div id="unpinnedFilesDiv">
+                    <div class="separator">
+                            <span id="unpinnedHeader" class="tooltip" ng-click="unpinnedFilesToggle()" ng-class="{hidden: persistdata.hideUnpinnedFiles}" data-tooltiptext="{{LC.mru_hideshowunpinned}}">
+                            {{LC.mru_unpinned + '[' + filteredUnpinned.length + ' ' + LC.mru_pinunpinfiles + ']'}}
+                            <span class="expandCaret">&#9660;</span>
+                            <span class="collapseCaret">&#9650;</span>
+                        </span>
+                    </div>
+                        <ul id="unpinnedFiles" ng-class="{hidden: persistdata.hideUnpinnedFiles}">
+                        <li class="mruitem" ng-repeat="item in filteredUnpinned = (filteredList.unpinned | filter:searchText)" ng-dblclick="openItem(item.filePath)">
+                            <div class="pinicon tooltip" ng-click="addToPinned(item.filePath); $event.stopPropagation();"  data-tooltiptext="{{LC.mru_pintooltip}}"><img src="imgs/unpin.png" /></div>
+                            <div class="boxWrapper">
+                                <div class="options">
+                                    <div class="openIcon tooltip" data-tooltiptimeout="500" data-tooltiptext="{{LC.mru_open}}" ng-click="openItem(item.filePath)"></div>
+                                    <div class="trashIcon tooltip" data-tooltiptimeout="500" data-tooltiptext="{{LC.mru_remove}}" ng-click="removeItem(item.filePath)"></div>
+                                    <div class="actionsIcon tooltip" data-tooltiptimeout="500" data-tooltiptext="{{LC.mru_actions}}"></div>
+                                </div>
+                                <img class="thumbnail" ng-src="{{item.thumbnailPath}}" alt="{{item.fileName}}"/>
+                                <div class="information" data-filetype="{{item.fileTypeByNumber}}">
+                                    <div ng-if="mrufile.vault[item.filePath]" class="vaultBadge tooltip" data-tooltiptext="{{mrufile.vault[item.filePath].tooltip}}">
+                                        <img ng-src="{{vaultIcons[mrufile.vault[item.filePath].vaultsortorder]}}" />
+                                    </div>
+                                    <div ng-if="!mrufile.vault[item.filePath]" class="vaultBadge tooltip" data-tooltiptext="{{LC.mru_vaultnotexist}}">
+                                        <img ng-src="imgs/vaultsample.png" />
+                                    </div>
+                                    <div class="typeparam doctype{{item.fileTypeByNumber}}"></div>
+                                    <h3 class="filename tooltip" ng-bind-html="item.fileNameForDisplay | unsafe"></h3>
+                                    <div class="locationparam tooltip">{{item.fileLocation}}</div>
+                                    <div class="dateparam tooltip">{{item.dateModified}}</div>
+                                    <div class="sizeparam tooltip">{{item.fileSize}}</div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div id="contextMenu">
+    <ul id="orientation">
+        <li class="flipButton">{{LC.menu_flip}}</li>
+        <li class="resetOrientationButton">{{LC.menu_reset}}</li>
+        <li class="maximizeMruButton">{{LC.menu_maximize}}</li>
+    </ul>
+    <ul id="removeShortcut">
+        <li>{{LC.shortcuts_remove}}</li>
+    </ul>
+    <ul id="nonItemActions">
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="defaultActions">
+        <li data-commandid="openDoc">{{LC.mru_open}}</li>
+        <li data-commandid="removeFromMRU">{{LC.mru_remove}}</li>
+        <li data-commandid="openWithOptions">{{LC.mru_openoptions}}</li>
+        <li data-commandid="openContainingFolder">{{LC.mru_containing}}</li>
+        <li data-commandid="exploreContainingFolder">{{LC.mru_explore}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="defaultActionsForIpn">
+        <li data-commandid="openDoc">{{LC.mru_open}}</li>
+        <li data-commandid="removeFromMRU">{{LC.mru_remove}}</li>
+        <li data-commandid="openContainingFolder">{{LC.mru_containing}}</li>
+        <li data-commandid="exploreContainingFolder">{{LC.mru_explore}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="defaultActionsFromActionsIcon">
+        <li data-commandid="openWithOptions">{{LC.mru_openoptions}}</li>
+        <li data-commandid="openContainingFolder">{{LC.mru_containing}}</li>
+        <li data-commandid="exploreContainingFolder">{{LC.mru_explore}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="defaultActionsFromActionsIconIpn">
+        <li data-commandid="openContainingFolder">{{LC.mru_containing}}</li>
+        <li data-commandid="exploreContainingFolder">{{LC.mru_explore}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="commonActionsForAllTypes">
+        <li data-commandid="openDoc">{{LC.mru_open}}</li>
+        <li data-commandid="removeFromMRU">{{LC.mru_remove}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="commonActionsForParts">
+        <li data-commandid="openDoc">{{LC.mru_open}}</li>
+        <li data-commandid="removeFromMRU">{{LC.mru_remove}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="commonActionsForAssemblies">
+        <li data-commandid="openDoc">{{LC.mru_open}}</li>
+        <li data-commandid="removeFromMRU">{{LC.mru_remove}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="commonActionsForDrawings">
+        <li data-commandid="openDoc">{{LC.mru_open}}</li>
+        <li data-commandid="removeFromMRU">{{LC.mru_remove}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+    <ul id="commonActionsForPresentations">
+        <li data-commandid="openDoc">{{LC.mru_open}}</li>
+        <li data-commandid="removeFromMRU">{{LC.mru_remove}}</li>
+        <li data-commandid="docProperties">{{LC.mru_properties}}</li>
+        <li data-commandid="clearRecent">{{LC.mru_clear}}</li>
+    </ul>
+</div>
+<div id="tooltipContainer"></div>
+<div id="tooltipPointer"></div>
+<div id="modalDialog">
+    <div id="dialog">
+        <div id="addPathDlg">
+            <div class="title">{{LC.dialog_addshortcut}}</div>
+            <div class="content">
+                {{LC.dialog_name}} <input type="text" placeholder="Name goes here..." /><br/>
+                {{LC.dialog_folderpath}} <br/> <input class="browseInput" type="text" placeholder="{{LC.dialog_shortcutplaceholder}}" />
+                <button type="button">{{LC.dialog_browse}}</button>
+            </div>
+            <div class="buttons">
+                <button type="button">{{LC.dialog_add}}</button>
+                <button class="cancel" type="button">{{LC.dialog_cancel}}</button>
+            </div>
+        </div>
+        <div id="addLinkDlg">
+            <div class="title">{{LC.dialog_addlink}}</div>
+            <div class="content">
+                Name <input type="text" placeholder="{{LC.dialog_namehere}}" /><br/>
+                URL/Filepath <input type="text" class="browseInput" placeholder="{{LC.dialog_linkplaceholder}}" />
+                <button type="button">{{LC.dialog_browse}}</button>
+            </div>
+            <div class="buttons">
+                <button type="button">{{LC.dialog_add}}</button>
+                <button class="cancel" type="button">{{LC.dialog_cancel}}</button>
+            </div>
+        </div>
+        <div id="clearDocsDlg">
+            <div class="title">{{LC.dialog_recentdocs}}</div>
+            <div class="content">
+                {{LC.dialog_selectoption}}
+            </div>
+            <div class="buttons">
+                <button type="button" data-buttonid="clearFiltered">{{LC.dialog_clearfiltered}}</button>
+                <button type="button" data-buttonid="clearUnpinned">{{LC.dialog_clearall}}</button>
+                <button class="cancel" type="button">{{LC.dialog_cancel}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="big-wait-message" id="loadingPane">
+    <span data-stringid="openloadingmessage">{{LC.loading_message}}</span>
+</div>
+<div id="welcomeOverlay">
+    <div id="tip1">
+        <h1>{{LC.welcome_title}}</h1>
+        <div id="learning">{{LC.welcome_startlearning}}</div>
+        <div id="working">{{LC.welcome_startworking}}</div>
+    </div>
+    <div id="tip2">
+        <img src="imgs/32.png" />
+        <h2>{{LC.welcome_whatsnew}}</h2><br/>
+        <div id="whatsnew">{{LC.welcome_whatsnewdetails}}</div>
+        <div>{{LC.welcome_whatsnewdetails2}}</div>
+    </div>
+    <div id="tip3">
+        <img src="imgs/overlay_help_arrow_up3.png" />
+        <h2>{{LC.welcome_new}}</h2>
+        <p>{{LC.welcome_newdetails}}</p>
+    </div>
+    <div id="tip4">
+        <img src="imgs/myhome.png" />
+        <h2>{{LC.welcome_working}}</h2>
+        <p>{{LC.welcome_workingdetails}}</p>
+    </div>
+    <div id="tip5">
+        <img src="imgs/peekthrough1.png" />
+        <img id="tip5Arrow" src="imgs/overlay_help_arrow_up1.png" />
+        <h2>{{LC.welcome_customize}}</h2>
+        <p>{{LC.welcome_customizedetails}}</p>
+    </div>
+</div>
+</body>
+</html>
