@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Unternehmen>
+    <Abteilung name="Vertrieb">
+        <Mitarbeiter>
+            <Name>Max Mustermann</Name>
+            <Position>Vertriebsleiter</Position>
+            <Email>max.mustermann@beispiel.de</Email>
+        </Mitarbeiter>
+        <Mitarbeiter>
+            <Name>Erika Musterfrau</Name>
+            <Position>Vertriebsmitarbeiter</Position>
+            <Email>erika.musterfrau@beispiel.de</Email>
+        </Mitarbeiter>
+    </Abteilung>
+    <Abteilung name="Entwicklung">
+        <Mitarbeiter>
+            <Name>John Doe</Name>
+            <Position>Entwicklungsleiter</Position>
+            <Email>john.doe@beispiel.de</Email>
+        </Mitarbeiter>
+        <Mitarbeiter>
+            <Name>Jane Doe</Name>
+            <Position>Entwickler</Position>
+            <Email>jane.doe@beispiel.de</Email>
+        </Mitarbeiter>
+    </Abteilung>
+</Unternehmen>

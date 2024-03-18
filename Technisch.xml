@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OmicronMeasurement>
+    <TestObject>
+        <Name>Hochspannungs-Durchführung</Name>
+        <Type>HS_Durchführung</Type>
+    </TestObject>
+    <Measurement>
+        <ID>1</ID>
+        <Voltage>
+            <Value>10000</Value>
+            <Unit>kV</Unit>
+        </Voltage>
+        <Frequency>
+            <Value>50</Value>
+            <Unit>Hz</Unit>
+        </Frequency>
+        <Capacitance>
+            <Value>2000</Value>
+            <Unit>pF</Unit>
+        </Capacitance>
+        <Loss>
+            <Value>0.05</Value>
+            <Unit>%</Unit>
+        </Loss>
+    </Measurement>
+    <Measurement>
+        <ID>2</ID>
+        <Voltage>
+            <Value>11000</Value>
+            <Unit>kV</Unit>
+        </Voltage>
+        <Frequency>
+            <Value>60</Value>
+            <Unit>Hz</Unit>
+        </Frequency>
+        <Capacitance>
+            <Value>2100</Value>
+            <Unit>pF</Unit>
+        </Capacitance>
+        <Loss>
+            <Value>0.06</Value>
+            <Unit>%</Unit>
+        </Loss>
+    </Measurement>
+</OmicronMeasurement>
