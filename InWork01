@@ -1,0 +1,114 @@
+#include <vector>
+#include <utility>
+#include <string>
+#include <iostream>
+
+class XMLProcess {
+private:
+    std::vector<std::pair<std::wstring, std::wstring>> xmlInfo;
+
+public:
+    void processNodePlus(IXMLDOMNode* pNode) {
+        if (pNode == NULL) {
+            return;
+        }
+
+        auto nodeInfo = RRTools::getNodeInfo(pNode);
+
+        // Extrahieren des Knotennamens und des Knotenwerts
+        BSTR nodeName, nodeValue;
+        pNode->get_nodeName(&nodeName);
+        pNode->get_text(&nodeValue);
+
+        // Hinzufügen der Knoteninformationen zum Vektor
+        xmlInfo.push_back({ nodeInfo.first, nodeValue });
+
+        // Freigeben der Speicherressourcen
+        SysFreeString(nodeName);
+        SysFreeString(nodeValue);
+
+        // Verarbeitung der Kindknoten
+        IXMLDOMNodeList* pChildren;
+        pNode->get_childNodes(&pChildren);
+        long length;
+        pChildren->get_length(&length);
+
+        for (long i = 0; i < length; i++) {
+            IXMLDOMNode* pChild;
+            pChildren->get_item(i, &pChild);
+            processNodePlus(pChild);
+        }
+    }
+
+    int getNodeCount() const {
+        return xmlInfo.size();
+    }
+
+    std::pair<std::wstring, std::wstring> getNodeInfo(int index) const {
+        if (index >= 0 && index < xmlInfo.size()) {
+            return xmlInfo[index];
+        } else {
+            return { L"", L"" }; // Rückgabe eines leeren Paares, wenn der Index ungültig ist
+        }
+    }
+
+    const std::vector<std::pair<std::wstring, std::wstring>>& getXMLInfo() const {
+        return xmlInfo;
+    }
+};
+
+
+//----------------------
+
+#include <memory>
+
+class XMLProcess {
+private:
+    std::shared_ptr<IXMLDOMDocument> pXMLDom;
+
+public:
+    XMLProcess() : pXMLDom(nullptr) {}
+
+    void loadXMLDocument(const std::wstring& filename) {
+        HRESULT hr_com = CoInitialize(NULL);
+        if (FAILED(hr_com)) {
+            throw std::runtime_error("Fehler bei der Initialisierung der COM-Schnittstelle");
+        }
+
+        HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+        if (FAILED(hr)) {
+            CoUninitialize();
+            throw std::runtime_error("Fehler beim Erstellen des XML-DOM-Objekts.");
+        }
+
+        VARIANT_BOOL status;
+        VARIANT xmlSource;
+        xmlSource.vt = VT_BSTR;
+        xmlSource.bstrVal = SysAllocString(filename.c_str());
+        hr = pXMLDom->load(xmlSource, &status);
+        SysFreeString(xmlSource.bstrVal);
+
+        if (FAILED(hr) || status != VARIANT_TRUE) {
+            pXMLDom = nullptr;
+            CoUninitialize();
+            throw std::runtime_error("Fehler beim Laden der XML-Datei.");
+        }
+    }
+
+    void processXMLDocument() {
+        if (!pXMLDom) {
+            throw std::runtime_error("XML-Dokument wurde nicht geladen.");
+        }
+
+        IXMLDOMElement* pRootNode;
+        HRESULT hr = pXMLDom->get_documentElement(&pRootNode);
+        if (FAILED(hr) || !pRootNode) {
+            throw std::runtime_error("Fehler beim Abrufen des Wurzelknotens.");
+        }
+
+        // Hier können Sie Ihre Verarbeitungsfunktionen aufrufen
+        // Beispiel: processNodePlus(pRootNode);
+
+        pRootNode->Release();
+    }
+};
