@@ -71,4 +71,23 @@ int main() {
 
     return 0;
 }
+
+
+
+
+std::pair<std::wstring, std::wstring> getNodeInfo(IXMLDOMNode* pNode) const {
+    std::wstring nodeName, nodeValue;
+    if (pNode != nullptr) {
+        BSTR bstrNodeName, bstrNodeValue;
+        pNode->get_nodeName(&bstrNodeName);
+        pNode->get_text(&bstrNodeValue);
+        nodeName = bstrNodeName ? std::wstring(bstrNodeName, SysStringLen(bstrNodeName)) : L"";
+        nodeValue = bstrNodeValue ? std::wstring(bstrNodeValue, SysStringLen(bstrNodeValue)) : L"";
+        SysFreeString(bstrNodeName);
+        SysFreeString(bstrNodeValue);
+    }
+    std::pair<std::wstring, std::wstring> result(nodeName, nodeValue);
+    return result;
+}
+
 */
