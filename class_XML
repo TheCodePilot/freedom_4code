@@ -1,0 +1,74 @@
+ class XMLProcessor {
+    public:
+        XMLProcessor() : pXMLDom(nullptr) {}
+        ~XMLProcessor() { ReleaseResources(); }
+
+        HRESULT InitializeCOM() {
+            return CoInitialize(nullptr);
+        }
+
+        HRESULT LoadXMLDocument(const std::wstring& filename) {
+            HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+            if (SUCCEEDED(hr)) {
+                VARIANT_BOOL status;
+                VARIANT xmlSource;
+                xmlSource.vt = VT_BSTR;
+                xmlSource.bstrVal = SysAllocString(filename.c_str());
+                hr = pXMLDom->load(xmlSource, &status);
+                SysFreeString(xmlSource.bstrVal);
+                if (status == VARIANT_TRUE) {
+                    return S_OK;
+                }
+                else {
+                    std::wcout << L"Fehler beim Laden der XML-Datei." << std::endl;
+                }
+            }
+            else {
+                std::wcout << L"Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+            }
+            return hr;
+        }
+
+        void ProcessXMLDocument() {
+            if (pXMLDom) {
+                IXMLDOMElement* pRootNode;
+                HRESULT hr = pXMLDom->get_documentElement(&pRootNode);
+                if (SUCCEEDED(hr) && pRootNode) {
+                    // Hier können Sie Ihre Verarbeitungsfunktionen aufrufen
+                    // Beispiel: RRTools::getNodeInfoByTagName(pRootNode, L"Unit");
+                    // Beispiel: processEmailNodes(pRootNode);
+                    pRootNode->Release();
+                }
+            }
+        }
+
+        void ReleaseResources() {
+            if (pXMLDom) {
+                pXMLDom->Release();
+                pXMLDom = nullptr;
+            }
+            CoUninitialize();
+        }
+
+    private:
+        IXMLDOMDocument* pXMLDom;
+    };
+
+/*
+Example of using
+int main() {
+    RRTools::XMLProcessor xmlProcessor;
+    HRESULT hr = xmlProcessor.InitializeCOM();
+    if (SUCCEEDED(hr)) {
+        hr = xmlProcessor.LoadXMLDocument(L"BeispielG.xml");
+        if (SUCCEEDED(hr)) {
+            xmlProcessor.ProcessXMLDocument();
+        }
+    }
+
+    std::wcout << L"Drücken Sie eine beliebige Taste, um fortzufahren...";
+    std::cin.get();
+
+    return 0;
+}
+*/
