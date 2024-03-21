@@ -152,3 +152,49 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
         Button1->Caption = "Drag & Drop entsperren";
 }
 //---------------------------------------------------------------------------
+
+
+
+
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit1.h"
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+
+__fastcall TForm1::TForm1(TComponent* Owner)
+  : TForm(Owner)
+{
+  // Erstellen Sie ein neues TLabel
+  TLabel *label = new TLabel(this);
+  label->Parent = this;
+  label->Caption = "Drag me!";
+  label->Left = 50;
+  label->Top = 50;
+
+  // Einstellen der Drag-Eigenschaften
+  label->DragMode = dmAutomatic;
+  label->DragKind = dkDrag;
+
+  // Event-Handler für das DragOver-Ereignis
+  label->OnDragOver = LabelDragOver;
+}
+
+void __fastcall TForm1::LabelDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept)
+{
+  Accept = true;
+}
+
+void __fastcall TForm1::FormDragDrop(TObject *Sender, TObject *Source, int X, int Y)
+{
+  TLabel *label = dynamic_cast<TLabel *>(Source);
+  if (label)
+  {
+    label->Left = X;
+    label->Top = Y;
+  }
+}
+
