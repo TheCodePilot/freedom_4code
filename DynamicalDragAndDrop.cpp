@@ -31,6 +31,72 @@ extern PACKAGE TForm1 *Form1;
 //---------------------------------------------------------------------------
 #endif
 
+
+// Unit1.cpp
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit1.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+//---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::ListBox1StartDrag(TObject *Sender, TDragObject *&DragObject)
+{
+    ListBox1->BeginDrag(false);
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::Edit1StartDrag(TObject *Sender, TDragObject *&DragObject)
+{
+    Edit1->BeginDrag(false);
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormCreate(TObject *Sender)
+{
+    ListBox1->DragMode = dmAutomatic;
+    Edit1->DragMode = dmAutomatic;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormDestroy(TObject *Sender)
+{
+    ListBox1->Items->Clear();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormDragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State,
+      bool &Accept)
+{
+    Accept = Source == ListBox1 || Source == Edit1;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormDragDrop(TObject *Sender, TObject *Source, int X, int Y)
+{
+    if (Source == ListBox1)
+        AddItemToListBox(ListBox1);
+    else if (Source == Edit1)
+        AddItemToListBox(Edit1);
+}
+
+void __fastcall TForm1::AddItemToListBox(TControl *SourceControl)
+{
+    UnicodeString ItemText = "";
+
+    if (SourceControl == ListBox1)
+        ItemText = ListBox1->Items->Strings[ListBox1->ItemIndex];
+    else if (SourceControl == Edit1)
+        ItemText = Edit1->Text;
+
+    ListBox1->Items->Add(ItemText);
+}
+//---------------------------------------------------------------------------
+
 //###########################################################################
 /*In diesem Beispiel gibt es ein Hauptformular (Form1), das eine ListBox (ListBox1)
 und ein Edit-Feld (Edit1) enthält. Beide Komponenten wurden so konfiguriert, 
