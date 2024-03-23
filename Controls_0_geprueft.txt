@@ -1,0 +1,297 @@
+Quelle:
+Vcl.Controls.TControl.ControlStyle – RAD Studio API Documentation (embarcadero.com) 
+https://docwiki.embarcadero.com/Libraries/Athens/de/Vcl.Controls.TControl.ControlStyle
+
+bzw.
+Vcl.Controls.TControl.ControlStyle – RAD Studio API Documentation (embarcadero.com) 
+https://docwiki.embarcadero.com/Libraries/Sydney/de/Vcl.Controls.TControl.ControlStyle
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    TOpenDialog *OpenDialog = new TOpenDialog(this);
+    OpenDialog->InitialDir = GetCurrentDir();
+    if (OpenDialog->Execute())
+    {
+        ShowMessage("Datei ausgewählt: " + OpenDialog->FileName);
+    }
+    delete OpenDialog;
+}
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    TOpenDialog *OpenDialog = new TOpenDialog(this);
+    OpenDialog->InitialDir = GetCurrentDir();
+    OpenDialog->OnClose = DialogClose;
+    if (OpenDialog->Execute())
+    {
+        ShowMessage("Datei ausgewählt: " + OpenDialog->FileName);
+    }
+    delete OpenDialog;
+}
+
+void __fastcall TForm1::DialogClose(TObject *Sender)
+{
+    ShowMessage("Dialog geschlossen");
+}
+
+class TForm1 : public TForm
+{
+__published: // IDE-managed Components
+    TButton *Button1;
+private: // User declarations
+    String FileName; // Member-Variablen für den Dateinamen und den Dateipfad
+public: // User declarations
+    __fastcall TForm1(TComponent* Owner);
+    void __fastcall Button1Click(TObject *Sender);
+    void __fastcall DialogClose(TObject *Sender);
+};
+
+// Implementierung
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    TOpenDialog *OpenDialog = new TOpenDialog(this);
+    OpenDialog->InitialDir = GetCurrentDir();
+    OpenDialog->OnClose = DialogClose;
+    if (OpenDialog->Execute())
+    {
+        FileName = OpenDialog->FileName; // Speichern des Dateinamens und des Dateipfads
+        ShowMessage("Datei ausgewählt: " + FileName);
+    }
+    delete OpenDialog;
+}
+
+void __fastcall TForm1::DialogClose(TObject *Sender)
+{
+    ShowMessage("Dialog geschlossen. Ausgewählte Datei: " + FileName);
+}
+
+OpenDialog->InitialDir = "C:/Users/BeispielOrdner";
+oder
+OpenDialog->InitialDir = "C:\\Users\\BeispielOrdner";
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    TOpenDialog *OpenDialog = new TOpenDialog(this);
+    OpenDialog->InitialDir = GetCurrentDir();
+    OpenDialog->OnClose = DialogClose;
+    if (OpenDialog->Execute())
+    {
+        FileName = OpenDialog->FileName; // Speichern des Dateinamens und des Dateipfads
+        ReadAndEvaluateFile(FileName); // Lesen und Auswerten der Datei
+    }
+    delete OpenDialog;
+}
+
+void __fastcall TForm1::ReadAndEvaluateFile(String FileName)
+{
+    // Öffnen der Datei im Lese-Modus
+    TFileStream *FileStream = new TFileStream(FileName, fmOpenRead);
+    // Lesen und Auswerten der Datei
+    // …
+ // Schließen der Datei
+    delete FileStream;
+}
+
+// Ereignishandler für das OnKeyPress-Ereignis
+void __fastcall TForm1::Edit1KeyPress(TObject *Sender, System::WideChar &Key)
+{
+    if (Key == VK_RETURN) // Wenn die Enter-Taste gedrückt wird
+    {
+        ShowMessage("Enter gedrückt. Text: " + Edit1->Text);
+    }
+}
+
+// Ereignishandler für das OnDragDrop-Ereignis
+void __fastcall TForm1::Edit1DragDrop(TObject *Sender, TObject *Source, int X, int Y)
+{
+    if (Source->ClassNameIs("TEdit")) // Wenn der Quelltext ein TEdit-Steuerelement ist
+    {
+        TEdit* sourceEdit = dynamic_cast<TEdit*>(Source);
+        Edit1->Text = sourceEdit->Text; // Text aus dem Quell-TEdit kopieren
+    }
+}
+
+// Ereignishandler für das OnDragOver-Ereignis
+void __fastcall TForm1::Edit1DragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept)
+{
+    Accept = Source->ClassNameIs("TEdit"); // Nur TEdit-Steuerelemente akzeptieren
+}
+
+
+// Ereignishandler für das OnDragOver-Ereignis
+void __fastcall TForm1::Edit1DragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept)
+{
+    TDragObject* dragObject = dynamic_cast<TDragObject*>(Source);
+    if (dragObject != nullptr)
+    {
+        Accept = dragObject->Source->ClassNameIs("TEdit"); // Nur TEdit-Steuerelemente akzeptieren
+    }
+    else
+    {
+        Accept = false;
+    }
+}
+
+
+// Ereignishandler für das OnDragOver-Ereignis
+void __fastcall TForm1::Edit1DragOver(TObject *Sender, TObject *Source, int X, int Y)
+{
+    TDragObject* dragObject = dynamic_cast<TDragObject*>(Source);
+    if (dragObject != nullptr)
+    {
+        Sender->ControlState << csAcceptsControls; // Nur TEdit-Steuerelemente akzeptieren
+    }
+    else
+    {
+        Sender->ControlState >> csAcceptsControls;
+    }
+}
+
+TForm1 *Form1 = new TForm1(this);
+Form1->ControlStyle = csAcceptsControls; // Setzen der Eigenschaft
+TControlStyle style = Form1->ControlStyle; // Lesen der Eigenschaft
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+#include <vcl.h>
+#include <windows.h>
+#pragma hdrstop
+#include <tchar.h>
+
+#pragma argsused
+int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
+{
+    try
+    {
+        Application->Initialize();
+        Application->MainFormOnTaskBar = true;
+
+        TForm *Form = new TForm(Application);
+        Form->Width = 300;
+        Form->Height = 300;
+        Form->Position = poScreenCenter;
+
+        HRGN Region;
+        Region = CreateEllipticRgn(0, 0, Form->Width, Form->Height);
+        SetWindowRgn(Form->Handle, Region, true);
+
+        Application->Run();
+
+        delete Form;
+    }
+    catch (Exception &exception)
+    {
+        Application->ShowException(&exception);
+    }
+    return 0;
+}
+
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    // ...
+}
+
+void __fastcall TForm1::FormCreate(TObject *Sender)
+{
+    HRGN Region;
+    Region = CreateEllipticRgn(0, 0, this->Width, this->Height);
+    SetWindowRgn(this->Handle, Region, true);
+}
+
+void __fastcall TForm1::WMNCPaint(TMessage &Message)
+{
+    TForm::Dispatch(&Message);
+
+    HDC hdc = GetWindowDC(Handle);
+    if (hdc)
+    {
+        Graphics::TBitmap *Bitmap = new Graphics::TBitmap();
+        try
+        {
+            Bitmap->LoadFromFile("PfadZumBild"); // Laden Sie Ihr Bild
+
+            RECT rc;
+            GetWindowRect(Handle, &rc);
+            OffsetRect(&rc, -rc.left, -rc.top);
+
+            BitBlt(hdc, 0, 0, Bitmap->Width, Bitmap->Height, Bitmap->Canvas->Handle, 0, 0, SRCCOPY);
+        }
+        __finally
+        {
+            delete Bitmap;
+            ReleaseDC(Handle, hdc);
+        }
+    }
+}
+
+
+
+#include <vcl.h>
+#pragma hdrstop
+#include <tchar.h>
+
+#pragma argsused
+int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
+{
+    try
+    {
+        Application->Initialize();
+        Application->MainFormOnTaskBar = true;
+
+        TForm *Form = new TForm(Application);
+        Form->Icon->LoadFromFile("PfadZumIcon"); // Laden Sie Ihr Icon
+
+        Application->Run();
+
+        delete Form;
+    }
+    catch (Exception &exception)
+    {
+        Application->ShowException(&exception);
+    }
+    return 0;
+}
+
+
+...nur das Schließen-Symbol im Fenstertitel-Bereich
+Form->BorderStyle = bsDialog;
+
+...Tooltip:
+Button1->Hint = "Klicken Sie auf diesen Button, um ...";
+Button1->ShowHint = true;
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+void __fastcall TForm1::DBGrid1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+    if (Button == mbLeft)
+    {
+        TGridCoord coord = DBGrid1->MouseCoord(X, Y);
+        if (coord.Y > 0) // Nicht auf den Spaltenüberschriften klicken
+        {
+            AnsiString text = DBGrid1->Columns->Items[coord.X - 1]->Field->AsString;
+            DBGrid1->BeginDrag(false);
+        }
+    }
+}
+
+void __fastcall TForm1::DBGrid1EndDrag(TObject *Sender, TObject *Target, int X, int Y)
+{
+    TControl *control = dynamic_cast<TControl*>(Target);
+    if (control != NULL)
+    {
+        AnsiString text = DBGrid1->Columns->Items[DBGrid1->SelectedIndex]->Field->AsString;
+        if (control->ClassNameIs("TEdit"))
+        {
+            dynamic_cast<TEdit*>(control)->Text = text;
+        }
+        else if (control->ClassNameIs("TMemo"))
+        {
+            dynamic_cast<TMemo*>(control)->Lines->Add(text);
+        }
+    }
+}
+
+...falls nötig:
+std::string text = AnsiString(DBGrid1->Columns->Items[DBGrid1->SelectedIndex]->Field->AsString).c_str();
