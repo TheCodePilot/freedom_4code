@@ -1,0 +1,175 @@
+
+
+#import <msxml6.dll>
+
+int main()
+{
+    // Initialisieren Sie die COM-Bibliothek
+    CoInitialize(NULL);
+
+    // Erstellen Sie ein DOM-Dokument
+    MSXML2::IXMLDOMDocumentPtr pDoc("Msxml2.DOMDocument.6.0");
+
+    // Laden Sie das XML-Dokument
+    pDoc->async = VARIANT_FALSE;
+    pDoc->loadXML("<root><child1/><child2/></root>");
+
+    // Holen Sie sich den Root-Knoten
+    MSXML2::IXMLDOMElementPtr pRoot = pDoc->documentElement;
+
+    // Holen Sie sich den ersten Kindknoten des Root-Knotens
+    MSXML2::IXMLDOMNodePtr pFirstChild = pRoot->firstChild;
+
+    // Beenden Sie die COM-Bibliothek
+    CoUninitialize();
+
+    return 0;
+}
+
+#import <msxml6.dll>
+
+int main()
+{
+    // Initialisieren Sie die COM-Bibliothek
+    CoInitialize(NULL);
+
+    // Erstellen Sie ein DOM-Dokument
+    MSXML2::IXMLDOMDocumentPtr pDoc("Msxml2.DOMDocument.6.0");
+
+    // Laden Sie das XML-Dokument
+    pDoc->async = VARIANT_FALSE;
+    pDoc->loadXML("<Unternehmen>...</Unternehmen>"); // Ersetzen Sie <Unternehmen>...</Unternehmen> durch Ihren XML-String
+
+    // Holen Sie sich den Root-Knoten
+    MSXML2::IXMLDOMElementPtr pRoot = pDoc->documentElement;
+
+    // Holen Sie sich alle Email-Knoten
+    MSXML2::IXMLDOMNodeListPtr pEmailNodes = pRoot→getElementsByTagName("Email");
+
+ // Durchlaufen Sie alle Email-Knoten und drucken Sie den Text aus
+    MSXML2::IXMLDOMNodePtr pEmailNode;
+    while ((pEmailNode = pEmailNodes->nextNode()) != NULL)
+    {
+        _bstr_t text = pEmailNode->text;
+        printf("Email: %s\n", (const char*)text);
+    }
+
+    // Beenden Sie die COM-Bibliothek
+    CoUninitialize();
+
+    return 0;
+}
+
+#import <msxml6.dll>
+
+int main()
+{
+    // Initialisieren Sie die COM-Bibliothek
+    CoInitialize(NULL);
+
+    // Erstellen Sie ein DOM-Dokument
+    MSXML2::IXMLDOMDocumentPtr pDoc("Msxml2.DOMDocument.6.0");
+
+    // Laden Sie das XML-Dokument
+    pDoc->async = VARIANT_FALSE;
+    pDoc->loadXML("<Unternehmen>...</Unternehmen>"); // Ersetzen Sie <Unternehmen>...</Unternehmen> durch Ihren XML-String
+
+    // Holen Sie sich den Root-Knoten
+    MSXML2::IXMLDOMElementPtr pRoot = pDoc→documentElement;
+
+// Holen Sie sich alle Email-Knoten
+    MSXML2::IXMLDOMNodeList *pEmailNodes = pRoot->getElementsByTagName("Email");
+
+    // Durchlaufen Sie alle Email-Knoten und drucken Sie den Text aus
+    MSXML2::IXMLDOMNode *pEmailNode;
+    while ((pEmailNode = pEmailNodes->nextNode()) != NULL)
+    {
+        _bstr_t text = pEmailNode->text;
+        printf("Email: %s\n", (const char*)text);
+    }
+
+    // Beenden Sie die COM-Bibliothek
+    CoUninitialize();
+
+    return 0;
+}
+
+#import <msxml6.dll>
+
+
+//Dies ist eine typische Kombination
+
+
+int main()
+{
+    // Initialisieren Sie die COM-Bibliothek
+    CoInitialize(NULL);
+
+    // Erstellen Sie ein DOM-Dokument
+    MSXML2::IXMLDOMDocumentPtr pDoc("Msxml2.DOMDocument.6.0");
+
+    // Laden Sie das XML-Dokument
+    pDoc->async = VARIANT_FALSE;
+    pDoc->loadXML("<Unternehmen>...</Unternehmen>"); // Ersetzen Sie <Unternehmen>...</Unternehmen> durch Ihren XML-String
+
+    // Holen Sie sich den Root-Knoten
+    MSXML2::IXMLDOMElementPtr pRoot = pDoc->documentElement;
+
+    // Holen Sie sich alle Abteilung-Knoten
+    MSXML2::IXMLDOMNodeList *pDeptNodes = pRoot->getElementsByTagName("Abteilung");
+
+    MSXML2::IXMLDOMNode *pDeptNode;
+    while ((pDeptNode = pDeptNodes->nextNode()) != NULL)
+    {
+        // Überprüfen Sie, ob das Attribut name "Entwicklung" ist
+        _bstr_t name = pDeptNode->attributes->getNamedItem("name")->text;
+        if (name == "Entwicklung")
+        {
+            // Holen Sie sich alle Email-Knoten in dieser Abteilung
+            MSXML2::IXMLDOMNodeList *pEmailNodes = pDeptNode->getElementsByTagName("Email");
+
+            // Durchlaufen Sie alle Email-Knoten und drucken Sie den Text aus
+            MSXML2::IXMLDOMNode *pEmailNode;
+            while ((pEmailNode = pEmailNodes->nextNode()) != NULL)
+            {
+                _bstr_t text = pEmailNode->text;
+                printf("Email: %s\n", (const char*)text);
+            }
+        }
+    }
+
+    // Beenden Sie die COM-Bibliothek
+    CoUninitialize();
+
+    return 0;
+}
+
+_____________________________________
+
+#import <msxml6.dll>
+using namespace MSXML2;
+
+int main()
+{
+    // Initialisieren Sie die COM-Bibliothek
+    CoInitialize(NULL);
+
+    // Erstellen Sie ein DOM-Dokument
+    IXMLDOMDocumentPtr pDoc("Msxml2.DOMDocument.6.0");
+
+    // Laden Sie das XML-Dokument
+    pDoc->async = VARIANT_FALSE;
+    pDoc->loadXML("<Unternehmen>...</Unternehmen>"); // Ersetzen Sie <Unternehmen>...</Unternehmen> durch Ihren XML-String
+
+    // Holen Sie sich den Root-Knoten
+    IXMLDOMElementPtr pRoot = pDoc->documentElement;
+
+    // Beenden Sie die COM-Bibliothek
+    CoUninitialize();
+
+    return 0;
+}
+
+
+
+
