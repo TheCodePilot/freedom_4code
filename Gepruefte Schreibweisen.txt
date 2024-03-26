@@ -317,5 +317,74 @@ int main() {
     return 0;
 }
 
+//Loesung der String-Probleme
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Durchlaufen und Verarbeiten der NodeList
+    IXMLDOMNodePtr pDeptNode;
+    while ((pDeptNode = pDeptNodes->nextNode()) != NULL) {
+        // Überprüfen Sie, ob das Attribut name "Entwicklung" ist
+        IXMLDOMNamedNodeMapPtr pAttributes;
+        hr = pDeptNode->get_attributes(&pAttributes);
+        if (FAILED(hr)) {
+            std::cerr << "Fehler beim Abrufen der Attribute des Elements." << std::endl;
+            continue;
+        }
 
+        IXMLDOMNodePtr pNameAttribute;
+        hr = pAttributes->getNamedItem(L"name", &pNameAttribute);
+        if (FAILED(hr)) {
+            std::cerr << "Fehler beim Abrufen des Attributs 'name'." << std::endl;
+            continue;
+        }
+
+        BSTR bstrName;
+        hr = pNameAttribute->get_text(&bstrName);
+        if (FAILED(hr)) {
+            std::cerr << "Fehler beim Abrufen des Attributwerts 'name'." << std::endl;
+            continue;
+        }
+
+        // Konvertieren von BSTR zu const wchar_t*
+        const wchar_t* name = bstrName;
+
+        if (wcscmp(name, L"Entwicklung") == 0) {
+            // Holen Sie sich alle Email-Knoten in dieser Abteilung
+            IXMLDOMNodeListPtr pEmailNodes;
+            hr = pDeptNode->getElementsByTagName(L"Email", &pEmailNodes);
+            if (FAILED(hr)) {
+                std::cerr << "Fehler beim Abrufen der Email-Knoten." << std::endl;
+                continue;
+            }
+
+            // Durchlaufen Sie alle Email-Knoten und drucken Sie den Text aus
+            IXMLDOMNodePtr pEmailNode;
+            while ((pEmailNode = pEmailNodes->nextNode()) != NULL) {
+                BSTR bstrEmailText;
+                hr = pEmailNode->get_text(&bstrEmailText);
+                if (FAILED(hr)) {
+                    std::cerr << "Fehler beim Abrufen des Texts des Email-Knotens." << std::endl;
+                    continue;
+                }
+
+                // Konvertieren von BSTR zu const wchar_t*
+                const wchar_t* emailText = bstrEmailText;
+
+                std::wcout << "Email: " << emailText << std::endl;
+
+                // Freigabe des BSTR
+                SysFreeString(bstrEmailText);
+            }
+        }
+
+        // Freigabe des BSTR
+        SysFreeString(bstrName);
+    }
+
+    // Freigabe der COM-Objekte
+    pRoot.Release();
+    pDeptNodes.Release();
+    pXMLDoc.Release();
+    CoUninitialize();
+    return 0;
+}
 
