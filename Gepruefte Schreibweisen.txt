@@ -170,6 +170,152 @@ int main()
     return 0;
 }
 
+__########################################__
+
+#include <iostream>
+#include <windows.h>
+#import "msxml6.dll" named_guids
+
+using namespace MSXML2;
+
+int main() {
+    HRESULT hr;
+
+    // Initialisierung von COM
+    hr = CoInitialize(NULL);
+    if (FAILED(hr)) {
+        std::cerr << "COM-Initialisierung fehlgeschlagen." << std::endl;
+        return 1;
+    }
+
+    // Erstellen eines DOM-Dokuments
+    IXMLDOMDocumentPtr pXMLDoc;
+    hr = pXMLDoc.CreateInstance(__uuidof(DOMDocument60));
+    if (FAILED(hr)) {
+        std::cerr << "Fehler beim Erstellen des DOM-Dokuments." << std::endl;
+        CoUninitialize();
+        return 1;
+    }
+
+    // XML-Datenstring als wchar_t* definieren
+    const wchar_t* xmlData = L"<root><example id=\"1\">Sample XML Data</example></root>";
+
+    // Konvertierung des wchar_t*-Datenstrings in einen BSTR
+    BSTR bstrXMLData = SysAllocString(xmlData);
+    if (!bstrXMLData) {
+        std::cerr << "Fehler beim Erstellen des BSTR." << std::endl;
+        pXMLDoc.Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Laden von XML-Daten aus einem BSTR in das DOM-Dokument
+    VARIANT_BOOL bSuccess;
+    hr = pXMLDoc->loadXML(bstrXMLData, &bSuccess);
+    if (FAILED(hr) || bSuccess == VARIANT_FALSE) {
+        std::cerr << "Fehler beim Laden der XML-Daten." << std::endl;
+        SysFreeString(bstrXMLData); // Freigabe des BSTR
+        pXMLDoc.Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // XML erfolgreich geladen, nun können Operationen auf dem DOM-Dokument ausgeführt werden
+
+    // Freigabe des BSTR, da er nicht mehr benötigt wird
+    SysFreeString(bstrXMLData);
+
+    // Root-Knoten des DOM-Dokuments abrufen
+    IXMLDOMNodePtr pRoot;
+    hr = pXMLDoc->get_documentElement(&pRoot);
+    if (FAILED(hr)) {
+        std::cerr << "Fehler beim Abrufen des Root-Knotens." << std::endl;
+        pXMLDoc.Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // NodeList mit den Elementen, die das Tag 'example' haben, abrufen
+    IXMLDOMNodeListPtr pDeptNodes;
+    hr = pRoot->getElementsByTagName(L"example", &pDeptNodes);
+    if (FAILED(hr)) {
+        std::cerr << "Fehler beim Abrufen der Elemente mit dem Tag 'example'." << std::endl;
+        pRoot.Release();
+        pXMLDoc.Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Das erste Element in der NodeList abrufen
+    IXMLDOMNodePtr pDeptNode;
+    hr = pDeptNodes->nextNode(&pDeptNode);
+    if (FAILED(hr)) {
+        std::cerr << "Fehler beim Abrufen des ersten Elements mit dem Tag 'example'." << std::endl;
+        pRoot.Release();
+        pDeptNodes.Release();
+        pXMLDoc.Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Attribute des Elements abrufen
+    IXMLDOMNamedNodeMapPtr pAttributes;
+    hr = pDeptNode->get_attributes(&pAttributes);
+    if (FAILED(hr)) {
+        std::cerr << "Fehler beim Abrufen der Attribute des Elements." << std::endl;
+        pRoot.Release();
+        pDeptNodes.Release();
+        pXMLDoc.Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    // Durchlaufen und Verarbeiten der Attribute
+    long attributeCount = 0;
+    hr = pAttributes->get_length(&attributeCount);
+    if (FAILED(hr)) {
+        std::cerr << "Fehler beim Abrufen der Anzahl der Attribute." << std::endl;
+        pRoot.Release();
+        pDeptNodes.Release();
+        pXMLDoc.Release();
+        CoUninitialize();
+        return 1;
+    }
+
+    std::cout << "Anzahl der Attribute: " << attributeCount << std::endl;
+
+    for (long i = 0; i < attributeCount; ++i) {
+        IXMLDOMNodePtr pAttribute;
+        hr = pAttributes->get_item(i, &pAttribute);
+        if (FAILED(hr)) {
+            std::cerr << "Fehler beim Abrufen des Attributes." << std::endl;
+            continue;
+        }
+
+        BSTR bstrAttributeName;
+        hr = pAttribute->get_nodeName(&bstrAttributeName);
+        if (SUCCEEDED(hr)) {
+            std::wcout << "Attributname: " << bstrAttributeName << std::endl;
+            SysFreeString(bstrAttributeName);
+        }
+
+        BSTR bstrAttributeValue;
+        hr = pAttribute->get_text(&bstrAttributeValue);
+        if (SUCCEEDED(hr)) {
+            std::wcout << "Attributwert: " << bstrAttributeValue << std::endl;
+            SysFreeString(bstrAttributeValue);
+        }
+
+        pAttribute.Release(); // Freigabe des aktuellen Attributes
+    }
+
+    // Freigabe der COM-Objekte
+    pRoot.Release();
+    pDeptNodes.Release();
+    pXMLDoc.Release();
+    CoUninitialize();
+    return 0;
+}
 
 
 
