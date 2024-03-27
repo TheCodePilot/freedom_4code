@@ -1,0 +1,3 @@
+﻿  ConsoleApplication_XMP.cpp
+D:\RR_Projekte\Code\VS_2023\QtVisualStudio\ConsoleApplication_XMP\ConsoleApplication_XMP.cpp(559): warning C4715: "main_nix": Nicht alle Codepfade geben einen Wert zurück.
+  ConsoleApplication_XMP.vcxproj -> D:\RR_Projekte\Code\VS_2023\QtVisualStudio\ConsoleApplication_XMP\x64\Debug\ConsoleApplication_XMP.exe

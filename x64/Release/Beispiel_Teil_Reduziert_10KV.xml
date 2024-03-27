@@ -1,0 +1,120 @@
+<Object xmlns="xmlns.omicron.at/2004/TCL" xmlns:TB="http://www.omicron.at/xmlns/2007/TestBase" clsid="{36AA80F4-45B7-11D4-8220-00104B6552C4}">
+<_v vt="19">1</_v>
+	<nTreeVersion vt="3">2</nTreeVersion>
+	<DateTime vt="7">03/07/2019 11:14:46</DateTime>
+	<Cards vt="8204" length="7">
+		<Cards_Item vt="13" clsid="{27B39070-7A34-4D92-9FEB-299F574CC28F}">
+			<nType vt="3">21</nType>
+			<bstrName vt="8">C2</bstrName>
+			<Date vt="7">02/26/2019 10:59:09</Date>
+			<nOverload vt="3">0</nOverload>
+			<bHasResults vt="3">1</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<ePLL vt="3">0</ePLL>
+			<Output vt="13" clsid="{EC41839C}">
+				<_v vt="19">0</_v>
+				<idxSelectedItem vt="3">0</idxSelectedItem>
+				<bstrName vt="8">:CPTD1</bstrName>
+</Output>
+			<Booster vt="0"></Booster>
+			<bCurrentClamp vt="3">0</bCurrentClamp>
+			<Clamp vt="0"></Clamp>
+			<CT vt="0"></CT>
+			<VT vt="0"></VT>
+			<Results vt="8204" length="4">
+				<Results_Item vt="13" clsid="{F90F2E1A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">503.067231968331</dVx>
+					<dIx vt="5">5.19400406743464E-05</dIx>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">500</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">503</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.00005194</dValue>
+</Ix>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">2007.5737958585</dVx>
+					<dIx vt="5">2.07278587925261E-04</dIx>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2008</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000207279</dValue>
+</Ix>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">504.086449925013</dVx>
+					<dIx vt="5">5.11393135656238E-05</dIx>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">500</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">504</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000051139</dValue>
+</Ix>
+</Results_Item>
+</Results>
+</Cards>
+	<nAssessment vt="3">2</nAssessment>
+	<bstrComment vt="8">
+  </bstrComment>
+</Object> 
+
+
+
+
+
+
+
+
+
