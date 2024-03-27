@@ -1,0 +1,157 @@
+#include "RRTools.h"
+
+#include <iostream>  // Für std::wcout
+#include <map>  // Für std::map
+#include <string>  // Für std::wstring
+#include <comdef.h>  // Für _bstr_t
+#include <msxml6.h>  // Für IXMLDOMNode
+#pragma comment(lib, "msxml6.lib")
+
+#include <locale>
+    //std::locale::global(std::locale(""));
+//if (wnodeName == targetName && wnodeValue == targetValue)
+
+void printNode1(IXMLDOMNode* pNode, const std::wstring& targetName, const std::wstring& targetValue, const std::wstring& stopName, int depth = 0) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+    std::wstring wnodeName(nodeName);
+    std::wstring wnodeValue(nodeValue);
+    if (nodeName && wcscmp(nodeName, L"#text") == 0) {
+        IXMLDOMNode* pParentNode;
+        pNode->get_parentNode(&pParentNode);
+        if (pParentNode) {
+            BSTR parentName;
+            pParentNode->get_nodeName(&parentName);
+            for (int i = 0; i < depth; ++i) std::wcout << L"  ";
+            if (wnodeName == targetName && wnodeValue == targetValue) {
+                std::wcout << L"Der Knoten hat den Namen \"" << parentName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+            }
+            SysFreeString(parentName);
+            pParentNode->Release();
+        }
+    }
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        printNode1(pChildNode, targetName, targetValue, stopName, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+
+
+
+void processNode_sonst(IXMLDOMNode* pNode) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+
+    // Verarbeiten Sie den Knoten oder speichern Sie ihn für weitere Verwendungszwecke
+    std::wcout << "Process-Result" << L"Node Name: " << nodeName << L", Value: " << nodeValue << std::endl;
+
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+}
+
+void processEmailNodes(IXMLDOMNode* pNode) {
+    if (pNode == NULL) {
+        return;
+    }
+
+    BSTR nodeName;
+    pNode->get_nodeName(&nodeName);
+
+    IXMLDOMNodeList* pChildren;
+    pNode->get_childNodes(&pChildren);
+
+    long length;
+    pChildren->get_length(&length);
+
+    for (long i = 0; i < length; i++) {
+        IXMLDOMNode* pChild;
+        pChildren->get_item(i, &pChild);
+
+        BSTR childNodeName;
+        pChild->get_nodeName(&childNodeName);
+
+        if (wcscmp(childNodeName, L"Email") == 0) {
+            RRTools::processNodePlus(pChild);    //hier schauen was sinnvoll
+        }
+
+        processEmailNodes(pChild);
+    }
+}
+
+
+
+
+
+
+int main() {
+
+    HRESULT hr_com = CoInitialize(NULL);
+    if (FAILED(hr_com)) {
+        std::cout << "Fehler bei der Initialisierung der Com-Schnittstelle" << std::endl;
+        // Fehlerbehandlung
+        return hr_com;
+    }
+
+    IXMLDOMDocument* pXMLDom;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+    if (SUCCEEDED(hr)) {
+        VARIANT_BOOL status;
+        VARIANT xmlSource;
+        xmlSource.vt = VT_BSTR;
+    xmlSource.bstrVal = SysAllocString(L"BeispielG.xml");
+            //xmlSource.bstrVal = SysAllocString(L"omicron.xml");
+        hr = pXMLDom->load(xmlSource, &status);
+        SysFreeString(xmlSource.bstrVal);
+
+        if (status == VARIANT_TRUE) {
+            IXMLDOMElement* pRootNode;
+            hr = pXMLDom->get_documentElement(&pRootNode);
+            if (SUCCEEDED(hr) && pRootNode) {
+                
+                       
+                //++++++++++++++++++
+                
+                    //RRTools::getNodeInfoByTagName(pRootNode, L"Unit");
+                RRTools::processNodePlus(pRootNode);
+             //processNodesBetweenMarkers(pRootNode, L"Abteilung", 2, L"Email", 1); //4,5,6,7 ist Schrott 3 und 11 Ausbau-fähig
+                            //processNodesBetweenMarkers(pRootNode, L"Measurement", 2, L"Value", 1); //4,5,6,7 ist Schrott 3 und 11 Ausbau-fähig
+                //~~~~~~~~~~~~~~~~~~
+                        //printNode1(pRootNode, L"Abteilung",L"Entwicklung", L"Email");
+                  
+                    //processEmailNodes(pRootNode);
+                pRootNode->Release();
+            }
+        }
+        else {
+            std::cout << "Fehler beim Laden der XML-Datei." << std::endl;
+        }
+    }
+    else {
+        std::cout << "Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+    }
+
+    if (pXMLDom) {
+        pXMLDom->Release();
+    }
+
+    CoUninitialize();
+
+    std::cout << "Drücken Sie eine beliebige Taste, um fortzufahren...";
+    std::cin.get();
+    return 0;
+}
+
+
+
