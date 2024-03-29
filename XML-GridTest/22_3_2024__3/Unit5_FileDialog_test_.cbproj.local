@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.264,C:\Tools\Project1.cbproj=C:\Tools\Project1.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.993,=C:\Tools\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.654,=C:\Tools\Project1PCH1.h</Transaction>
+    <Transaction>2024.03.23 18:57:21.540,=C:\Tools\Project1PCH2.h</Transaction>
+    <Transaction>2024.03.23 18:57:22.488,=C:\Tools\Unit5.cpp</Transaction>
+    <Transaction>2024.03.23 19:25:08.944,C:\Tools\Unit5_FileDialog_test.h=C:\Tools\Unit5.h</Transaction>
+    <Transaction>2024.03.23 19:25:08.944,C:\Tools\Unit5_FileDialog_test.dfm=C:\Tools\Unit5.dfm</Transaction>
+    <Transaction>2024.03.23 19:25:08.944,C:\Tools\Unit5_FileDialog_test.cpp=C:\Tools\Unit5.cpp</Transaction>
+    <Transaction>2024.03.23 19:25:21.519,C:\Tools\Unit5_FileDialog_testPCH2.h=C:\Tools\Project1PCH2.h</Transaction>
+    <Transaction>2024.03.23 19:25:38.095,C:\Tools\Unit5_FileDialog_test_.cbproj=C:\Tools\Project1.cbproj</Transaction>
+  </Transactions>
+</BorlandProject>

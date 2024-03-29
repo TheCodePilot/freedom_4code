@@ -1,0 +1,6 @@
+//Zentrale Routine hier auch Filterung
+	xmlProcess->ProcessNodePlus(pRootNode);
+	//Zentrale Routine hier auch Filterung
+	
+	std::vector<std::pair<std::wstring, std::wstring> > data = xmlProcess->GetXMLInfo();
+	
