@@ -1,0 +1,664 @@
+
+// SQL_ConsoleApplication1.cpp : Diese Datei enth‰lt die Funktion "main". Hier beginnt und endet die Ausf¸hrung des Programms.
+//
+#include <iostream>
+#include <windows.h>
+
+//###################################################################################################
+
+
+#include <msxml6.h>
+
+#include <map>
+
+#include <codecvt>
+#include <locale>
+#include <string>
+
+
+#include <map>
+#include <vector>
+#include <string>
+#include <comutil.h>
+
+
+#include <comdef.h>  // F¸r _bstr_t und _com_error
+#include <cassert>
+
+std::string to_string(const std::wstring& wstr) {
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    return converter.to_bytes(wstr);
+}
+
+
+std::string to_string0(const std::wstring& wstr) {
+    std::string str(wstr.begin(), wstr.end());
+    return str;
+}
+
+bool CompareBSTRWithStdString(BSTR bstr, const std::string& str)
+{
+    try
+    {
+        // Konvertieren Sie BSTR in std::wstring
+        _bstr_t bstr_t(bstr, false);  // false bedeutet, dass _bstr_t das BSTR nicht lˆschen soll
+        BSTR rawBstr = bstr_t.GetBSTR();
+        std::wstring wstr(rawBstr, SysStringLen(rawBstr));
+
+        // Konvertieren Sie std::string in std::wstring
+        std::wstring wstr2(str.begin(), str.end());
+
+        // Vergleichen Sie die beiden std::wstring
+        return wstr == wstr2;
+    }
+    catch (...)
+    {
+        // Fehlerbehandlung
+        return false;
+    }
+}
+
+/*
+bool CompareBSTRWithStdString(BSTR bstr, const std::string& str)
+{
+    try
+    {
+        // Konvertieren Sie BSTR in std::wstring
+        _bstr_t bstr_t(bstr, false);  // false bedeutet, dass _bstr_t das BSTR nicht lˆschen soll
+        std::wstring wstr = bstr_t;
+
+        // Konvertieren Sie std::string in std::wstring
+        std::wstring wstr2(str.begin(), str.end());
+
+        // Vergleichen Sie die beiden std::wstring
+        return wstr == wstr2;
+    }
+    catch (_com_error& e)
+    {
+        // Fehlerbehandlung
+        return false;
+    }
+}
+*/
+
+void printNode(IXMLDOMNode* pNode, int depth = 0) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+    if (nodeName && wcscmp(nodeName, L"#text") == 0) {
+        IXMLDOMNode* pParentNode;
+        pNode->get_parentNode(&pParentNode);
+        if (pParentNode) {
+            BSTR parentName;
+            pParentNode->get_nodeName(&parentName);
+            for (int i = 0; i < depth; ++i) std::wcout << L"  ";
+            std::wcout << L"Der Knoten hat den Namen \"" << parentName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+            SysFreeString(parentName);
+            pParentNode->Release();
+        }
+    }
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        printNode(pChildNode, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+
+    //#import <msxml6.dll> named_guids
+
+void printNodeCondition(IXMLDOMNode* pNode, const std::wstring& startMarker, const std::wstring& endMarker, bool& withinMarkers) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+
+    if (nodeName && wcscmp(nodeName, L"#text") != 0) {
+        if (nodeValue && withinMarkers) {
+            std::wcout << L"Entsprechend der gew¸nschten Bedingung: Der Knoten hat den Namen \"" << nodeName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+        }
+
+        if (nodeValue && nodeName == startMarker) {
+            withinMarkers = true;
+        }
+
+        if (nodeName == endMarker) {
+            withinMarkers = false;
+        }
+    }
+
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        printNodeCondition(pChildNode, startMarker, endMarker, withinMarkers);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+void printNodeConditionPrecise(IXMLDOMNode* pNode, const std::wstring& startMarker, const std::wstring& endMarker, bool& withinMarkers, int& von, int& bis) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+
+    if (nodeName && wcscmp(nodeName, L"#text") != 0) {
+        if (nodeValue && withinMarkers) {
+            std::wcout << L"Entsprechend Precise: Der Knoten hat den Namen \"" << nodeName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+        }
+
+        if (nodeValue && nodeName == startMarker) {
+            withinMarkers = true;
+        }
+
+        if (nodeName == endMarker) {
+            withinMarkers = false;
+        }
+    }
+
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        printNodeConditionPrecise(pChildNode, startMarker, endMarker, withinMarkers, von, bis);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+void countNodeTypes(IXMLDOMNode* pNode, std::map<std::wstring, int>& nodeCounts) {
+    BSTR nodeName;
+    pNode->get_nodeName(&nodeName);
+    std::wstring wnodeName(nodeName);
+    SysFreeString(nodeName);
+
+    // Erhˆhe den Z‰hler f¸r den aktuellen Knotentyp
+    nodeCounts[wnodeName]++;
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        countNodeTypes(pChildNode, nodeCounts);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+void processNode(IXMLDOMNode* pNode) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+
+    // Verarbeiten Sie den Knoten oder speichern Sie ihn f¸r weitere Verwendungszwecke
+    std::wcout << "Process-Result" << L"Node Name: " << nodeName << L", Value: " << nodeValue << std::endl;
+
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+}
+
+void processNodesBetweenMarkers0(IXMLDOMNode* pRootNode, const std::wstring& startMarker, int startOccurrence, const std::wstring& endMarker, int endOccurrence) {
+    std::map<std::wstring, int> markerCounts;
+    std::vector<IXMLDOMNode*> nodesBetweenMarkers;
+
+    IXMLDOMNode* pNode;
+    pRootNode->get_firstChild(&pNode);
+    while (pNode) {
+        BSTR nodeName;
+        pNode->get_nodeName(&nodeName);
+        std::wstring wnodeName(nodeName);
+        SysFreeString(nodeName);
+
+        if (wnodeName == startMarker) {
+            markerCounts[startMarker]++;
+        }
+        else if (wnodeName == endMarker) {
+            markerCounts[endMarker]++;
+        }
+
+        if (markerCounts[startMarker] == startOccurrence + 1 && markerCounts[endMarker] == endOccurrence) {
+            break; // Verlassen Sie die Schleife, wenn das Ende des Bereichs erreicht ist
+        }
+
+        if (markerCounts[startMarker] > startOccurrence && markerCounts[endMarker] == 0) {
+            nodesBetweenMarkers.push_back(pNode);
+        }
+
+        IXMLDOMNode* pNextNode;
+        pNode->get_nextSibling(&pNextNode);
+        pNode->Release();
+        pNode = pNextNode;
+    }
+
+    // Verarbeiten Sie die Knoten zwischen den Markern
+    for (IXMLDOMNode* pNode : nodesBetweenMarkers) {
+        processNode(pNode);
+    }
+}
+
+void processNodesBetweenMarkers1(IXMLDOMNode* pRootNode, const std::wstring& startMarker, int startOccurrence, const std::wstring& endMarker, int endOccurrence) {
+    std::map<std::wstring, int> markerCounts;
+    std::vector<IXMLDOMNode*> nodesBetweenMarkers;
+
+    IXMLDOMNode* pNode;
+    pRootNode->get_firstChild(&pNode);
+    while (pNode) {
+        BSTR nodeName;
+        pNode->get_nodeName(&nodeName);
+        std::wstring wnodeName(nodeName);
+        SysFreeString(nodeName);
+
+        /*
+        if (wnodeName == startMarker) {
+            markerCounts[startMarker]++;
+        }
+        else if (wnodeName == endMarker) {
+            markerCounts[endMarker]++;
+        }
+        */
+
+        /*
+        if (wnodeName == startMarker || wnodeName == endMarker) {
+            if (wnodeName == startMarker) {
+                markerCounts[startMarker]++;
+            }
+            else {
+                markerCounts[endMarker]++;
+            }
+        }
+        */
+
+        if (wnodeName == startMarker) {
+            markerCounts[startMarker]++;
+        }
+        else if (wnodeName == endMarker && markerCounts[startMarker] == startOccurrence) {
+            markerCounts[endMarker]++;
+        }
+
+
+        if (/*markerCounts[startMarker] == startOccurrence && */markerCounts[endMarker] == endOccurrence) {
+            break; // Verlassen Sie die Schleife, wenn das Ende des Bereichs erreicht ist
+        }
+
+        if (markerCounts[startMarker] >= startOccurrence && markerCounts[endMarker] == 0) {
+            nodesBetweenMarkers.push_back(pNode);
+        }
+
+        IXMLDOMNode* pNextNode;
+        pNode->get_nextSibling(&pNextNode);
+        pNode->Release();
+        pNode = pNextNode;
+    }
+
+    // Verarbeiten Sie die Knoten zwischen den Markern
+    for (IXMLDOMNode* pNode : nodesBetweenMarkers) {
+        processNode(pNode);
+    }
+}
+
+/*
+void processNodesBetweenMarkers2(IXMLDOMNode* pRootNode, const std::string& startMarker, int startOccurrence, const std::string& endMarker, int endOccurrence) {
+    std::map<std::wstring, int> markerCounts4Start;
+    std::map<std::wstring, int> markerCounts4End;
+
+    IXMLDOMNode* pNode;
+    pRootNode->get_firstChild(&pNode);
+    while (pNode) {
+        BSTR nodeName;
+        pNode->get_nodeName(&nodeName);
+        std::wstring wnodeName(nodeName);
+        
+
+        //if (nodeName == startMarker) 
+        //if (wcscmp(wnodeName.c_str(), startMarker.c_str()) == 0)
+            if(CompareBSTRWithStdString(nodeName,startMarker))
+        {
+            markerCounts4Start[startMarker]++;
+            std::cout << "markerCounts4Start[startMarker]++;" << std::endl;
+           // if (markerCounts4Start[startMarker] == startOccurrence) {
+                // Startverarbeitung beginnen
+           //     processNode(pNode);
+           // }
+        }
+        if (nodeName == endMarker) 
+        {
+            markerCounts4End[endMarker]++;
+            std::cout << "markerCounts4End[endMarker]++;" << std::endl;
+
+        }
+         /*   if (markerCounts4End[endMarker] == endOccurrence) {
+                // Endverarbeitung beenden
+                break;
+            }
+        }
+        else if (markerCounts4Start[startMarker] == startOccurrence) {
+            // Verarbeiten Sie die Knoten zwischen Start- und Endmarkern
+            processNode(pNode);
+        }
+        
+        if (markerCounts4Start[startMarker] == startOccurrence && markerCounts4End[endMarker] < endOccurrence) {
+            std::cout << "processNode(pNode);" << std::endl;
+            // Verarbeiten Sie die Knoten zwischen Start- und Endmarkern
+            processNode(pNode);
+        }
+
+
+        IXMLDOMNode* pNextNode;
+        pNode->get_nextSibling(&pNextNode);
+        pNode->Release();
+        pNode = pNextNode;
+        
+        SysFreeString(nodeName);
+    }
+    
+}
+*/
+
+
+std::wstring BSTR_to_wstring(BSTR bs) {
+    assert(bs != nullptr);
+    return std::wstring(bs, SysStringLen(bs));
+}
+
+BSTR wstring_to_BSTR(const std::wstring& ws) {
+    assert(!ws.empty());
+    return SysAllocStringLen(ws.data(), ws.size());
+}
+
+void processNodesBetweenMarkers3(IXMLDOMNode* pRootNode, const std::wstring& startMarker, int startOccurrence, const std::wstring& endMarker, int endOccurrence) {
+    std::map<std::wstring, int> markerCounts4Start;
+    std::map<std::wstring, int> markerCounts4End;
+
+        //std::cout << "processNodesBetweenMarkers" << std::endl;
+
+    IXMLDOMNode* pNode;
+    pRootNode->get_firstChild(&pNode);
+    while (pNode) {
+        BSTR nodeName;
+        pNode->get_nodeName(&nodeName);
+        std::wstring wnodeName(nodeName);
+
+        //if (std::wcscmp(wnodeName.c_str(), startMarker.c_str()) == 0)
+        if (nodeName == wstring_to_BSTR(startMarker))
+        {
+            markerCounts4Start[wnodeName]++;
+            std::cout << "markerCounts4Start[" << wnodeName.c_str() << "]++;" << std::endl;
+        }
+
+       /* if (wcscmp(wnodeName.c_str(), endMarker.c_str()) == 0)
+        {
+            markerCounts4End[wnodeName]++;
+            std::cout << "markerCounts4End[" << wnodeName.c_str() << "]++;" << std::endl;
+        }
+        */
+        pNode->Release();
+        pNode = NULL;
+        pRootNode->get_nextSibling(&pNode);
+    }
+}
+
+//_bstr_t startMarkerP = L"Unternehmen";
+//void processNodesBetweenMarkers(IXMLDOMNode* pRootNode, _bstr_t& startMarker, int startOccurrence, const std::wstring& endMarker, int endOccurrence) {
+    void processNodesBetweenMarkers(IXMLDOMNode* pRootNode, _bstr_t& startMarker, int startOccurrence, _bstr_t& endMarker, int endOccurrence) {
+    std::map<std::wstring, int> markerCounts4Start;
+    std::map<std::wstring, int> markerCounts4End;
+
+    IXMLDOMNode* pNode;
+    pRootNode->get_firstChild(&pNode);
+    while (pNode) {
+        BSTR nodeName;
+        pNode->get_nodeName(&nodeName);
+        std::wstring wnodeName = BSTR_to_wstring(nodeName); // Umwandlung in std::wstring
+
+        // Vergleich des Knotennamens mit dem Startmarker
+        //if (nodeName == startMarker)
+        if (_bstr_t(nodeName, false) == startMarker)
+        {
+            markerCounts4Start[wnodeName]++;
+            std::wcout << L"markerCounts4Start[" << wnodeName << L"]++;" << std::endl;
+        }
+
+            //pNode->Release(); // Freigabe des aktuellen Knotens
+            //pNode = nullptr;
+
+        // Nachfolgenden Knoten erhalten
+        IXMLDOMNode* pNextNode;
+        pNode->get_nextSibling(&pNextNode);
+        pNode->Release(); // Freigabe des aktuellen Knotens
+        pNode = pNextNode;
+        
+    }
+    if (pNode) {
+        pNode->Release();
+    }
+}
+
+    void TestVergleiche(IXMLDOMNode* pNode1, IXMLDOMNode* pNode2) {
+        BSTR nodeName1, nodeName2;
+        pNode1->get_nodeName(&nodeName1);
+        pNode2->get_nodeName(&nodeName2);
+
+        std::wcout << L"Vergleiche Knoten: " << nodeName1 << L" und " << nodeName2 << std::endl;
+
+        if (wcscmp(nodeName1, nodeName2) == 0) {
+            std::wcout << L"Die Knoten sind gleich." << std::endl;
+        }
+        else {
+            std::wcout << L"Die Knoten sind nicht gleich." << std::endl;
+        }
+
+        SysFreeString(nodeName1);
+        SysFreeString(nodeName2);
+    }
+
+
+
+int main() {
+
+    HRESULT hr_com = CoInitialize(NULL);
+    if (FAILED(hr_com)) {
+        std::cout << "Fehler bei der Initialisierung der Com-Schnittstelle" << std::endl;
+        // Fehlerbehandlung
+        return hr_com;
+    }
+
+    IXMLDOMDocument* pXMLDom;
+    std::map<std::wstring, int> nodeCounts;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+    if (SUCCEEDED(hr)) {
+        VARIANT_BOOL status;
+        VARIANT xmlSource;
+        xmlSource.vt = VT_BSTR;
+        xmlSource.bstrVal = SysAllocString(L"BeispielG.xml");
+        hr = pXMLDom->load(xmlSource, &status);
+        SysFreeString(xmlSource.bstrVal);
+
+        if (status == VARIANT_TRUE) {
+            IXMLDOMElement* pRootNode;
+            hr = pXMLDom->get_documentElement(&pRootNode);
+            if (SUCCEEDED(hr) && pRootNode) {
+
+                //##########################
+
+                IXMLDOMNode* pNode1;
+                IXMLDOMNode* pNode2;
+
+                // Erster und zweiter Knoten des Wurzelknotens holen
+                pRootNode->get_firstChild(&pNode1);
+                if (pNode1) {
+                    pNode1->get_nextSibling(&pNode2);
+                    if (pNode2) {
+                        // TestVergleiche() aufrufen
+                        TestVergleiche(pNode1, pNode2);
+                    }
+                    pNode1->Release();
+                }
+                
+                    pNode2->Release();
+                
+                //pRootNode->Release();
+
+                //######################################
+
+                //printNode(pRootNode);
+                
+                //##########
+                //std::map<std::wstring, int> nodeCounts;
+                countNodeTypes(pRootNode, nodeCounts);
+
+                // Ausgabe der gez‰hlten Knotenarten
+                for (const auto& pair : nodeCounts) {
+                    ;// std::wcout << L"Es gibt " << pair.second << L" Knoten vom Typ \"" << pair.first << L"\"." << std::endl;
+                }
+                //##########
+                bool withinMarkers = false;
+                std::wstring startMarker = L"Unternehmen";
+                std::wstring endMarker = L"Email";
+                //printNodeCondition(pRootNode, startMarker, endMarker, withinMarkers);
+
+                //##########
+                //##########
+                bool withinMarkersP = false;
+                //std::wstring startMarkerP = L"Unternehmen";
+                //std::wstring endMarkerP = L"Email";
+                _bstr_t startMarkerP = L"Unternehmen"; 
+                _bstr_t endMarkerP = L"Email";
+                int von = 1;
+                int bis = 2;
+                            //printNodeConditionPrecise(pRootNode, startMarker, endMarker, withinMarkers, von, bis);
+                    //processNodesBetweenMarkers(pRootNode, startMarkerP, von, endMarkerP, bis);
+
+                //TestVergleiche()
+                //##########
+                //##########
+                pRootNode->Release();
+            }
+            
+        }
+        else {
+            std::cout << "Fehler beim Laden der XML-Datei." << std::endl;
+        }
+    }
+    else {
+        std::cout << "Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+    }
+
+    if (pXMLDom) {
+        pXMLDom->Release();
+    }
+
+    CoUninitialize();
+
+    std::cout << "Dr¸cken Sie eine beliebige Taste, um fortzufahren...";
+    std::cin.get();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// Programm ausf¸hren: STRG+F5 oder Men¸eintrag "Debuggen" > "Starten ohne Debuggen starten"
+// Programm debuggen: F5 oder "Debuggen" > Men¸ "Debuggen starten"
+
+// Tipps f¸r den Einstieg: 
+//   1. Verwenden Sie das Projektmappen-Explorer-Fenster zum Hinzuf¸gen/Verwalten von Dateien.
+//   2. Verwenden Sie das Team Explorer-Fenster zum Herstellen einer Verbindung mit der Quellcodeverwaltung.
+//   3. Verwenden Sie das Ausgabefenster, um die Buildausgabe und andere Nachrichten anzuzeigen.
+//   4. Verwenden Sie das Fenster "Fehlerliste", um Fehler anzuzeigen.
+//   5. Wechseln Sie zu "Projekt" > "Neues Element hinzuf¸gen", um neue Codedateien zu erstellen, bzw. zu "Projekt" > "Vorhandenes Element hinzuf¸gen", um dem Projekt vorhandene Codedateien hinzuzuf¸gen.
+//   6. Um dieses Projekt sp‰ter erneut zu ˆffnen, wechseln Sie zu "Datei" > "÷ffnen" > "Projekt", und w‰hlen Sie die SLN-Datei aus.
+
+/*
+if (!SetDllDirectory(L"C:\\Users\\swepr\\SQLAPI\\vs2022\\x86_64\\bin"))
+    {
+        std::cout << "Fehler" << std::endl;
+        return 0;
+
+    }
+
+    if (!SetDllDirectory(L"C:\\Users\\swepr\\SQLAPI\\vs2022\\x86_64\\bin"))
+    {
+        DWORD dw = GetLastError();
+        std::cout << "Fehler: " << dw << std::endl;
+        return 0;
+    }
+*/
+
+/*
+ /*HMODULE hMod = LoadLibraryA("C:\\Users\\swepr\\SQLAPI\\vs2022\\x86_64\\bin\\sqlapi.dll");
+    if (!hMod)
+    {
+        DWORD dw = GetLastError();
+        std::cout << "Fehler: " << dw << std::endl;
+        return 0;
+    }
+
+    // Ihr Code hier...
+    //FreeLibrary(hMod);
+*/
+
+
+//‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
+int main0() {   //Warum l‰uft diese nicht ?
+    // ... (Ihr Code zum Laden des XML-Dokuments hier)
+
+    HRESULT hr_com = CoInitialize(NULL);
+    if (FAILED(hr_com)) {
+        std::cout << "Fehler bei der Initialisierung der Com-Schnittstelle" << std::endl;
+        // Fehlerbehandlung
+        return hr_com;
+    }
+
+    IXMLDOMDocument* pXMLDom;
+        //std::map<std::wstring, int> nodeCounts;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+    IXMLDOMElement* pRootNode;
+    hr = pXMLDom->get_documentElement(&pRootNode);
+    if (SUCCEEDED(hr) && pRootNode) {
+        IXMLDOMNode* pNode1 = NULL;
+        IXMLDOMNode* pNode2 = NULL;
+
+        // Erster und zweiter Knoten des Wurzelknotens holen
+        pRootNode->get_firstChild(&pNode1);
+        if (pNode1) {
+            pNode1->get_nextSibling(&pNode2);
+            if (pNode2) {
+                // TestVergleiche() aufrufen
+                TestVergleiche(pNode1, pNode2);
+            }
+            pNode1->Release();
+        }
+        if (pNode2) {
+            pNode2->Release();
+        }
+        pRootNode->Release();
+    }
+
+    // ... (Rest Ihres Codes hier)
+}
+//‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹

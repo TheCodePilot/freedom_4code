@@ -1,0 +1,607 @@
+void printNode0(IXMLDOMNode* pNode, int depth = 0) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+    for (int i = 0; i < depth; ++i) std::wcout << L"  ";
+    std::wcout << nodeName << L": " << nodeValue << std::endl;
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        printNode0(pChildNode, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+void printNode1(IXMLDOMNode* pNode, int depth = 0) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+    if (nodeName && wcscmp(nodeName, L"#text") != 0) {
+        for (int i = 0; i < depth; ++i) std::wcout << L"  ";
+        std::wcout << L"Der Knoten hat den Namen \"" << nodeName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+    }
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        printNode1(pChildNode, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+void printNode2(IXMLDOMNode* pNode, int depth = 0) {
+    BSTR nodeName, nodeValue;
+    pNode->get_nodeName(&nodeName);
+    pNode->get_text(&nodeValue);
+    if (nodeName && wcscmp(nodeName, L"#text") == 0) {
+        for (int i = 0; i < depth; ++i) std::wcout << L"  ";
+        std::wcout << L"Der Knoten hat den Namen \"" << nodeName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+    }
+    SysFreeString(nodeName);
+    SysFreeString(nodeValue);
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        printNode2(pChildNode, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+#############################################################
+#############################################################
+#############################################################
+
+/*
+void countNodes(IXMLDOMNode* pNode, std::map<std::wstring, int>& counts, int depth = 0) {
+    BSTR nodeName;
+    pNode->get_nodeName(&nodeName);
+    std::wstring wnodeName(nodeName);
+    SysFreeString(nodeName);
+
+    if (depth == 1) { // Unternehmen
+        counts[L"Unternehmen"]++;
+    } else if (depth == 2 && wnodeName == L"Abteilung") { // Abteilung
+        counts[L"Abteilung"]++;
+    } else if (depth == 3 && wnodeName == L"Mitarbeiter") { // Mitarbeiter
+        counts[L"Mitarbeiter"]++;
+    }
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        countNodes(pChildNode, counts, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+int main() {
+    CoInitialize(NULL);
+    IXMLDOMDocument *pXMLDom;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+    if (SUCCEEDED(hr)) {
+        VARIANT_BOOL status;
+        VARIANT xmlSource;
+        xmlSource.vt = VT_BSTR;
+        xmlSource.bstrVal = SysAllocString(L"BeispielG.xml");
+        hr = pXMLDom->load(xmlSource, &status);
+        SysFreeString(xmlSource.bstrVal);
+
+        if (status == VARIANT_TRUE) {
+            IXMLDOMElement* pRootNode;
+            hr = pXMLDom->get_documentElement(&pRootNode);
+            if (SUCCEEDED(hr) && pRootNode) {
+                std::map<std::wstring, int> counts;
+                countNodes(pRootNode, counts);
+                for (const auto& pair : counts) {
+                    std::wcout << L"Es gibt " << pair.second << L" " << pair.first << L"(n)." << std::endl;
+                }
+                pRootNode->Release();
+            }
+        } else {
+            std::cout << "Fehler beim Laden der XML-Datei." << std::endl;
+        }
+    } else {
+        std::cout << "Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+    }
+
+    if (pXMLDom) {
+        pXMLDom->Release();
+    }
+
+    CoUninitialize();
+
+    std::cout << "Drücken Sie eine beliebige Taste, um fortzufahren...";
+    std::cin.get();
+    return 0;
+}
+
+
+###################################
+###################################
+###################################
+
+void countNodes0(IXMLDOMNode* pNode, std::map<std::wstring, int>& counts, int depth = 0) {
+    BSTR nodeName;
+    pNode->get_nodeName(&nodeName);
+    std::wstring wnodeName(nodeName);
+    SysFreeString(nodeName);
+
+    if (depth == 1) { // Unternehmen
+        counts[L"Unternehmen"]++;
+    }
+    else if (depth == 2 && wnodeName == L"Abteilung") { // Abteilung
+        counts[L"Abteilung"]++;
+    }
+    else if (depth == 3 && wnodeName == L"Mitarbeiter") { // Mitarbeiter
+        counts[L"Mitarbeiter"]++;
+    }
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        countNodes0(pChildNode, counts, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+int main3() {
+    CoInitialize(NULL);
+    IXMLDOMDocument* pXMLDom;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+    if (SUCCEEDED(hr)) {
+        VARIANT_BOOL status;
+        VARIANT xmlSource;
+        xmlSource.vt = VT_BSTR;
+        xmlSource.bstrVal = SysAllocString(L"Beispiel.xml");
+        hr = pXMLDom->load(xmlSource, &status);
+        SysFreeString(xmlSource.bstrVal);
+
+        if (status == VARIANT_TRUE) {
+            IXMLDOMElement* pRootNode;
+            hr = pXMLDom->get_documentElement(&pRootNode);
+            if (SUCCEEDED(hr) && pRootNode) {
+                std::map<std::wstring, int> counts;
+                countNodes0(pRootNode, counts);
+                for (const auto& pair : counts) {
+                    std::cout << "Es gibt " << pair.second << " " << to_string(pair.first) << "(n)." << std::endl;
+
+                }
+                pRootNode->Release();
+            }
+        }
+        else {
+            std::cout << "Fehler beim Laden der XML-Datei." << std::endl;
+        }
+    }
+    else {
+        std::cout << "Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+    }
+
+    if (pXMLDom) {
+        pXMLDom->Release();
+    }
+
+    CoUninitialize();
+
+    std::cout << "Drücken Sie eine beliebige Taste, um fortzufahren...";
+    std::cin.get();
+    return 0;
+}
+
+
+#include <msxml6.h>
+#include <iostream>
+#include <map>
+
+std::string to_string00(const std::wstring& wstr) {
+    std::string str(wstr.begin(), wstr.end());
+    return str;
+}
+
+void countNodes1(IXMLDOMNode* pNode, std::map<std::wstring, int>& counts, std::wstring currentDepartment = L"", int depth = 0) {
+    BSTR nodeName;
+    pNode->get_nodeName(&nodeName);
+    std::wstring wnodeName(nodeName);
+    SysFreeString(nodeName);
+
+    if (depth == 1) { // Unternehmen
+        counts[L"Unternehmen"]++;
+    }
+    else if (depth == 2 && wnodeName == L"Abteilung") { // Abteilung
+        BSTR departmentName;
+        IXMLDOMNamedNodeMap* attributes;
+        pNode->get_attributes(&attributes);
+        //attributes->getNamedItem(L"name", &departmentName);
+        //currentDepartment = departmentName;
+        counts[L"Abteilung: " + currentDepartment]++;
+    }
+    else if (depth == 3 && wnodeName == L"Mitarbeiter") { // Mitarbeiter
+        counts[L"Mitarbeiter in " + currentDepartment]++;
+    }
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        countNodes1(pChildNode, counts, currentDepartment, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+int main4() {
+    CoInitialize(NULL);
+    IXMLDOMDocument* pXMLDom;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+    if (SUCCEEDED(hr)) {
+        VARIANT_BOOL status;
+        VARIANT xmlSource;
+        xmlSource.vt = VT_BSTR;
+        xmlSource.bstrVal = SysAllocString(L"Beispiel.xml");
+        hr = pXMLDom->load(xmlSource, &status);
+        SysFreeString(xmlSource.bstrVal);
+
+        if (status == VARIANT_TRUE) {
+            IXMLDOMElement* pRootNode;
+            hr = pXMLDom->get_documentElement(&pRootNode);
+            if (SUCCEEDED(hr) && pRootNode) {
+                std::map<std::wstring, int> counts;
+                countNodes1(pRootNode, counts);
+                for (const auto& pair : counts) {
+                    std::cout << "Es gibt " << pair.second << " " << to_string(pair.first) << "(n)." << std::endl;
+                }
+                pRootNode->Release();
+            }
+        }
+        else {
+            std::cout << "Fehler beim Laden der XML-Datei." << std::endl;
+        }
+    }
+    else {
+        std::cout << "Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+    }
+
+    if (pXMLDom) {
+        pXMLDom->Release();
+    }
+
+    CoUninitialize();
+
+    std::cout << "Drücken Sie eine beliebige Taste, um fortzufahren...";
+    std::cin.get();
+    return 0;
+}
+
+#include <comdef.h>
+
+
+
+void countNodes(IXMLDOMNode* pNode, std::map<std::wstring, int>& counts, std::wstring currentDepartment = L"", int depth = 0) {
+    BSTR nodeName;
+    pNode->get_nodeName(&nodeName);
+    std::wstring wnodeName(nodeName);
+    SysFreeString(nodeName);
+
+    if (depth == 1) { // Unternehmen
+        counts[L"Unternehmen"]++;
+    }
+    else if (depth == 2 && wnodeName == L"Abteilung") { // Abteilung
+        IXMLDOMNamedNodeMap* attributes;
+        pNode->get_attributes(&attributes);
+        IXMLDOMNode* attrNode;
+        //attributes->getNamedItem(L"name", &attrNode);
+        attributes->getNamedItem(_bstr_t(L"name"), &attrNode);
+
+        if (attrNode) {
+            VARIANT attrValue;
+            attrNode->get_nodeValue(&attrValue);
+            if (attrValue.vt == VT_BSTR) {
+                currentDepartment = attrValue.bstrVal;
+            }
+            attrNode->Release();
+        }
+        attributes->Release();
+        counts[L"Abteilung: " + currentDepartment]++;
+    }
+    else if (depth == 3 && wnodeName == L"Mitarbeiter") { // Mitarbeiter
+        counts[L"Mitarbeiter in " + currentDepartment]++;
+    }
+
+    IXMLDOMNode* pChildNode;
+    pNode->get_firstChild(&pChildNode);
+    while (pChildNode) {
+        countNodes(pChildNode, counts, currentDepartment, depth + 1);
+        IXMLDOMNode* pNextNode;
+        pChildNode->get_nextSibling(&pNextNode);
+        pChildNode->Release();
+        pChildNode = pNextNode;
+    }
+}
+
+int main_aktuellste() {
+    CoInitialize(NULL);
+    IXMLDOMDocument* pXMLDom;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+    if (SUCCEEDED(hr)) {
+        VARIANT_BOOL status;
+        VARIANT xmlSource;
+        xmlSource.vt = VT_BSTR;
+        xmlSource.bstrVal = SysAllocString(L"Beispiel.xml");
+        hr = pXMLDom->load(xmlSource, &status);
+        SysFreeString(xmlSource.bstrVal);
+
+        if (status == VARIANT_TRUE) {
+            IXMLDOMElement* pRootNode;
+            hr = pXMLDom->get_documentElement(&pRootNode);
+            if (SUCCEEDED(hr) && pRootNode) {
+                std::map<std::wstring, int> counts;
+                countNodes(pRootNode, counts);
+                for (const auto& pair : counts) {
+                    std::cout << "Es gibt " << pair.second << " " << to_string(pair.first) << "(n)." << std::endl;
+                }
+                pRootNode->Release();
+            }
+        }
+        else {
+            std::cout << "Fehler beim Laden der XML-Datei." << std::endl;
+        }
+    }
+    else {
+        std::cout << "Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+    }
+
+    if (pXMLDom) {
+        pXMLDom->Release();
+    }
+
+    CoUninitialize();
+
+    std::cout << "Drücken Sie eine beliebige Taste, um fortzufahren...";
+    std::cin.get();
+    return 0;
+}
+
+
+Tipps
+
+BSTRZu std::wstring:
+
+// given BSTR bs
+assert(bs != nullptr);
+std::wstring ws(bs, SysStringLen(bs));
+ 
+std::wstringZu BSTR:
+
+// given std::wstring ws
+assert(!ws.empty());
+BSTR bs = SysAllocStringLen(ws.data(), ws.size());
+
+
+std::wstring to_wstring(const std::wstring& wstr) {
+    return wstr;
+}
+Da std::wstring bereits eine wstring ist, benötigen Sie keine Konvertierung. Diese Funktion wird nur für die Konsistenz beibehalten.
+
+Und für die Konvertierung von BSTR zu std::wstring:
+
+std::wstring BSTR_to_wstring(BSTR bs) {
+    assert(bs != nullptr);
+    return std::wstring(bs, SysStringLen(bs));
+}
+
+BSTR wstring_to_BSTR(const std::wstring& ws) {
+    assert(!ws.empty());
+    return SysAllocStringLen(ws.data(), ws.size());
+}
+
+
+
+
+//Nun ist ja der Typ gefragt und wenn dann Wert 18 der Typ hat:
+//ein Kind mit 
+    Wert von <bstrName> == C1 (f)
+    Wert von <Date> == 02/26/2019 10:57:29
+
+
+//<Results
+    dort dann Result-Item
+        dort dann Vx
+            dort gibt es mehrere Attribute
+
+
+
+
+            //ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+
+
+
+//Verssuch mit DOMNodeType nodeType;
+//sei gesucht Werte wo:
+// Wert von <bstrName> == C1 (f)
+//Wert von <Date> == 02 / 26 / 2019 10:57 : 29
+
+int main_bevorobigesKriterium() {
+
+    HRESULT hr_com = CoInitialize(NULL);
+    if (FAILED(hr_com)) {
+        std::cout << "Fehler bei der Initialisierung der COM-Schnittstelle" << std::endl;
+        return hr_com;
+    }
+
+    IXMLDOMDocument3* pXMLDom;
+    HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+    if (FAILED(hr)) {
+        std::cout << "Fehler beim Erstellen des XML-DOM-Objekts." << std::endl;
+        CoUninitialize();
+        return hr;
+    }
+
+    VARIANT_BOOL status;
+    VARIANT xmlSource;
+    xmlSource.vt = VT_BSTR;
+    xmlSource.bstrVal = SysAllocString(L"Beispiel_10KV.xml");
+    hr = pXMLDom->load(xmlSource, &status);
+    SysFreeString(xmlSource.bstrVal);
+
+    if (status == VARIANT_TRUE) {
+        IXMLDOMElement* pRootNode;
+        hr = pXMLDom->get_documentElement(&pRootNode);
+        if (SUCCEEDED(hr) && pRootNode) {
+            IXMLDOMNodeList* pObjects;  //DEKLARATION: Alle Kinder von pRootNode
+            hr = pRootNode->get_childNodes(&pObjects); //BEKOMME: Alle Kinder von pRootNode
+            if (FAILED(hr)) {
+                std::cerr << "Fehler beim Abrufen der Objektknoten." << std::endl;
+                pXMLDom->Release();
+                CoUninitialize();
+                return hr;
+            }
+
+            long nodeListLength = 0;
+            hr = pObjects->get_length(&nodeListLength);
+            if (nodeListLength == 0) {
+                std::cout << "Die Objektknotenliste ist leer." << std::endl;
+                pObjects->Release();
+                pXMLDom->Release();
+                CoUninitialize();
+                return 0;
+            }
+
+            IXMLDOMNode* pLastChildNode;
+            hr = pRootNode->get_lastChild(&pLastChildNode);
+            if (FAILED(hr)) {
+                std::cerr << "Fehler beim Abrufen des letzten Kindknotens vom Wurzelelement." << std::endl;
+                pRootNode->Release();
+                pXMLDom->Release();
+                CoUninitialize();
+                return hr;
+            }
+          
+            IXMLDOMNode* pCardsNode = NULL;
+            IXMLDOMNode* pCards_ItemNode = NULL;
+
+            IXMLDOMNode* pNodeRoot;
+            HRESULT hr_loop = S_OK; // Variable zur Überwachung des Schleifenstatus
+            while (pObjects->nextNode(&pNodeRoot) == S_OK)  //SCHLEIFE: Solange Root Kinder hat
+            {
+                if (hr_loop != S_OK) {
+                    // Wenn nextNode kein weiteres Element zurückgibt, brechen Sie die Schleife ab
+                    break;
+                }
+
+                BSTR childNodeName;
+                hr = pNodeRoot->get_nodeName(&childNodeName);
+                if (SUCCEEDED(hr) && childNodeName && wcscmp(childNodeName, L"Cards") == 0) {
+                    // Wenn der Knoten "Cards" ist, speichern Sie ihn und brechen Sie die Schleife ab
+                    pCardsNode = pNodeRoot;
+                    SysFreeString(childNodeName);
+                    break;
+                }
+                SysFreeString(childNodeName);
+            }
+
+            pObjects->Release(); // Freigeben des Speichers für die Knotenliste
+
+            if (pCardsNode) {
+                // Hier haben Sie den Knoten "Cards", von dem aus Sie die Kinder abrufen können
+                // Fügen Sie hier Ihren Code hinzu, um die Kinder des "Cards"-Knotens zu verarbeiten
+                IXMLDOMNodeList* pChildrenOfCards;
+                hr = pCardsNode->get_childNodes(&pChildrenOfCards);
+                if (SUCCEEDED(hr)) {
+                    IXMLDOMNode* pChildNodeOfCards;
+                    while (pChildrenOfCards->nextNode(&pChildNodeOfCards) == S_OK) {
+                        // Verarbeiten Sie hier die Kinder des "Cards"-Knotens
+                        BSTR childNodeName;
+                        hr = pChildNodeOfCards->get_nodeName(&childNodeName);
+                        if (SUCCEEDED(hr)) {                                            //sollte rein |+| && wcscmp(childNodeName, L"Cards_Item") == 0
+                            // Hier haben Sie den Namen des Kindknotens
+                            // Fügen Sie hier Ihren weiteren Verarbeitungscode hinzu
+                            BSTR value;
+                            hr = pNodeRoot->get_text(&value);
+                            if (SUCCEEDED(hr)) {
+                                std::wcout << "Kinder Von Cards  __ Knotenname: " << childNodeName << std::endl; //", Wert: " << value << std::endl;
+                                SysFreeString(value);
+                            }
+                            SysFreeString(childNodeName);
+                           
+                            //Nun Da hier alle Kindsknoten nun hier erscheinen
+                            IXMLDOMNodeList* pChildrenChildrenOfCards;
+                            hr = pChildNodeOfCards->get_childNodes(&pChildrenChildrenOfCards);
+                            if (SUCCEEDED(hr)) {
+                                
+                                IXMLDOMNode* pChildChildNodeOfCards = NULL;
+
+                                while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards) == S_OK) {
+
+                                    BSTR childChildNodeName;
+                                    hr = pChildChildNodeOfCards->get_nodeName(&childChildNodeName);
+                                    if (SUCCEEDED(hr) && wcscmp(childChildNodeName, L"nType") == 0) {                                                //hier neu | && wcscmp(childChildNodeName, L"nType") == 0)
+                                        BSTR value;
+                                     
+                                        if (SUCCEEDED(hr) && wcscmp(value, L"21")==0)                       //hier neu | && wcscmp(value, L"21") raus || && childChildNodeName && wcscmp(childChildNodeName, L"nType") == 0
+                                        {
+                                            //TEST-Ausgabe
+                                            std::wcout << "Kinder Von Cards SOLLTE DER NAME Cards_Item sein und der  __ Knotenname__ lautet: " << childChildNodeName << ", Wert: " << value << std::endl;
+                                            //TEST-Ausgabe
+
+                                            pCards_ItemNode = pChildChildNodeOfCards;
+                                            SysFreeString(childChildNodeName);
+                                            pChildChildNodeOfCards->Release();
+                                            break;  //Speicherfreigeben im Falle von break !!!
+                                        }
+                                        SysFreeString(value);
+                                       
+                                    }
+                                    SysFreeString(childChildNodeName);
+                                    pChildChildNodeOfCards->Release(); // Freigeben des Speichers für den Kindknoten
+                                }
+                                pChildrenChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder
+                            }
+                        }
+                        pChildNodeOfCards->Release(); // Freigeben des Speichers für den Kindknoten
+                        SysFreeString(childNodeName);
+                    }
+                    pChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder
+                }
+                pCardsNode->Release(); // Freigeben des Speichers für den "Cards"-Knoten
+            }
+            else {
+                std::cerr << "Der Knoten 'Cards' wurde nicht gefunden." << std::endl;
+            }
+           
+            pRootNode->Release();
+            pXMLDom->Release(); // Freigeben des Speichers
+            CoUninitialize();
+
+            std::cout << "Drücken Sie eine beliebige Taste, um fortzufahren...";
+            std::cin.get();
+            return 0;
+        }
+    }
+}
+*/
