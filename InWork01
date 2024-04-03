@@ -112,45 +112,84 @@ public:
         pRootNode->Release();
     }
 };
-//<<---------------------------3 April 2024------------------------------
-//Hier nun nach klick auf den richtigen Messereignis Aufbau der Daten in das DBGrid4XMCard_Item
-void __fastcall TForm5::DBGrid4XMLinOnCellClick(TColumn *Column)
-{
-		AnsiString text = DBGrid4XMLin->Columns->Items[DBGrid4XMLin->SelectedIndex]->Field->AsString;
-		//Card_Item2Grid(std::wstring ereignis, std::wstring datum);
-		/*
-		//Neu
-		if(Column->Index == 1)
-		{
-			DBGrid4XMLin->SelectedIndex = DBGrid4XMLin->SelectedIndex -1;
-			//DBGrid4XMLin->Columns->Items[Column->Index] = 1;
-		}
-		//Neu
+//>>>--------------------------------------------
+... drei TDBGrid-Komponenten haben und nur eine davon mit einer Datenbank verbunden sein soll, benötigen Sie dennoch nur ein TDataset, um die Daten aus der Datenbank abzurufen, und ein TDBClientDataset, um die Daten für die anderen beiden TDBGrids bereitzustellen.
+Hier ist eine typische Vorgehensweise:
+    1. TDataset: Verwenden Sie eine TDataset-Komponente (z. B. TQuery, TTable, TStoredProc), um die Daten aus der Datenbank abzurufen. Diese Komponente ist direkt mit der Datenbank verbunden und liest oder schreibt Daten in die Datenbank.
+    2. TDBClientDataset: Verwenden Sie eine TDBClientDataset-Komponente, um die Daten aus der TDataset zu speichern. Diese Komponente fungiert als Zwischenspeicher und ermöglicht es Ihnen, die Daten zu bearbeiten, zu filtern und zu sortieren, ohne direkte Auswirkungen auf die Datenbank.
+    3. Datenbindung: Binden Sie die erste TDBGrid-Komponente direkt an die TDataset-Komponente, damit sie die Daten aus der Datenbank anzeigt.
+    4. Kopieren der Daten: Verwenden Sie die TDBClientDataset-Komponente, um eine Kopie der Daten aus der Datenbank zu erstellen. Diese Kopie wird dann von den anderen beiden TDBGrids verwendet.
+    5. Datenanzeige: Binden Sie die beiden anderen TDBGrids-Komponenten an die TDBClientDataset-Komponente, um die Daten anzuzeigen, die von der ersten TDBGrid angezeigt werden.
+Auf diese Weise haben Sie nur ein TDataset, das direkt mit der Datenbank verbunden ist, und ein TDBClientDataset, das als Datenquelle für die anderen TDBGrids dient.
 
-		if(Column->Index !=1)
-		{
+Basierend auf Ihrer Beschreibung benötigen Sie insgesamt zwei TClientDataSet-Komponenten und ein TDataset.
+    1. Erstes TClientDataSet: Dieses TClientDataSet wird verwendet, um die Daten aus der XML-Datei zu laden und zu filtern, um nur die gewünschten Beiträge anzuzeigen. Es wird als Datenquelle für die erste TDBGrid verwendet.
+    2. Zweites TClientDataSet: Dieses TClientDataSet wird verwendet, um die Messwerte für den ausgewählten Beitrag anzuzeigen. Es wird als Datenquelle für die zweite TDBGrid verwendet.
+    3. TDataset für die Verbindung zur Datenbank: Dieses TDataset wird verwendet, um die gewünschten Daten direkt aus der Datenbank abzurufen. Es wird als Datenquelle für die vierte TDBGrid verwendet.
+Die Struktur könnte etwa wie folgt aussehen:
+    • Das erste TClientDataSet wird mit den Daten aus der XML-Datei gefüllt und gefiltert, um nur die gewünschten Beiträge anzuzeigen. Diese werden in der ersten TDBGrid angezeigt.
+    • Wenn der Benutzer einen Beitrag in der ersten TDBGrid auswählt, werden die zugehörigen Messwerte aus dem zweiten TClientDataSet geladen und in der zweiten TDBGrid angezeigt.
+    • Der Benutzer kann dann Messwerte aus der zweiten TDBGrid auswählen und sie per Drag & Drop in die dritte TDBGrid ziehen.
+    • Die vierte TDBGrid zeigt gewisse Spalten aus der Datenbank an, die von einem separaten TDataset abgerufen werden.
+Auf diese Weise haben Sie die erforderlichen Komponenten, um Ihre Anforderungen zu erfüllen.
 
-			AnsiString text = DBGrid4XMLin->Columns->Items[DBGrid4XMLin->SelectedIndex]->Field->AsString;
-			DBGrid4XMLin->BeginDrag(false);
 
-		}
-		*/
+Wenn das dritte TDBGrid lediglich als Drop-Ziel fungiert und keine eigene Datenquelle benötigt, können Sie es dennoch verwenden, um die Daten aus der zweiten TDBGrid anzuzeigen, nachdem der Benutzer sie dort platziert hat.
+Sie können die Daten aus der zweiten TDBGrid einfach über die Drag & Drop-Funktion in das dritte TDBGrid ziehen. Da das dritte TDBGrid jedoch keine eigene Datenquelle hat, müssen Sie die Datenstruktur so gestalten, dass sie die gewünschte Ordnung widerspiegelt.
+Hier sind einige Schritte, wie Sie vorgehen könnten:
+    1. Wenn der Benutzer Daten aus der zweiten TDBGrid in das dritte TDBGrid zieht, können Sie Ereignisse wie OnDragOver und OnDragDrop verwenden, um die Daten zu verarbeiten und in das dritte TDBGrid einzufügen.
+    2. Bevor Sie die Daten in das dritte TDBGrid einfügen, können Sie sicherstellen, dass sie die gewünschte Ordnung haben, z. B. indem Sie sicherstellen, dass die Daten bestimmte Spalten enthalten und dass sie in einer bestimmten Reihenfolge angeordnet sind.
+    3. Sie können die Daten dann einfach in das dritte TDBGrid einfügen, ohne dass ein TClientDataSet oder TDataset benötigt wird, da das TDBGrid lediglich als Anzeigefläche für die Daten dient.
+Auf diese Weise können Sie das dritte TDBGrid als Drop-Ziel verwenden und sicherstellen, dass die Daten, die dort platziert werden, die gewünschte Ordnung haben.
 
+Um die Positionen der Zellen im dritten TDBGrid zu steuern und zu kontrollieren, müssen Sie sicherstellen, dass die Daten, die Sie in das TDBGrid einfügen, die gewünschte Struktur haben.
+Angenommen, Sie möchten, dass jede Zeile im dritten TDBGrid vier Messreihen enthält, wobei jede Messreihe eine Spannung (Ux) und einen Strom (Ix) enthält. Sie könnten die Daten so strukturieren, dass jede Zeile im TDBGrid diese Informationen enthält, und dann die Spalten entsprechend benennen.
+Hier ist ein Beispiel, wie Sie vorgehen könnten:
+    1. Strukturieren Sie Ihre Daten entsprechend, sodass jede Zeile die Daten für vier Messreihen enthält, wobei jede Messreihe eine Spannung und einen Strom enthält.
+    2. Legen Sie die Spaltennamen für das dritte TDBGrid fest, um die verschiedenen Messreihen zu repräsentieren. Sie könnten zum Beispiel Spalten mit Namen wie "U1", "I1", "U2", "I2" usw. festlegen.
+    3. Wenn der Benutzer Daten aus der zweiten TDBGrid in das dritte TDBGrid zieht, fügen Sie die Daten entsprechend der gewünschten Struktur ein. Stellen Sie sicher, dass Sie die Daten so in das TDBGrid einfügen, dass sie den Spalten entsprechen, die Sie für jede Messreihe festgelegt haben.
+    4. Verwenden Sie die Ereignisse des TDBGrid wie OnDragOver und OnDragDrop, um sicherzustellen, dass die Daten korrekt eingefügt werden und die gewünschte Struktur im dritten TDBGrid beibehalten wird.
+Durch die strukturierte Organisation Ihrer Daten und die entsprechende Festlegung der Spalten im TDBGrid können Sie die Positionen der Zellen im dritten TDBGrid steuern und kontrollieren.
+
+
+// Angenommen, auf die Zelle in Zeile 2 und Spalte 3 zugreifen:
+int row = 2;
+int col = 3;
+
+// Stellen Sie sicher, dass die Zeile und Spalte innerhalb des gültigen Bereichs liegen:
+if (row >= 0 && row < DBGrid1->RowCount && col >= 0 && col < DBGrid1->ColCount) {
+    // Greifen Sie auf den Wert der Zelle zu und manipulieren Sie ihn:
+    String cellValue = DBGrid1->Cells[col][row];
+    
+    // Manipulieren Sie den Wert der Zelle (zum Beispiel setzen Sie einen neuen Wert):
+    DBGrid1->Cells[col][row] = "Neuer Wert";
+} else {
+    // Fehlerbehandlung für den Fall, dass die Zeile oder Spalte außerhalb des gültigen Bereichs liegt
+    ShowMessage("Ungültige Zeile oder Spalte");
 }
+ RowCount gibt die Anzahl der Zeilen im TDBGrid an und ColCount gibt die Anzahl der Spalten an.
+Sie können die Werte von row und col entsprechend ändern, um auf verschiedene Zellen zuzugreifen, und dann den Wert der Zelle lesen oder manipulieren, indem Sie auf die Cells-Eigenschaft des TDBGrid zugreifen. Beachten Sie, dass die Zeilen- und Spaltenindizes bei 0 beginnen.
+Bitte beachten Sie, dass dies ein einfaches Beispiel ist, und je nach Ihren spezifischen Anforderungen und dem Datenmodell, das Sie verwenden, möglicherweise zusätzliche Schritte erforderlich sind.
 
-//>>---------------------------3 April 2024------------------------------
+Gibt es noch eine andere Art mit anderen Befehlen und Syntax in C++ bezüglich "// Angenommen, Sie möchten auf die Zelle in Zeile 2 und Spalte 3 zugreifen: int row = 2; int col = 3; // Stellen Sie sicher, dass die Zeile und Spalte innerhalb des gültigen Bereichs liegen: if (row >= 0 && row < DBGrid1->RowCount && col >= 0 && col < DBGrid1->ColCount) { // Greifen Sie auf den Wert der Zelle zu und manipulieren Sie ihn: String cellValue = DBGrid1->Cells[col][row]; // Manipulieren Sie den Wert der Zelle (zum Beispiel setzen Sie einen neuen Wert): DBGrid1->Cells[col][row] = "Neuer Wert"; } else { // Fehlerbehandlung für den Fall, dass die Zeile oder Spalte außerhalb des gültigen Bereichs liegt ShowMessage("Ungültige Zeile oder Spalte"); } "?
 
-#include <string>
+Beispiel, um auf eine Zelle in Zeile 2 und Spalte 3 zugreifen können:
+cppCopy code
+int row = 2;
+int col = 3;
 
-std::wstring AnsiToWide(const AnsiString& ansi)
-{
-    std::wstring wide;
-    wide.resize(ansi.Length());
-    std::copy(ansi.begin(), ansi.end(), wide.begin());
-    return wide;
+if (row >= 0 && row < DBGrid1->RowCount && col >= 0 && col < DBGrid1->ColCount) {
+    // Greifen Sie auf den Wert der Zelle zu und manipulieren Sie ihn:
+    String cellValue = DBGrid1->GetFieldValue(col, row);
+    
+    // Manipulieren Sie den Wert der Zelle (zum Beispiel setzen Sie einen neuen Wert):
+    DBGrid1->SetFieldValue(col, row, "Neuer Wert");
+} else {
+    // Fehlerbehandlung für den Fall, dass die Zeile oder Spalte außerhalb des gültigen Bereichs liegt
+    ShowMessage("Ungültige Zeile oder Spalte");
 }
-//In diesem Code repräsentiert 0 die erste Spalte und 1 die zweite Spalte
-AnsiString text1 = DBGrid4XMLin->Columns->Items[0]->Field->AsString;
-AnsiString text2 = DBGrid4XMLin->Columns->Items[1]->Field->AsString;
+In diesem Beispiel wird GetFieldValue verwendet, um den Wert der Zelle in der angegebenen Zeile und Spalte abzurufen, und SetFieldValue wird verwendet, um den Wert einer Zelle zu setzen. Die Methode GetFieldValue erwartet die Spaltennummer als ersten Parameter und die Zeilennummer als zweiten Parameter.
+ Spaltennummer bei 0 beginnt, während die Zeilennummer bei 1 beginnt.
+
 
 
