@@ -191,5 +191,46 @@ if (row >= 0 && row < DBGrid1->RowCount && col >= 0 && col < DBGrid1->ColCount) 
 In diesem Beispiel wird GetFieldValue verwendet, um den Wert der Zelle in der angegebenen Zeile und Spalte abzurufen, und SetFieldValue wird verwendet, um den Wert einer Zelle zu setzen. Die Methode GetFieldValue erwartet die Spaltennummer als ersten Parameter und die Zeilennummer als zweiten Parameter.
  Spaltennummer bei 0 beginnt, während die Zeilennummer bei 1 beginnt.
 
+//--------------------------------------------------------------------------------------------------------------------------------------
+
+Kopie der Daten aus der Datenbank zu erstellen und sie einem TClientDataSet zur weiteren Verwendung in anderen TDBGrid-Komponenten zur Verfügung zu stellen, können Sie den folgenden Ansatz verwenden:
+Angenommen,  haben eine Verbindung zu Ihrer Datenbank und einen TClientDataSet namens ClientDataSet1, der als Zwischenspeicher für die Daten aus der Datenbank dient:
+cppCopy code
+// Erstelle eine Verbindung zur Datenbank
+TADOConnection *ADOConnection1 = new TADOConnection(this);
+ADOConnection1->ConnectionString = "YourConnectionString";
+ADOConnection1->Connected = true;
+
+// Erstelle einen ClientDataSet und stellen Sie eine Verbindung zur Datenbank her
+TClientDataSet *ClientDataSet1 = new TClientDataSet(this);
+ClientDataSet1->ProviderName = "YourProviderName";
+ClientDataSet1->CommandText = "SELECT * FROM YourTable";
+ClientDataSet1->Active = true;
+
+// Erstelle einen DataSource und binden Sie ihn an das ClientDataSet
+TDataSource *DataSource1 = new TDataSource(this);
+DataSource1->DataSet = ClientDataSet1;
+
+// Verwende den ClientDataSet zum Kopieren der Daten
+TClientDataSet *CopiedDataSet = new TClientDataSet(this);
+CopiedDataSet->FieldDefs->Assign(ClientDataSet1->FieldDefs); // Kopieren Sie die Felddefinitionen
+
+// Kopiere die Daten aus dem ClientDataSet in das Kopier-Dataset
+ClientDataSet1->First();
+while (!ClientDataSet1->Eof) {
+    CopiedDataSet->Insert();
+    for (int i = 0; i < ClientDataSet1->FieldCount; ++i) {
+        CopiedDataSet->Fields->Fields[i]->Value = ClientDataSet1->Fields->Fields[i]->Value;
+    }
+    CopiedDataSet->Post();
+    ClientDataSet1->Next();
+}
+
+// Verwenden Sie das Kopier-Dataset als Datenquelle für andere TDBGrids
+DataSource1->DataSet = CopiedDataSet;
+In diesem Beispiel wird zuerst eine Verbindung zur Datenbank hergestellt und ein TClientDataSet (ClientDataSet1) erstellt, das Daten aus einer Tabelle in der Datenbank lädt. Dann wird ein neues TClientDataSet (CopiedDataSet) erstellt, das die gleichen Felddefinitionen wie ClientDataSet1 hat.
+Die Daten werden dann aus ClientDataSet1 in CopiedDataSet kopiert, indem jede Zeile von ClientDataSet1 durchlaufen wird und die entsprechenden Werte in CopiedDataSet eingefügt werden.
+Schließlich wird das DataSource1-Objekt, das an ClientDataSet1 gebunden ist, an CopiedDataSet gebunden, so dass CopiedDataSet als Datenquelle für andere TDBGrid-Komponenten verwendet werden kann.
+
 
 
