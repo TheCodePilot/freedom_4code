@@ -231,6 +231,28 @@ DataSource1->DataSet = CopiedDataSet;
 In diesem Beispiel wird zuerst eine Verbindung zur Datenbank hergestellt und ein TClientDataSet (ClientDataSet1) erstellt, das Daten aus einer Tabelle in der Datenbank lädt. Dann wird ein neues TClientDataSet (CopiedDataSet) erstellt, das die gleichen Felddefinitionen wie ClientDataSet1 hat.
 Die Daten werden dann aus ClientDataSet1 in CopiedDataSet kopiert, indem jede Zeile von ClientDataSet1 durchlaufen wird und die entsprechenden Werte in CopiedDataSet eingefügt werden.
 Schließlich wird das DataSource1-Objekt, das an ClientDataSet1 gebunden ist, an CopiedDataSet gebunden, so dass CopiedDataSet als Datenquelle für andere TDBGrid-Komponenten verwendet werden kann.
+//------------------------------------------------------------------
 
+CopiedDataSet->Insert(); for (int i = 0; i < ClientDataSet1->FieldCount; ++i) { CopiedDataSet->Fields->Fields[i]->Value = ClientDataSet1->Fields->Fields[i]->Value; } CopiedDataSet->Post(); ClientDataSet1->Next();" Bitte hier um genauere Erklärung.
+
+Dieser Abschnitt des Codes ist dafür verantwortlich, die Daten aus ClientDataSet1 in CopiedDataSet zu kopieren. 
+    1. CopiedDataSet->Insert();: Diese Zeile fügt eine neue Zeile in das CopiedDataSet ein. Dadurch wird eine neue Zeile erstellt, in die die Daten aus ClientDataSet1 kopiert werden können.
+    2. for (int i = 0; i < ClientDataSet1->FieldCount; ++i) {: Diese Schleife durchläuft alle Felder in ClientDataSet1. FieldCount gibt die Anzahl der Felder in ClientDataSet1 an.
+    3. CopiedDataSet->Fields->Fields[i]->Value = ClientDataSet1->Fields->Fields[i]->Value;: In dieser Zeile wird der Wert des aktuellen Felds in ClientDataSet1 auf das entsprechende Feld in CopiedDataSet kopiert. Fields gibt eine Liste aller Felder im TDataSet an, und [i] gibt das aktuelle Feld in der Schleife an. Value gibt den Wert des aktuellen Felds an.
+    4. CopiedDataSet->Post();: Nachdem alle Felder kopiert wurden, wird Post() aufgerufen, um die aktuelle Zeile in CopiedDataSet zu bestätigen und zu speichern.
+    5. ClientDataSet1->Next();: Mit diesem Befehl wird zum nächsten Datensatz in ClientDataSet1 übergegangen, um den Vorgang für die nächste Zeile zu wiederholen.
+Zusammengefasst: Durch diese Schleife wird jede Zeile von ClientDataSet1 durchlaufen, und die Werte der Felder werden in eine neue Zeile von CopiedDataSet kopiert. Auf diese Weise werden alle Daten aus ClientDataSet1 in CopiedDataSet dupliziert.
+
+
+Speicherlecks zu vermeiden, sicherstellen, dass dynamisch allokierten Speicher ordnungsgemäß freigeben, Im Falle von TClientDataSet wird der Speicher automatisch freigegeben, wenn die Instanzen der Objekte zerstört werden. Wenn alle dynamisch allokierten TClientDataSet-Objekte freigeben, wenn sie nicht mehr benötigt werden, vermeiden Speicherlecks.
+Im Beispielcode wird ClientDataSet1 und CopiedDataSet als lokale Variablen im Konstruktor (oder einer Methode) erstellt. Wenn die Instanz der Klasse, die diese Variablen enthält, zerstört wird, werden auch diese Variablen zerstört, was dazu führt, dass der Speicher automatisch freigegeben wird.
+ jedoch TClientDataSet-Objekte dynamisch auf dem Heap erstellen (mit dem new-Operator),  mit dem delete-Operator freigeben, wenn sie nicht mehr benötigt werden. Andernfalls entstehen Speicherlecks.
+Zum Beispiel:
+cppCopy code
+// Dynamisch auf dem Heap erstellen
+TClientDataSet *CopiedDataSet = new TClientDataSet(this);
+
+// Speicher freigeben, wenn nicht mehr benötigt
+delete CopiedDataSet;
 
 
