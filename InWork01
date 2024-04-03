@@ -112,7 +112,7 @@ public:
         pRootNode->Release();
     }
 };
-//---------------------------3 April 2024------------------------------
+//<<---------------------------3 April 2024------------------------------
 //Hier nun nach klick auf den richtigen Messereignis Aufbau der Daten in das DBGrid4XMCard_Item
 void __fastcall TForm5::DBGrid4XMLinOnCellClick(TColumn *Column)
 {
@@ -137,5 +137,20 @@ void __fastcall TForm5::DBGrid4XMLinOnCellClick(TColumn *Column)
 		*/
 
 }
+
+//>>---------------------------3 April 2024------------------------------
+
+#include <string>
+
+std::wstring AnsiToWide(const AnsiString& ansi)
+{
+    std::wstring wide;
+    wide.resize(ansi.Length());
+    std::copy(ansi.begin(), ansi.end(), wide.begin());
+    return wide;
+}
+//In diesem Code repräsentiert 0 die erste Spalte und 1 die zweite Spalte
+AnsiString text1 = DBGrid4XMLin->Columns->Items[0]->Field->AsString;
+AnsiString text2 = DBGrid4XMLin->Columns->Items[1]->Field->AsString;
 
 
