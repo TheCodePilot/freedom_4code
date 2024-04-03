@@ -112,3 +112,30 @@ public:
         pRootNode->Release();
     }
 };
+//---------------------------3 April 2024------------------------------
+//Hier nun nach klick auf den richtigen Messereignis Aufbau der Daten in das DBGrid4XMCard_Item
+void __fastcall TForm5::DBGrid4XMLinOnCellClick(TColumn *Column)
+{
+		AnsiString text = DBGrid4XMLin->Columns->Items[DBGrid4XMLin->SelectedIndex]->Field->AsString;
+		//Card_Item2Grid(std::wstring ereignis, std::wstring datum);
+		/*
+		//Neu
+		if(Column->Index == 1)
+		{
+			DBGrid4XMLin->SelectedIndex = DBGrid4XMLin->SelectedIndex -1;
+			//DBGrid4XMLin->Columns->Items[Column->Index] = 1;
+		}
+		//Neu
+
+		if(Column->Index !=1)
+		{
+
+			AnsiString text = DBGrid4XMLin->Columns->Items[DBGrid4XMLin->SelectedIndex]->Field->AsString;
+			DBGrid4XMLin->BeginDrag(false);
+
+		}
+		*/
+
+}
+
+
