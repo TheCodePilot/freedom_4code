@@ -317,5 +317,150 @@ void __fastcall TForm1::MyControlEndDrag(TObject *Sender, TObject *Target, int X
 }
 In diesem Beispiel behandeln die Ereignisse OnMouseDown, OnDragOver, OnDragDrop und EndDrag, um den Drag & Drop-Vorgang zu verwalten, wenn das Drag-Mode-Eigenschaft auf dmManual gesetzt ist.
 
+//-----------------------------------------6 April 2024-------------------------------------------
+TColumn* ColumnByName(TDBGrid* Grid, const AnsiString& Name)
+{
+    for (int i = 0; i < Grid->Columns->Count; i++)
+    {
+        if (Grid->Columns->Items[i]->FieldName == Name)
+        {
+            return Grid->Columns->Items[i];
+        }
+    }
+    return nullptr;
+}
+
+--------
+
+if (ColumnByName(DBGrid1, "SpaltenName") != nullptr)
+{
+    // Der Spaltenname existiert bereits
+}
+else
+{
+    // Der Spaltenname existiert nicht
+}
+
+
+________
+
+void __fastcall TForm1::DBGrid1EndDrag(TObject *Sender, TObject *Target, int X, int Y)
+{
+    // Angenommen, draggedColumn ist der Name der Spalte, die der Benutzer in das Grid gezogen hat
+    std::string draggedColumn = ...;
+
+    // Überprüfen, ob die Spalte in Ihrem Vektor vorhanden ist
+    auto it = std::find_if(vector.begin(), vector.end(), &draggedColumn
+    {
+        return pair.first == draggedColumn;
+    });
+
+    if (it != vector.end())
+    {
+        // Wenn die Spalte vorhanden ist, füllen Sie die Spalte mit den Werten aus Ihrem Vektor
+        cds->Open();
+        for (const auto& pair : vector)
+        {
+            if (pair.first == draggedColumn)
+            {
+                cds->Append();
+                cds->FieldByName(draggedColumn.c_str())->AsString = pair.second.c_str();
+                cds->Post();
+            }
+        }
+        cds->First();
+    }
+}
+________
+
+void __fastcall TForm1::DBGrid1EndDrag(TObject *Sender, TObject *Target, int X, int Y)
+{
+    // Angenommen, draggedColumn ist der Name der Spalte, die der Benutzer in das Grid gezogen hat
+    std::string draggedColumn = ...;
+
+    // Überprüfen, ob die Spalte in Ihrem Vektor vorhanden ist
+    std::vector<std::pair<std::string, std::string> >::iterator it;
+    for (it = vector.begin(); it != vector.end(); ++it)
+    {
+        if (it->first == draggedColumn)
+        {
+            break;
+        }
+    }
+
+    if (it != vector.end())
+    {
+        // Wenn die Spalte vorhanden ist, fülle die Spalte mit den Werten aus Ihrem Vektor
+        cds->Open();
+        for (std::vector<std::pair<std::string, std::string> >::iterator pair = vector.begin(); pair != vector.end(); ++pair)
+        {
+            if (pair->first == draggedColumn)
+            {
+                cds->Append();
+                cds->FieldByName(draggedColumn.c_str())->AsString = pair->second.c_str();
+                cds->Post();
+            }
+        }
+        cds->First();
+    }
+}
+_______
+
+void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
+{
+    // Speicher den Namen der ausgewählten Spalte
+    draggedColumn = Column->FieldName.c_str();
+}
+
+_______
+
+void __fastcall TForm1::DBGrid1EndDrag(TObject *Sender, TObject *Target, int X, int Y)
+{
+    // Überprüfen, ob die Spalte in Ihrem Vektor vorhanden ist
+    std::vector<std::pair<std::string, std::string> >::iterator it;
+    for (it = vector.begin(); it != vector.end(); ++it)
+    {
+        if (it->first == draggedColumn)
+        {
+            break;
+        }
+    }
+
+    if (it != vector.end())
+    {
+        // Wenn die Spalte vorhanden ist, füllen die Spalte mit den Werten aus Ihrem Vektor
+        cds->Open();
+        for (std::vector<std::pair<std::string, std::string> >::iterator pair = vector.begin(); pair != vector.end(); ++pair)
+        {
+            if (pair->first == draggedColumn)
+            {
+                cds->Append();
+                cds->FieldByName(draggedColumn.c_str())->AsString = pair->second.c_str();
+                cds->Post();
+            }
+        }
+        cds->First();
+    }
+}
+______
+______
+
+class TMyButton : public TButton
+{
+public:
+    __fastcall TMyButton(TComponent* Owner) : TButton(Owner)
+    {
+        // benutzerdefinierte Eigenschaften für Ihren Button festlegen
+        this->Caption = "Mein Button";
+        this->Width = 150;
+        this->Height = 50;
+    }
+};
+
+
+
+
+
+
 
 
