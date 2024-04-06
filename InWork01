@@ -516,27 +516,7 @@ void __fastcall TForm5::UpdateUserGrid()
 }
 
 //<<<<<_______________________________
-bool found = false;
-ClientDataSet3->First();
-while (!ClientDataSet3->Eof) {
-    if (ClientDataSet3->FieldByName("Name der Messgroesse")->AsString == pairUserChoice.first.c_str()) {
-        found = true;
-        break;
-    }
-    ClientDataSet3->Next();
-}
-
-if (found) {
-    // Wenn ja, aktualisieren Sie den bestehenden Datensatz
-    ClientDataSet3->Edit();
-    ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
-    ClientDataSet3->Post();
-} else {
-    // Wenn nicht, fügen Sie einen neuen Datensatz hinzu
-    ClientDataSet3->Append();
-    ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
-    ClientDataSet3->Post();
-}
+So nun das Problem das bei Edit() die zweite Spalte bei 1 bleibt. Kann ich irgendwie die Schreibposition von Edit immer um eins erhöhen. Vorausgesetzt diesen Rekord gibt es natürlich.
 
 
 
