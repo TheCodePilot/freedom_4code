@@ -457,7 +457,63 @@ public:
     }
 };
 
+//<<____
+void __fastcall TForm5::UpdateUserGrid()
+{
+	if(!ClientDataSet3->Active)
+	{
+		ClientDataSet3->CreateDataSet();
+	}
 
+	if(xmlProcess)
+			{
+				DBGridUserChoice->DataSource->DataSet->Next();
+				ClientDataSet3->Append(); //Nur hier hinein
+
+				std::vector<std::pair<std::wstring, std::wstring> > dataUserChoice = xmlProcess->GetXMLInfo4UserChoice();
+				//--------------------------------------------
+
+				std::vector<std::pair<std::wstring, std::wstring> > dataXML = xmlProcess->GetXMLInfo();
+				//Schleife der Überschrift
+				for(size_t i = 0; i < dataUserChoice.size();++i )
+				{
+					const std::pair < std::wstring, std::wstring>& pairUserChoice = dataUserChoice[i];
+
+					//Nun schauen wo überall gleiche Userchoice als Einheit
+					for(size_t j = 0; j < dataXML.size()-3; ++j)
+					{
+						const std::pair < std::wstring, std::wstring>& pairOfXML = dataXML[j];
+
+					std::wstring w1User = pairUserChoice.first;
+					std::wstring w2User = pairUserChoice.second; //ValueUser
+					std::wstring w3XML = pairOfXML.first; //CaptionOfColum
+					std::wstring w4XML = pairOfXML.second; //ValueXML
+					if((w1User != L"") && (w1User == w3XML)) //std::wcscmp(w1 ,w2) == 0)
+						{
+								//DBGridUserChoice->DataSource->DataSet->Next();
+								//ClientDataSet3->FieldByName(pair.first.c_str())->AsString = pair.second.c_str();
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
+								const std::pair < std::wstring, std::wstring>& pairOfXML1 = dataXML[j+1];
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
+
+								const std::pair < std::wstring, std::wstring>& pairOfXML2 = dataXML[j+2];
+								//DBGridUserChoice->DataSource->DataSet->Next();
+								//ClientDataSet3->Append();
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = L"Ueberschreibe" ;// + pairOfXML.second.c_str();
+								//ClientDataSet3->Post();
+						}
+
+					}
+
+
+				}
+
+				//--------------------------------------------
+				ClientDataSet3->Post(); //Nur hier hinein
+			}
+
+
+}
 
 
 
