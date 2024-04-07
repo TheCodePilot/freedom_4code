@@ -1,0 +1,1293 @@
+
+#include <stdexcept>
+#include "rr_system.h"
+#include <string>
+
+ void XMLData::ReleaseResourcesWegenBcc32Schei_()
+ {
+			if (pXMLDom) {
+				pXMLDom->Release();
+				pXMLDom = NULL;
+			}
+			if (isInitializedCOM) {
+				CoUninitialize();
+				isInitializedCOM = false;
+			}
+
+ }
+
+ VARIANT_BOOL XMLData::LoadXMLDocument(const std::wstring& filename) {
+
+	 VARIANT_BOOL returner = !VARIANT_TRUE;
+	 HRESULT hr_com = CoInitialize(NULL);
+
+	 if (FAILED(hr_com)) {
+
+		 throw std::runtime_error("Fehler bei der Initialisierung der COM-Schnittstelle");
+		 return returner;
+
+	 }
+	 isInitializedCOM = true;
+
+	 HRESULT hr = CoCreateInstance(__uuidof(DOMDocument60), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pXMLDom));
+
+	 if (FAILED(hr)) {
+
+		 CoUninitialize();
+		
+		 throw std::runtime_error("Fehler beim Erstellen des XML-DOM-Objekts.");
+		 return returner;
+		
+	 }
+	
+	 VARIANT_BOOL status;
+	 VARIANT xmlSource;
+	 xmlSource.vt = VT_BSTR;
+	 xmlSource.bstrVal = SysAllocString(filename.c_str());
+	
+	 hr = pXMLDom->load(xmlSource, &status);
+	
+	 SysFreeString(xmlSource.bstrVal);
+	 	
+	 if (FAILED(hr) || status != VARIANT_TRUE) {
+	
+		 pXMLDom = NULL;
+		
+		 CoUninitialize();
+		
+		 throw std::runtime_error("Fehler beim Laden der XML-Datei.");
+		 return returner;
+	
+	 }
+	 return VARIANT_TRUE;
+}
+
+
+//=============================================================================================================================================
+//XMLData
+//=============================================================================================================================================
+
+XMLData::XMLData()	//: XMLProcess()
+{
+    pXMLDom = NULL;
+	isInitializedCOM = false;
+
+	pRootNode = NULL;
+	findTheNode__Card_Item = NULL;
+	
+	std::cout << "Konstruktor:  XMLData" << std::endl;
+
+	countMaxDifferM = 0;
+	strError = "";
+}
+
+XMLData::~XMLData()
+{
+	if (pRootNode) {
+		pRootNode->Release();
+		pRootNode = NULL;
+	}
+	if (findTheNode__Card_Item) {
+		findTheNode__Card_Item->Release();
+		findTheNode__Card_Item = NULL;
+	}
+
+	ClearTheNodes();
+	ClearTheInfo();
+	ReleaseResourcesWegenBcc32Schei_();
+
+	//std::cout << "Desruktor:  XMLData" << std::endl;
+}
+
+//Bei exception alles aufräumen
+void XMLData::ReleaseResources()
+{
+	if (pRootNode) {
+		pRootNode->Release();
+		pRootNode = NULL;
+	}
+	if (findTheNode__Card_Item) {
+		findTheNode__Card_Item->Release();
+		findTheNode__Card_Item = NULL;
+	}
+	//std::cout << "Error: Release Ressourcen:  XMLData" << std::endl;
+
+	ClearTheNodes();
+	ClearTheInfo();
+
+	ReleaseResourcesWegenBcc32Schei_();
+}
+
+void XMLData::ClearTheNodes() 
+{
+	for (size_t i = 0; i < nodes.size(); ++i) {
+		
+		if (nodes[i] != NULL) {
+			nodes[i]->Release();
+			nodes[i] = NULL;
+		}
+	}
+	nodes.clear();
+}
+
+void XMLData::ClearTheInfo()
+{
+	xmlInfo.clear();
+}
+
+
+void XMLData::ClearTheInfo4GUI()
+{
+	for (size_t i = 0; i < xmlInfo4Gui.size(); ++i) {
+		// Freigabe des IXMLDOMNode* in BasicNode
+		IXMLDOMNode* node = xmlInfo4Gui[i].first.GetTheNodeIam();
+		if (node != NULL) {
+			node->Release();
+			xmlInfo4Gui[i].first.SetNodeIam(NULL);
+		}
+	}
+
+	// Leeren des Vektors
+	xmlInfo4Gui.clear();
+}
+
+//In der Analyse sobald Card_Item gefunden
+void XMLData::CreateGuiNode(IXMLDOMNode* node)
+{
+	BasicNode bnode;
+	bnode.SetNodeIam(node);
+	bnode.SetGuiEnable(true);
+	bnode.SetGuiVisible(true);
+
+	std::pair<BasicNode, int> info(bnode, 0);
+	addBasicNode(info);
+}
+
+
+//=============================================================================================================================================
+//Hilfsfunktion erstmal einfach oder
+//=============================================================================================================================================
+IXMLDOMNode* XMLData::GetNode(size_t index)const {
+
+//size_t sz = nodes.size();
+
+	if (index < nodes.size())
+	{
+		return nodes[index];
+	}
+	else {
+		return NULL; // Index außerhalb des gültigen Bereichs
+	}
+}
+
+HRESULT XMLData::IniRoot()
+{
+	HRESULT hr = this->pXMLDom->get_documentElement(&pRootNode);
+	if (FAILED(hr))
+	{
+		ReleaseResources();
+		throw std::runtime_error("Fehler beim Finden des Wurzel-Elements.");
+	}
+	return hr;
+
+}
+
+//hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_nodeName(&dataINodeName);
+void XMLData::WriteInfos()
+{
+	HRESULT hr;
+	BSTR nodename = NULL;
+	BSTR nodevalue = NULL;
+	BSTR nodenameParent = NULL;
+
+	IXMLDOMNode* pNodeParent = NULL;
+	std::vector<std::pair<std::wstring, std::wstring> > data = this->GetXMLInfo();
+	
+	for (size_t i = 0; i < data.size(); ++i)
+	{
+		const std::pair < std::wstring, std::wstring>& pair = (data)[i];
+		//std::wcout << "Name:" << pair.first.c_str();
+		//std::wcout << "  __Wert:" << pair.second.c_str() << std::endl;
+	}
+
+	//Zur Zeit der Wert selbst alo schon das Kind von Vx und so weiter
+	std::vector<std::pair<BasicNode, int> > info = this->GetXMLInfo4Gui();
+	for (size_t i = 0; i < info.size(); ++i)
+	{
+		//hr = info.fi->get_nodeName(&dataINodeName);
+		const std::pair < BasicNode, int>& pair = (info)[i];
+		pair.first.GetTheNodeIam()->get_nodeName(&nodename);
+		pair.first.GetTheNodeIam()->get_text(&nodevalue);
+		pair.first.GetTheNodeIam()->get_parentNode(&pNodeParent);
+		pNodeParent->get_nodeName(&nodenameParent); pNodeParent = NULL;
+		std::wcout << "		GUI_Name_Parent :		" << nodenameParent << "		GUI_Name :		" << nodename << "		GUI_Value :		" << nodevalue << std::endl;
+		//std::wcout << "  __Wert:" << pair.second.c_str() << std::endl;
+	}
+	if (nodename)
+		SysFreeString(nodename);
+	if (nodevalue)
+		SysFreeString(nodevalue);
+	if (nodenameParent)
+		SysFreeString(nodenameParent);
+	if(pNodeParent)
+		pNodeParent->Release();
+}
+
+//Ein Paar-Wert zurück
+std::pair<std::wstring, std::wstring> XMLData::GetNodeInfo(IXMLDOMNode* pNode) const {
+
+	std::wstring nodeName, nodeValue;
+	nodeName = L"";
+	nodeValue = L"";
+
+	if (pNode != NULL)
+	{
+		BSTR bstrNodeName, bstrNodeValue;
+		pNode->get_nodeName(&bstrNodeName);
+		pNode->get_text(&bstrNodeValue);
+		if (bstrNodeName)
+		{
+			nodeName = std::wstring(bstrNodeName, SysStringLen(bstrNodeName));
+		}
+
+		if (bstrNodeValue)
+		{
+			nodeValue = std::wstring(bstrNodeValue, SysStringLen(bstrNodeValue));
+		}
+
+		SysFreeString(bstrNodeName);
+		SysFreeString(bstrNodeValue);
+	}
+	std::pair<std::wstring, std::wstring> temp;
+	temp.first = nodeName;
+	temp.second = nodeValue;
+	return temp;
+}
+
+int XMLData::FindTheMeasurementData(IXMLDOMNodeList* pSiblings, int option)	//02/26/2019 10:59:09
+{
+	BSTR dataINodeNameDate = NULL;
+	BSTR dataINodeName = NULL;
+	BSTR dataINodeValue = NULL;
+	BSTR dataHelp = NULL;
+	BSTR dataHelp1 = NULL;
+
+	//Im Falle option = 1
+	bool oneResult_Item = false;
+	//Immer maximale verschiedene Messdaten-Arten mit dValue
+	bool allcounted = false;
+
+	IXMLDOMNode* pChildWithInterestingData;
+	while (pSiblings->nextNode(&pChildWithInterestingData) == S_OK) { //Schleife wo auch Date und bstrName
+
+		HRESULT hr = pChildWithInterestingData->get_nodeName(&dataINodeName); //wäre Wert
+		if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"Results") == 0) //hier auch Results enthalten
+		{
+			//Hier nun Results_Item über die Kinder
+			IXMLDOMNode* pChildWithInterestingData_Results_Item = NULL;
+			IXMLDOMNodeList* pChildWithInterestingDatas_Results_Item = NULL;
+			hr = pChildWithInterestingData->get_childNodes(&pChildWithInterestingDatas_Results_Item); //Kinder von Result um zu schauen ob Result_Item dabei ist
+			if (FAILED(hr)) {
+				//std::cout << "Fehler beim Bekommen der Kinder" << std::endl;
+				return 1;
+			}
+			while (!oneResult_Item && pChildWithInterestingDatas_Results_Item->nextNode(&pChildWithInterestingData_Results_Item) == S_OK) { //hier sollte auch Result_Item enthalten sein
+				//Erstmal alle Kinder
+				hr = pChildWithInterestingData_Results_Item->get_nodeName(&dataINodeName);
+				if (FAILED(hr)) {
+					//std::cout << "Fehler beim Bekommen des Knotennamens" << std::endl;
+					return 2;
+				}
+				std::wcout << "Alle Kinder von Results  __ Knotenname: " << " Wert: " << dataINodeName << std::endl;	//RRR46 Bis hier OK
+
+				//Hier nun Results_Item gefunden und nun über die Kinder von Results_Item  !!! ausgehend immer nur das Kind von Result ist Result_Item ///Hier Prüfen ob eine Schleife ResultItem fehlt Ich denke ja !!!
+				IXMLDOMNode* pChildWithInterestingData_Results_Item_Childs = NULL;
+				IXMLDOMNodeList* pChildWithInterestingDatas_Results_Item_Childs = NULL;
+				hr = pChildWithInterestingData_Results_Item->get_childNodes(&pChildWithInterestingDatas_Results_Item_Childs);
+				if (FAILED(hr)) {
+					//std::cout << "Fehler beim Bekommen der Kinder" << std::endl;
+					return 3;
+				}
+				//Hier endlich die Daten pro Messwert welcher aus mehreren Attributen besteht
+				while (pChildWithInterestingDatas_Results_Item_Childs->nextNode(&pChildWithInterestingData_Results_Item_Childs) == S_OK) { //Diese Schleife erfasst alle noch richtig //RRR46
+					//oneResult_Item = true;
+					//Erstmal alle Kinder
+					hr = pChildWithInterestingData_Results_Item_Childs->get_nodeName(&dataINodeName);
+					if (FAILED(hr)) {
+						//std::cout << "Fehler beim Bekommen des Knotennamens" << std::endl;
+						return 4;
+					}
+					hr = pChildWithInterestingData_Results_Item_Childs->get_text(&dataINodeValue);
+					if (FAILED(hr)) {
+						//std::cout << "Fehler beim Bekommen des Knotenwerts" << std::endl;
+						return 5;
+					}
+
+					if (!oneResult_Item) {
+						//-------------------------------Im Vektor speichern----------------------------------
+						//std::wcout << "Alle Kinder von Results_Item  __ Knotenname: " << " Name: " << dataINodeName << std::endl; //RRR47
+						//-------------------------------Im Vektor speichern----------------------------------
+					}
+					//Hier nun die Datenbeschreiber RRR48 hier
+					IXMLDOMNode* pChildWithInterestingData_Results_Item_Childs_Describer = NULL;
+					IXMLDOMNodeList* pChildWithInterestingDatas_Results_Item_Childs_Describer = NULL;
+
+					hr = pChildWithInterestingData_Results_Item_Childs->get_childNodes(&pChildWithInterestingDatas_Results_Item_Childs_Describer);
+					if (FAILED(hr)) {
+						//std::cout << "Fehler beim Bekommen der Kinder" << std::endl;
+						return 6;
+					}
+
+					while (pChildWithInterestingDatas_Results_Item_Childs_Describer->nextNode(&pChildWithInterestingData_Results_Item_Childs_Describer) == S_OK) {
+						hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_nodeName(&dataINodeName);
+						if (FAILED(hr)) {
+							//std::cout << "Fehler beim Bekommen des Knotennamens" << std::endl;
+							return 7;
+						}
+						hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_text(&dataINodeValue);
+						if (FAILED(hr)) {
+							//std::cout << "Fehler beim Bekommen des Knotenwerts" << std::endl;
+							return 8;
+						}
+
+						hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_nodeName(&dataINodeName);
+						pChildWithInterestingData_Results_Item_Childs->get_nodeName(&dataHelp); //Vom Parent
+
+						if ((SUCCEEDED(hr) && (wcscmp(dataINodeName, L"dValue")) == 0))// && (wcscmp(dataHelp, L"Vx") == 0)) //RRR41
+						{
+							IXMLDOMNode* pChildTest = NULL;
+							IXMLDOMNodeList* pChildsTest = NULL;
+
+							hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_childNodes(&pChildsTest); //hier noetig weil wer keine Kinder als Knoten hat sein Werte als Kinder. So bekomme ich Werte
+							if (FAILED(hr)) {
+								//std::cout << "____Fehler beim Bekommen des Kindes von Vx" << std::endl;
+								return 9;
+							}
+
+							while (pChildsTest->nextNode(&pChildTest) == S_OK) {
+								pChildTest->get_text(&dataHelp1);
+
+								std::pair<std::wstring, std::wstring> info(dataHelp, dataHelp1); //RRR42
+								xmlInfo.push_back(info);	//RRR42
+
+								//++++++++++++++++++++++++++++++++++++++
+								CreateGuiNode(pChildWithInterestingData_Results_Item_Childs_Describer);
+								//++++++++++++++++++++++++++++++++++++++
+
+								if(!allcounted)
+									++countMaxDifferM;
+
+								pChildTest->Release();
+							}
+
+							pChildsTest->Release();
+
+						}
+						//pChildWithInterestingData_Results_Item_Childs_Describer->Release(); RRR60 wohl raus
+
+					}  //ENDE while (pChildWithInterestingDatas_Results_Item_Childs_Describer->nextNode(&pChildWithInterestingData_Results_Item_Childs_Describer)
+					//RRR46
+					pChildWithInterestingDatas_Results_Item_Childs_Describer->Release();  //geprueft
+					pChildWithInterestingData_Results_Item_Childs->Release();   //geprueft
+				}  //ENDE while (pChildWithInterestingDatas_Results_Item_Childs->nextNode(&pChildWithInterestingData_Results_Item_Childs)
+				pChildWithInterestingDatas_Results_Item_Childs->Release();
+				pChildWithInterestingData_Results_Item->Release();  //geprueft
+				allcounted = true; //Anzahl verschiedener Messwerte nun ermittelt
+				if(option == 1)
+					oneResult_Item = true;
+
+			}  //ENDE while (pChildWithInterestingDatas_Results_Item->nextNode(&pChildWithInterestingData_Results_Item)
+
+		}
+		pChildWithInterestingData->Release();   //geprueft
+	}  //ENDE while (pSiblings->nextNode(&pChildWithInterestingData)
+
+
+	if (dataINodeNameDate)
+		SysFreeString(dataINodeNameDate);
+	if (dataINodeName)
+		SysFreeString(dataINodeName);
+	if (dataINodeValue)
+		SysFreeString(dataINodeValue);
+	if (dataHelp)
+		SysFreeString(dataHelp);
+	if (dataHelp1)
+		SysFreeString(dataHelp1);
+
+	return 0;
+
+}
+//
+/*
+(1) : pChildWithInterestingData_Results_Item: Knoten : <Result_Item>
+(2) : pChildWithInterestingData_Results_Item_Childs : Liste der Kinder von <Result_Item> also auch <V0>, <Vx>
+(3) : pChildWithInterestingData_Results_Item_Childs_Describer : Ist einer der 5 Beschreibenden Knoten einer Meßgröße <dValue>, <bstrUnit>
+*/
+//________________________
+int XMLData::FindTheMeasurementDataStrCat(IXMLDOMNodeList* pSiblings, int option)
+{
+	BSTR dataINodeNameDate = NULL;
+	BSTR dataINodeName = NULL;
+	BSTR dataINodeValue = NULL;
+	BSTR dataMeasurand = NULL;
+	BSTR dataMsDescriber = NULL;
+	BSTR dValueAndbstrUnit = NULL;
+
+	//Im Falle option = 1
+	bool oneResult_Item = false;
+	//Immer maximale verschiedene Messdaten-Arten mit dValue
+	bool allcounted = false;
+
+	IXMLDOMNode* pChildWithInterestingData;
+	while (pSiblings->nextNode(&pChildWithInterestingData) == S_OK) { //Schleife wo auch Date und bstrName
+
+		HRESULT hr = pChildWithInterestingData->get_nodeName(&dataINodeName); //wäre Wert
+		if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"Results") == 0) //hier auch Results enthalten
+		{
+			//Hier nun Results_Item über die Kinder
+			IXMLDOMNode* pChildWithInterestingData_Results_Item = NULL;
+			IXMLDOMNodeList* pChildWithInterestingDatas_Results_Item = NULL;
+			hr = pChildWithInterestingData->get_childNodes(&pChildWithInterestingDatas_Results_Item); //Kinder von Result um zu schauen ob Result_Item dabei ist
+			if (FAILED(hr)) {
+				//std::cout << "Fehler beim Bekommen der Kinder" << std::endl;
+				return 1;
+			}
+			while (!oneResult_Item && pChildWithInterestingDatas_Results_Item->nextNode(&pChildWithInterestingData_Results_Item) == S_OK) { //hier sollte auch Result_Item enthalten sein
+				//Erstmal alle Kinder
+				hr = pChildWithInterestingData_Results_Item->get_nodeName(&dataINodeName);//(1)
+				if (FAILED(hr)) {
+					//std::cout << "Fehler beim Bekommen des Knotennamens" << std::endl;
+					return 2;
+				}
+
+				//Hier nun Results_Item gefunden und nun über die Kinder von Results_Item  !!! ausgehend immer nur das Kind von Result ist Result_Item ///Hier Prüfen ob eine Schleife ResultItem fehlt Ich denke ja !!!
+				IXMLDOMNode* pChildWithInterestingData_Results_Item_Childs = NULL;
+				IXMLDOMNodeList* pChildWithInterestingDatas_Results_Item_Childs = NULL;
+				hr = pChildWithInterestingData_Results_Item->get_childNodes(&pChildWithInterestingDatas_Results_Item_Childs);
+				if (FAILED(hr)) {
+					//std::cout << "Fehler beim Bekommen der Kinder" << std::endl;
+					return 3;
+				}
+
+				//Hier endlich die Daten pro Messwert welcher aus mehreren Attributen besteht
+				while (pChildWithInterestingDatas_Results_Item_Childs->nextNode(&pChildWithInterestingData_Results_Item_Childs) == S_OK) { //Diese Schleife erfasst alle noch richtig //RRR46
+					//Erstmal alle Kinder
+					hr = pChildWithInterestingData_Results_Item_Childs->get_nodeName(&dataINodeName);//(2)
+					if (FAILED(hr)) {
+						//std::cout << "Fehler beim Bekommen des Knotennamens" << std::endl;
+						return 4;
+					}
+					hr = pChildWithInterestingData_Results_Item_Childs->get_text(&dataINodeValue);
+					if (FAILED(hr)) {
+						//std::cout << "Fehler beim Bekommen des Knotenwerts" << std::endl;
+						return 5;
+					}
+
+					//Hier nun die Datenbeschreiber RRR48 hier
+					IXMLDOMNode* pChildWithInterestingData_Results_Item_Childs_Describer = NULL;
+					IXMLDOMNodeList* pChildWithInterestingDatas_Results_Item_Childs_Describer = NULL;
+
+					hr = pChildWithInterestingData_Results_Item_Childs->get_childNodes(&pChildWithInterestingDatas_Results_Item_Childs_Describer);
+					if (FAILED(hr)) {
+						//std::cout << "Fehler beim Bekommen der Kinder" << std::endl;
+						return 6;
+					}
+
+					while (pChildWithInterestingDatas_Results_Item_Childs_Describer->nextNode(&pChildWithInterestingData_Results_Item_Childs_Describer) == S_OK) {
+						hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_nodeName(&dataINodeName);
+						if (FAILED(hr)) {
+							//std::cout << "Fehler beim Bekommen des Knotennamens" << std::endl;
+							return 7;
+						}
+						hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_text(&dataINodeValue);
+						if (FAILED(hr)) {
+							//std::cout << "Fehler beim Bekommen des Knotenwerts" << std::endl;
+							return 8;
+						}
+
+						hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_nodeName(&dataINodeName);//(3)
+						pChildWithInterestingData_Results_Item_Childs->get_nodeName(&dataMeasurand); //Vom Parent
+
+						//Nun dazu der im srrcat Wert + Einheit
+						if ((SUCCEEDED(hr) && (wcscmp(dataINodeName, L"bstrUnit")) == 0))// && (wcscmp(dataHelp, L"Vx") == 0)) //RRR41
+						{
+							IXMLDOMNode* pChildTest = NULL;
+							IXMLDOMNodeList* pChildsTest = NULL;
+
+							hr = pChildWithInterestingData_Results_Item_Childs_Describer->get_childNodes(&pChildsTest); //hier noetig weil wer keine Kinder als Knoten hat sein Werte als Kinder. So bekomme ich Werte
+							if (FAILED(hr)) {
+								//std::cout << "____Fehler beim Bekommen des Kindes von Vx" << std::endl;
+								return 9;
+							}
+
+							while (pChildsTest->nextNode(&pChildTest) == S_OK) {
+								pChildTest->get_text(&dataMsDescriber); //Hier der Wertz des Kindes z.B. V0 ist es V als Einheit für den Wert von bstrUnit
+
+								//Nun die Sibling durchschauen, Nur OK mit dieser Version von Omicron xml-Datei
+								//wenn Value genau im übernächsten Knoten ist. Hierbei gle8iche Ebene also ein Sibling von <bstrUnit>
+								//################################
+								IXMLDOMNode* pChildTestSibling = NULL;
+								IXMLDOMNode* pChildTestSibling2 = NULL;
+
+								dataINodeValue = NULL;
+
+
+								hr = pChildWithInterestingDatas_Results_Item_Childs_Describer->nextNode(&pChildTestSibling);
+								if (pChildTestSibling && (SUCCEEDED(hr)))
+								{
+
+									hr = pChildWithInterestingDatas_Results_Item_Childs_Describer->nextNode(&pChildTestSibling2);
+									if (pChildTestSibling2 && (SUCCEEDED(hr)))
+									{
+									   hr = pChildTestSibling2->get_text(&dataINodeValue);
+									   if (dataINodeValue && (SUCCEEDED(hr)))
+										{
+											//%%%%%%%%%%%%%%%%%%%%%%%%
+											std::wstring part1(dataINodeValue, SysStringLen(dataINodeValue));
+											std::wstring part2(dataMsDescriber, SysStringLen(dataMsDescriber));
+											part1 = part1 + L"  " + part2;
+											//dValueAndbstrUnit: Bemerkung nur aus Parameterkonsistent-gründen, es würde auch part1 akzeptiert werden
+											dValueAndbstrUnit = NULL;
+											dValueAndbstrUnit = SysAllocStringLen(part1.data(), part1.size());
+											//%%%%%%%%%%%%%%%%%%%%%%%%
+
+											std::pair<std::wstring, std::wstring> info(dataMeasurand,dValueAndbstrUnit); //dValueAndbstrUnit für part1, siehe obere Bemerkung); //
+											xmlInfo.push_back(info);	//RRR42
+											if(dValueAndbstrUnit)
+												SysFreeString(dValueAndbstrUnit);
+											//++++++++++++++++++++++++++++++++++++++
+											CreateGuiNode(pChildWithInterestingData_Results_Item_Childs_Describer);
+
+										}
+									}
+									if(pChildTestSibling)
+										pChildTestSibling->Release();
+									if(pChildTestSibling2)
+										pChildTestSibling2->Release();
+								}
+								//################################
+
+								pChildTest->Release();
+							}
+							pChildsTest->Release();
+
+						}
+
+					}  //ENDE while (pChildWithInterestingDatas_Results_Item_Childs_Describer->nextNode(&pChildWithInterestingData_Results_Item_Childs_Describer)
+					//RRR46
+					pChildWithInterestingDatas_Results_Item_Childs_Describer->Release();  //geprueft
+					pChildWithInterestingData_Results_Item_Childs->Release();   //geprueft
+				}  //ENDE while (pChildWithInterestingDatas_Results_Item_Childs->nextNode(&pChildWithInterestingData_Results_Item_Childs)
+				pChildWithInterestingDatas_Results_Item_Childs->Release();
+				pChildWithInterestingData_Results_Item->Release();  //geprueft
+				allcounted = true; //Anzahl verschiedener Messwerte nun ermittelt
+				if(option == 1)
+					oneResult_Item = true;
+
+			}  //ENDE while (pChildWithInterestingDatas_Results_Item->nextNode(&pChildWithInterestingData_Results_Item)
+
+		}
+		pChildWithInterestingData->Release();   //geprueft
+	}  //ENDE while (pSiblings->nextNode(&pChildWithInterestingData)
+
+
+	if (dataINodeNameDate)
+		SysFreeString(dataINodeNameDate);
+	if (dataINodeName)
+		SysFreeString(dataINodeName);
+	if (dataINodeValue)
+		SysFreeString(dataINodeValue);
+	if (dataMeasurand)
+		SysFreeString(dataMeasurand);
+	if (dataMsDescriber)
+		SysFreeString(dataMsDescriber);
+
+	return 0;
+
+}
+
+ HRESULT XMLData::AnalyzeDOM()
+{
+	 HRESULT hr = IniRoot();
+	 if (FAILED(hr))
+		 return hr;
+
+	bool type21 = false;
+	bool cardItem = false;
+		
+		BSTR dataINodeNamebstrName = NULL;
+		BSTR dataINodeNameDate = NULL;
+		BSTR dataINodeName = NULL;
+		BSTR dataINodeValue = NULL;
+		
+		//Aufräumer noch prüfen RRR30
+
+		IXMLDOMNodeList* pObjects = NULL;  //DEKLARATION: Alle Kinder von pRootNode
+		hr = pRootNode->get_childNodes(&pObjects); //BEKOMME: Alle Kinder von pRootNode
+		if (FAILED(hr)) {
+			std::cerr << "Fehler beim Abrufen der Objektknoten." << std::endl;
+			if (pObjects != NULL)
+				pObjects->Release();
+			ReleaseResources();
+			return hr;
+		}
+
+		long nodeListLength = 0;
+		hr = pObjects->get_length(&nodeListLength);
+		if (nodeListLength == 0) {
+			std::cout << "Die Objektknotenliste ist leer." << std::endl;
+			pObjects->Release();
+			ReleaseResources();
+			return hr;
+		}
+
+		IXMLDOMNode* pCardsNode = NULL;
+		IXMLDOMNode* pNodeRoot = NULL;
+
+		HRESULT hr_loop = S_OK; // Variable zur Überwachung des Schleifenstatus
+		while (pObjects->nextNode(&pNodeRoot) == S_OK)  //SCHLEIFE: Solange Root Kinder hat
+		{
+			if (hr_loop != S_OK) {
+				break;
+			}
+
+			hr = pNodeRoot->get_nodeName(&dataINodeName);
+			if (SUCCEEDED(hr) && dataINodeName && wcscmp(dataINodeName, L"Cards") == 0) {
+				// Wenn der Knoten "Cards" ist, speichern Sie ihn und brechen Sie die Schleife ab
+				pCardsNode = pNodeRoot;
+				break;
+			}
+		}
+
+		pObjects->Release(); // Freigeben des Speichers für die Knotenliste
+
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//		STEP1: einmaliger Knoten Cards ermittelt
+		//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+		if (pCardsNode) {
+
+			IXMLDOMNodeList* pChildrenOfCards = NULL;
+			hr = pCardsNode->get_childNodes(&pChildrenOfCards); //hier nun Cards_Item erhalten
+			if (SUCCEEDED(hr)) {
+				IXMLDOMNode* pChildNodeOfCards = NULL;
+				while (!cardItem && pChildrenOfCards->nextNode(&pChildNodeOfCards) == S_OK) {
+					std::cout << "@@@@@@Ich bin die WHILE um Card_item zu finden" << std::endl;
+					// Verarbeite Kinder des "Cards"-Knotens also Cards_Item finden welches Typ, bstrName [EINGABE KUNDE]? und wcscmp(dataINodeValue, [EINGABE KUNDE] ) == 0 | hier: L"C1 (f)"
+					addNode(pChildNodeOfCards);	//RRR31
+					//Nun Da hier alle Kindsknoten nun hier erscheinen
+					IXMLDOMNodeList* pChildrenChildrenOfCards = NULL; //Für die Kinder von Card_Item  //Cards_Item
+					IXMLDOMNode* pChildChildNodeOfCards = NULL;
+					hr = pChildNodeOfCards->get_childNodes(&pChildrenChildrenOfCards);
+					if (SUCCEEDED(hr)) {
+						while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards) == S_OK) {
+
+							hr = pChildChildNodeOfCards->get_nodeName(&dataINodeName);
+							if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"nType") == 0) {
+								hr = pChildChildNodeOfCards->get_text(&dataINodeValue);
+								if (SUCCEEDED(hr) && wcscmp(dataINodeValue, L"21") == 0) {	// @[EINGABE KUNDE] per Zeilenwahl der Verschiedenen genannten Protokolle
+									std::wcout << "Typ ist: " << " Wert: " << dataINodeValue << std::endl;
+									type21 = true;
+									//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+									//		STEP2: Typ je Card_Item ermittelt
+									//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+									// Beispiel Wert nType "21" ist, überprüfe andere Bedingungen bstrName [EINGABE KUNDE]? und wcscmp(dataINodeValue, [EINGABE KUNDE] ) == 0 | hier: L"C1 (f)" ... diese sind siblings von nType und sogar Nachbarn, aber es bleibt mit Siblings zu arbeiten
+									IXMLDOMNode* pSiblingNode = NULL;
+									hr = pChildChildNodeOfCards->get_nextSibling(&pSiblingNode);
+									if (SUCCEEDED(hr))
+									{
+										// Wert von <bstrName> == C1 (f)
+										hr = pSiblingNode->get_nodeName(&dataINodeName);
+										if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"bstrName") == 0)
+										{
+											hr = pSiblingNode->get_text(&dataINodeValue);
+											if (SUCCEEDED(hr) && wcscmp(dataINodeValue, L"C1 (f)") == 0) // @[EINGABE KUNDE]   
+											{
+												//erneut Schleife aller siblings mit Hilfe von Parent aus also eine Enbene zurück
+												IXMLDOMNode* pParentNode;
+												hr = pSiblingNode->get_parentNode(&pParentNode);    //dort wo Bedingung erfüllt schauen wer ist Parent
+												if (SUCCEEDED(hr) && pParentNode) {                 // RRR3: Noch testen wenn gleicher Name //RRR4: was wenn genau gleich sehr theoretisch da sekundengenau ?
+													IXMLDOMNodeList* pSiblings;
+													//Liste wo auch Knoten Date als Sibling von nType und bstrName
+													hr = pParentNode->get_childNodes(&pSiblings);
+													if (SUCCEEDED(hr) && pSiblings) {
+														IXMLDOMNode* pSibling;
+														while (pSiblings->nextNode(&pSibling) == S_OK) {
+															//Wert von <Date> == 02/26/2019 10:57:29
+															hr = pSibling->get_nodeName(&dataINodeName);
+															if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"Date") == 0)
+															{
+																hr = pSibling->get_text(&dataINodeValue);
+																if (SUCCEEDED(hr) && wcscmp(dataINodeValue, L"02/26/2019 10:57:29") == 0) // @[EINGABE KUNDE]
+																{
+																	cardItem = true;
+																	findTheNode__Card_Item = pParentNode;
+																				//addNode(pParentNode); //RRR30
+
+																	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+																	//		STEP3: Nun ist richtige Card_Item ermittelt
+																	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+																	size_t index = 1;
+																	HRESULT hr = FindTheMeasurementData(pSiblings);
+																	if (FAILED(hr))
+																	{
+																		std::cout << "Probleme Messdaten zu erhalten. Eventuell XML-Datei beschädigt." << std::endl;
+																	}
+																}
+															}
+
+															pSibling->Release(); // Freigeben des Speichers  //geprueft
+														} //ENDE while (pSiblings->nextNode(&pSibling)
+														pSiblings->Release(); // Freigeben des Speichers  //geprueft
+													}
+															//pParentNode->Release(); // Freigeben des Speichers  //geprueft RRR20 muß raus da keine Kopie!!! sondern echtes gleich findTheNode__Card_Item = pParentNode;
+												}
+												pSiblingNode->Release();  //geprueft
+											}
+										}
+									}
+								}
+								else if (!type21)//RRR7 hier else TYP nicht 21 
+								{
+									//nur für die Überlegung hier dies zu nutzen. Besser wohl eigene Kontrollfunktion oder Info-Sammler vector von vectoren zum Beispiel
+										//std::cerr << "Dieser Typ enthält keine Messdaten. Aktion nicht sinnvoll" << std::endl;
+									//bereits genutzter Speicher frei geben
+								}
+							}
+							pChildChildNodeOfCards->Release(); // Freigeben des Speichers für den Kindknoten  //geprueft
+						} //ENDE while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards
+						pChildrenChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder //geprueft
+					}
+
+					//pChildNodeOfCards->Release(); // Freigeben des Speichers für den Kindknoten  //geprueft nicht mehr da nun im Vector RRR32
+				} //ENDE while (pChildrenOfCards->nextNode(&pChildNodeOfCards) == S_OK)
+				pChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder //geprueft
+			}
+			pCardsNode->Release(); // Freigeben des Speichers für den "Cards"-Knoten //geprueft
+		}
+		else {
+			std::cerr << "Der Knoten 'Cards' wurde nicht gefunden." << std::endl;
+		}
+
+		if(dataINodeNamebstrName)
+			SysFreeString(dataINodeNamebstrName);
+		if(dataINodeNameDate)
+			SysFreeString(dataINodeNameDate);
+		if(dataINodeName)
+			SysFreeString(dataINodeName);
+		if(dataINodeValue)
+			SysFreeString(dataINodeValue);
+		
+	//diesen aber nun in einem Vector von Nodes speichern und am Ene in XMLData wieder frei geben
+	
+
+	return S_OK;
+}
+//------------------------------
+
+int XMLData::AnalyzeDOM_PicAllEvents() //RRR 40
+{
+	int errornumber = 0;
+
+	bool type21 = false;
+
+	BSTR dataINodeNameDate = NULL;
+	BSTR dataINodeName = NULL;
+	BSTR dataINodeValue = NULL;
+
+	BSTR NodeEventTheValue = NULL;
+	BSTR NodeDatetheValue = NULL;
+
+	//Aufräumer noch prüfen RRR30
+
+	IXMLDOMNode* pNodeRoot = NULL;
+	int IndexOfVector = 0;
+	//int IndexOfTest = 0;
+
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	//		STEP1: einmaliger Knoten Cards ermittelt
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	//while (1  > IndexOfVector)
+	while (nodes.size() > ((size_t)IndexOfVector))
+	{
+
+		IXMLDOMNodeList* pChildrenChildrenOfCards = NULL; //Für die Kinder von Card_Item  //Cards_Item
+		IXMLDOMNode* pChildChildNodeOfCards = NULL;
+		//+++++++++++++++++++++++++++++++++++++++++
+		IXMLDOMNode* pChildNodeOfCards = NULL;	pChildNodeOfCards = GetNode((size_t)IndexOfVector);
+		//+++++++++++++++++++++++++++++++++++++++++
+		HRESULT hr = pChildNodeOfCards->get_childNodes(&pChildrenChildrenOfCards);
+		if (SUCCEEDED(hr))
+		{
+			while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards) == S_OK)
+			{
+			//---------------------------Hier Problem
+				IXMLDOMNode* pSiblingNode = NULL;
+				hr = pChildChildNodeOfCards->get_nextSibling(&pSiblingNode);	//RRR44
+				if (SUCCEEDED(hr))
+					{
+						dataINodeName = NULL;
+						if(pSiblingNode)
+							hr = pSiblingNode->get_nodeName(&dataINodeName);
+
+						if (pSiblingNode && SUCCEEDED(hr) && wcscmp(dataINodeName, L"bstrName") == 0)
+							{
+								NodeEventTheValue = NULL;
+								hr = pSiblingNode->get_text(&NodeEventTheValue);
+								//erneut Schleife aller siblings mit Hilfe von Parent aus also eine Enbene zurück
+								IXMLDOMNode* pParentNode = NULL;
+								hr = pSiblingNode->get_parentNode(&pParentNode);    //dort wo Bedingung erfüllt schauen wer ist Parent
+								if (SUCCEEDED(hr) && pParentNode)
+								{
+								 // RRR3: Noch testen wenn gleicher Name //RRR4: was wenn genau gleich sehr theoretisch da sekundengenau ?
+									IXMLDOMNodeList* pSiblings = NULL;
+									//Liste wo auch Knoten Date als Sibling von nType und bstrName
+									hr = pParentNode->get_childNodes(&pSiblings);
+									if (SUCCEEDED(hr) && pSiblings)
+										{
+											IXMLDOMNode* pSibling = NULL;
+											while (pSiblings->nextNode(&pSibling) == S_OK)
+											{
+												//Wert von <Date> == 02/26/2019 10:57:29
+												dataINodeName = NULL;
+												hr = pSibling->get_nodeName(&dataINodeName);
+												if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"Date") == 0)
+												{
+													//Alles erfüllt für den ersten Ereignis-Eintrag
+													//##############################################
+													NodeDatetheValue = NULL;
+													hr = pSibling->get_text(&NodeDatetheValue);
+													std::pair<std::wstring, std::wstring> info(NodeEventTheValue, NodeDatetheValue);
+													xmlInfo.push_back(info);
+													if(NodeDatetheValue)
+														SysFreeString(NodeDatetheValue);
+													//##############################################
+
+												}
+
+											pSibling->Release(); // Freigeben des Speichers  //geprueft
+											} //ENDE while (pSiblings->nextNode(&pSibling)
+
+										}
+										if(pSiblings)
+										pSiblings->Release(); // Freigeben des Speichers  //geprueft
+								}
+
+								if(pParentNode)
+									pParentNode->Release(); // Freigeben des Speichers  hier ja
+
+
+
+								if(NodeEventTheValue)
+									SysFreeString(NodeEventTheValue);
+							}
+
+					}
+				if(pChildChildNodeOfCards)
+					pChildChildNodeOfCards->Release(); // Freigeben des Speichers für den Kindknoten  //geprueft     RRR99
+				if(pSiblingNode)     //(1)
+					pSiblingNode->Release();  //Prüfen   */
+			} //ENDE while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards
+			pChildrenChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder //geprueft   //RRR199
+		}
+		++IndexOfVector;
+	} //ENDE while (pChildrenOfCards->nextNode(&pChildNodeOfCards) == S_OK)
+
+
+	if (dataINodeNameDate)
+		SysFreeString(dataINodeNameDate);
+	if (dataINodeName)
+		SysFreeString(dataINodeName);
+	if (dataINodeValue)
+		SysFreeString(dataINodeValue);
+
+	return errornumber;
+}
+
+//------------------
+//Typen unbedingt prüfen !!!
+int XMLData::AnalyzeDOM_ProofTyp(size_t coiceInList) //RRR 40
+{
+	int errornumber = 0;
+	HRESULT hr = !SUCCEEDED(hr);
+	BSTR dataINodeName = NULL;
+	BSTR NodeTypeTheValue = NULL;
+
+	IXMLDOMNodeList* pChildrenChildrenOfCards = NULL; //Für die Kinder von Card_Item  //Cards_Item
+	IXMLDOMNode* pChildChildNodeOfCards = NULL;
+	//+++++++++++++++++++++++++++++++++++++++++
+	IXMLDOMNode* pChildNodeOfCards = NULL;
+	pChildNodeOfCards = GetNode((size_t)coiceInList); //hier was gewählz wiurde in der GUI vom User
+	//+++++++++++++++++++++++++++++++++++++++++
+	if(pChildNodeOfCards)
+		hr = pChildNodeOfCards->get_childNodes(&pChildrenChildrenOfCards);
+	if (SUCCEEDED(hr))
+		{
+		while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards) == S_OK)
+		{
+			IXMLDOMNode* pSiblingNode = NULL;
+			hr = pChildChildNodeOfCards->get_nextSibling(&pSiblingNode);	//RRR44
+			if (pSiblingNode && SUCCEEDED(hr))
+			{
+				dataINodeName = NULL;
+				if(pSiblingNode)
+				hr = pSiblingNode->get_nodeName(&dataINodeName);
+
+				if (pSiblingNode && SUCCEEDED(hr) && wcscmp(dataINodeName, L"nType") == 0)
+				{
+					NodeTypeTheValue = NULL;
+					hr = pSiblingNode->get_text(&NodeTypeTheValue);
+
+					if(SUCCEEDED(hr) && wcscmp(NodeTypeTheValue, L"21") == 0)
+					{
+						errornumber = 0;
+					}
+					else
+					{
+						errornumber = -1; // hier noch Kunden fragen was er genau will wenn nicht Typ 21 RRR111
+					}
+					if(pChildChildNodeOfCards)
+						pChildChildNodeOfCards->Release();   //geprueft     RRR99
+					if(pSiblingNode)
+						pSiblingNode->Release();
+                    if(pChildrenChildrenOfCards)
+						pChildrenChildrenOfCards->Release();
+                    if(NodeTypeTheValue)
+						SysFreeString(NodeTypeTheValue);
+					if (dataINodeName)
+						SysFreeString(dataINodeName);
+					return errornumber;
+				}
+
+			}
+            if(pSiblingNode)
+				pSiblingNode->Release();
+			if(pChildChildNodeOfCards)
+				pChildChildNodeOfCards->Release();
+		} //ENDE while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards
+		if(pChildrenChildrenOfCards)
+			pChildrenChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder //geprueft   //RRR199
+		}
+
+	if(NodeTypeTheValue)
+		SysFreeString(NodeTypeTheValue);
+	if (dataINodeName)
+		SysFreeString(dataINodeName);
+	return -1; //allgemeiner fehler wird nicht spezifiziert RRR111
+
+}
+
+
+
+int XMLData::AnalyzeDOM_PicEventUwish(std::wstring ereignis, std::wstring datum,int option) //RRR 40
+{
+	ClearTheInfo();
+	DummyIfThis();
+
+	int errornumber = 0;
+
+	bool type21 = false;
+	bool cardItem = false;
+
+	BSTR dataINodeNameDate = NULL;
+	BSTR dataINodeName = NULL;
+	BSTR dataINodeValue = NULL;
+
+	IXMLDOMNode* pNodeRoot = NULL;
+	unsigned IndexOfVector = 0;
+
+
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	//		STEP1: einmaliger Knoten Cards ermittelt
+	 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	IXMLDOMNode* pChildNodeOfCards = NULL;
+
+	while (!cardItem)// && nodes.size() > ((size_t)(IndexOfVector)))
+	{
+
+		std::cout << "@@@@@@Ich bin die WHILE um das bestimmte Card_item zu nutzen" << std::endl;
+		// Verarbeite Kinder des "Cards"-Knotens also Cards_Item finden welches Typ, bstrName [EINGABE KUNDE]? und wcscmp(dataINodeValue, [EINGABE KUNDE] ) == 0 | hier: L"C1 (f)"
+		//Nun Da hier alle Kindsknoten nun hier erscheinen
+		IXMLDOMNodeList* pChildrenChildrenOfCards = NULL; //Für die Kinder von Card_Item  //Cards_Item
+		IXMLDOMNode* pChildChildNodeOfCards = NULL;
+		//+++++++++++++++++++++++++++++++++++++++++
+		IXMLDOMNode* pChildNodeOfCards = NULL;	pChildNodeOfCards = GetNode((size_t)IndexOfVector);
+		//+++++++++++++++++++++++++++++++++++++++++
+		HRESULT hr = pChildNodeOfCards->get_childNodes(&pChildrenChildrenOfCards);
+		if (SUCCEEDED(hr)) {
+			while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards) == S_OK)
+			{
+
+				hr = pChildChildNodeOfCards->get_nodeName(&dataINodeName);
+				if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"nType") == 0) {
+					hr = pChildChildNodeOfCards->get_text(&dataINodeValue);
+					if (SUCCEEDED(hr) && wcscmp(dataINodeValue, L"21") == 0) {	// @[EINGABE KUNDE] per Zeilenwahl der Verschiedenen genannten Protokolle
+						std::wcout << "Typ ist: " << " Wert: " << dataINodeValue << std::endl;
+						type21 = true;
+						//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+						//		STEP2: Typ je Card_Item ermittelt
+						//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+						// Beispiel Wert nType "21" ist, überprüfe andere Bedingungen bstrName [EINGABE KUNDE]? und wcscmp(dataINodeValue, [EINGABE KUNDE] ) == 0 | hier: L"C1 (f)" ... diese sind siblings von nType und sogar Nachbarn, aber es bleibt mit Siblings zu arbeiten
+						IXMLDOMNode* pSiblingNode = NULL;
+						hr = pChildChildNodeOfCards->get_nextSibling(&pSiblingNode);	//RRR44
+						if (SUCCEEDED(hr))
+						{
+							// Wert von <bstrName> == C1 (f)
+							hr = pSiblingNode->get_nodeName(&dataINodeName);
+							if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"bstrName") == 0)
+							{
+								hr = pSiblingNode->get_text(&dataINodeValue);
+								//if (SUCCEEDED(hr) && wcscmp(dataINodeValue, L"C1 (f)") == 0) // @[EINGABE KUNDE]
+								BSTR ereignisBSTR = SysAllocString(ereignis.c_str());
+								if (SUCCEEDED(hr) && wcscmp(dataINodeValue, ereignisBSTR) == 0) // @[EINGABE KUNDE]
+								{
+									SysFreeString(ereignisBSTR);
+									//erneut Schleife aller siblings mit Hilfe von Parent aus also eine Enbene zurück
+									IXMLDOMNode* pParentNode;
+									hr = pSiblingNode->get_parentNode(&pParentNode);    //dort wo Bedingung erfüllt schauen wer ist Parent
+									if (SUCCEEDED(hr) && pParentNode) {                 // RRR3: Noch testen wenn gleicher Name //RRR4: was wenn genau gleich sehr theoretisch da sekundengenau ?
+										IXMLDOMNodeList* pSiblings;
+										//Liste wo auch Knoten Date als Sibling von nType und bstrName
+										hr = pParentNode->get_childNodes(&pSiblings);
+										if (SUCCEEDED(hr) && pSiblings) {
+											IXMLDOMNode* pSibling;
+											while (pSiblings->nextNode(&pSibling) == S_OK) {
+												//Wert von <Date> == 02/26/2019 10:57:29
+												hr = pSibling->get_nodeName(&dataINodeName);
+												if (SUCCEEDED(hr) && wcscmp(dataINodeName, L"Date") == 0)
+												{
+													hr = pSibling->get_text(&dataINodeValue);
+													BSTR datumBSTR = SysAllocString(datum.c_str());
+													if (SUCCEEDED(hr) && wcscmp(dataINodeValue, datumBSTR) == 0) // @[EINGABE KUNDE]
+													{
+														SysFreeString(datumBSTR);
+														cardItem = true;
+														findTheNode__Card_Item = pParentNode;
+														//addNode(pParentNode); //RRR30
+
+											//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+											//		STEP3: Nun ist richtige Card_Item ermittelt
+											//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+														//size_t index = 1;
+														int error  = FindTheMeasurementDataStrCat(pSiblings, option); //RRR45 müßte stimmen
+														if (error > 0)
+														{
+															//std::cout << "Probleme Messdaten zu erhalten. Eventuell XML-Datei beschädigt." << std::endl;
+															errornumber = 1;
+														}
+													}
+												}
+
+												pSibling->Release(); // Freigeben des Speichers  //geprueft
+											} //ENDE while (pSiblings->nextNode(&pSibling)
+											pSiblings->Release(); // Freigeben des Speichers  //geprueft
+										}
+										//pParentNode->Release(); // Freigeben des Speichers  //geprueft RRR20 muß raus da keine Kopie!!! sondern echtes gleich findTheNode__Card_Item = pParentNode;
+									}
+									pSiblingNode->Release();  //geprueft
+								}
+							}
+						}
+					}
+					else if (!type21)//RRR7 hier else TYP nicht 21 
+					{
+						//nur für die Überlegung hier dies zu nutzen. Besser wohl eigene Kontrollfunktion oder Info-Sammler vector von vectoren zum Beispiel
+							//std::cerr << "Dieser Typ enthält keine Messdaten. Aktion nicht sinnvoll" << std::endl;
+						//bereits genutzter Speicher frei geben
+					}
+				}
+				pChildChildNodeOfCards->Release(); // Freigeben des Speichers für den Kindknoten  //geprueft
+			} //ENDE while (pChildrenChildrenOfCards->nextNode(&pChildChildNodeOfCards
+			pChildrenChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder //geprueft
+		}
+		++IndexOfVector;
+	} //ENDE while (pChildrenOfCards->nextNode(&pChildNodeOfCards) == S_OK)
+
+
+	if (dataINodeNameDate)
+		SysFreeString(dataINodeNameDate);
+	if (dataINodeName)
+		SysFreeString(dataINodeName);
+	if (dataINodeValue)
+		SysFreeString(dataINodeValue);
+
+	return errornumber;
+}
+
+//_____
+
+
+
+//------------------------------
+const std::vector<std::pair<std::wstring, std::wstring> >& XMLData::GetXMLInfo() const {
+			return xmlInfo;
+		}
+
+
+//Hier werden die Cards_Item eingesammelt
+int XMLData::CollectCards_Items()
+{
+	int errornumber = 0;
+
+	HRESULT hr = IniRoot();
+	if (FAILED(hr))
+		return 1;
+
+	BSTR dataINodeNameDate = NULL;
+	BSTR dataINodeName = NULL;
+	BSTR dataINodeValue = NULL;
+	
+	//Aufräumer noch prüfen RRR30
+
+	IXMLDOMNodeList* pObjects = NULL;  //DEKLARATION: Alle Kinder von pRootNode
+	hr = pRootNode->get_childNodes(&pObjects); //BEKOMME: Alle Kinder von pRootNode
+	if (FAILED(hr)) {
+		//std::cerr << "Fehler beim Abrufen der Objektknoten." << std::endl;
+		if (pObjects != NULL)
+			pObjects->Release();
+		ReleaseResources();
+		return 2;
+	}
+
+	long nodeListLength = 0;
+	pObjects->get_length(&nodeListLength);
+	if (nodeListLength == 0) {
+		//std::cout << "Die Objektknotenliste ist leer." << std::endl;
+		pObjects->Release();
+		ReleaseResources();
+		return 3;
+	}
+
+	IXMLDOMNode* pCardsNode = NULL;
+	IXMLDOMNode* pNodeRoot = NULL;
+
+	HRESULT hr_loop = S_OK; // Variable zur Überwachung des Schleifenstatus
+	while (pObjects->nextNode(&pNodeRoot) == S_OK)  //SCHLEIFE: Solange Root Kinder hat
+	{
+		if (hr_loop != S_OK) {
+			break;
+		}
+
+		hr = pNodeRoot->get_nodeName(&dataINodeName);
+		if (SUCCEEDED(hr) && dataINodeName && wcscmp(dataINodeName, L"Cards") == 0) {
+			// Wenn der Knoten "Cards" ist, speichern Sie ihn und brechen Sie die Schleife ab
+			pCardsNode = pNodeRoot;
+			break;
+		}
+	}
+
+	pObjects->Release(); // Freigeben des Speichers für die Knotenliste
+
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	//		STEP1: einmaliger Knoten Cards ermittelt
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	if (pCardsNode) {
+
+		IXMLDOMNodeList* pChildrenOfCards = NULL;
+		hr = pCardsNode->get_childNodes(&pChildrenOfCards); //hier nun Cards_Item erhalten
+		if (SUCCEEDED(hr)) {
+			IXMLDOMNode* pChildNodeOfCards = NULL;
+			while (pChildrenOfCards->nextNode(&pChildNodeOfCards) == S_OK) {
+
+				//RRR50 Eigentlich noch überprüfung hinein
+				hr = pChildNodeOfCards->get_nodeName(&dataINodeName);
+				if (SUCCEEDED(hr) && dataINodeName && wcscmp(dataINodeName, L"Cards_Item") == 0) {
+
+					//std::wcout << "@@@@@@Ich bin die WHILE um alle Card_item zu finden. Ich habe gefunden: " << dataINodeName << std::endl; RRR60
+					// Verarbeite Kinder des "Cards"-Knotens also Cards_Item finden welches Typ, bstrName [EINGABE KUNDE]? und wcscmp(dataINodeValue, [EINGABE KUNDE] ) == 0 | hier: L"C1 (f)"
+					addNode(pChildNodeOfCards);	//RRR31
+				}
+			} //ENDE while (pChildrenOfCards->nextNode(&pChildNodeOfCards) == S_OK)
+			pChildrenOfCards->Release(); // Freigeben des Speichers für die Liste der Kinder //geprueft
+		}
+		pCardsNode->Release(); // Freigeben des Speichers für den "Cards"-Knoten //geprueft
+	}
+	else {
+		errornumber = 4;
+		//std::cerr << "Der Knoten 'Cards' wurde nicht gefunden." << std::endl;
+	}
+
+	if (dataINodeNameDate)
+		SysFreeString(dataINodeNameDate);
+	if (dataINodeName)
+		SysFreeString(dataINodeName);
+	if (dataINodeValue)
+		SysFreeString(dataINodeValue);
+	
+	if (errornumber > 0)
+		return errornumber;
+
+	size_t size_tIfZero = 0;
+	if (GetNodeCount() > size_tIfZero) {
+		//_againstEmbaSize_t = GetNodeCount();
+		return 0; // Erfolg
+	}
+	else {
+		return 5; // Fehler
+	}
+
+	/*size_t size_tIfZero = 0;
+	if (GetNodeCount() > size_tIfZero) {
+		return S_OK;
+	}
+	else
+	{
+		return FAILED(hr);
+		std::cerr << "Der Knoten 'Cards_Item' wurde nicht gefunden." << std::endl;
+	}
+	*/
+}
+
+
+
+//=============================================================================================================================================
+//Hilfsfunktion erstmal einfach oder
+//=============================================================================================================================================
+
+BasicNode::BasicNode()
+{
+	IXMLDOMNode* Iam = NULL;
+
+	bool IamTheRoot = false;
+	bool HaveChilds = false;
+	bool HaveSiblings = false;
+
+	bool guiEnable = false;
+	bool guiVisible = false;
+	std::wstring custom = L"";
+}
+
+BasicNode::~BasicNode()
+{
+}
+
+//=============================================================================================================================================
+//Class Pair2Strings //Hilfsklasse
+//=============================================================================================================================================
+
+
+//=============================================================================================================================================
+//Erklärung zur Analyse des DOM vom xml-Dokument
+//=============================================================================================================================================
+	/*
+Zu 1:
+<bstrMulti vt="8"></bstrMulti>
+<bstrUnit vt="8">V</bstrUnit>
+<nPrecision vt="3">0</nPrecision>
+<dValue vt="5">2010</dValue>
+
+
+Zu 2:
+Großeltern: <Results>
+	Eltern: <Results_Item>
+		Kinder:
+		Messdaten wie Vx, Ix, f
+			Um wirklich an die wie in (1) beschriebenen Messdaten beschreiber eines Messwertes zu kommen
+				haben die Messdaten Kinder
+
+*/

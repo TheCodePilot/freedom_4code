@@ -1,0 +1,703 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Neu_XML_TDBGrid.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm5 *Form5;
+//---------------------------------------------------------------------------
+#include "rr_system.h"
+
+namespace NS_TForm5
+{
+	static AnsiString WStrToAnsiString(std::wstring wstr)
+	{
+		AnsiString ansi(wstr.c_str());
+		return ansi;
+
+    }
+
+	static std::wstring AnsiToWide(const AnsiString ansi)
+	{
+		std::string str = ansi.c_str();
+		std::wstring wstr = std::wstring(str.begin(), str.end());
+		return wstr;
+	}
+
+	static std::string AnsiToString(const AnsiString ansi)
+	{
+		std::string str = ansi.c_str();
+		return str;
+	}
+
+	static std::wstring BSTRToWString(const BSTR bs)
+	{
+		assert(bs != NULL);
+		std::wstring wstr(bs, SysStringLen(bs));
+		return wstr;
+	}
+
+	static std::wstring WStringToBSTR(const std::wstring wstr)
+	{
+		assert(!wstr.empty());
+		BSTR bs = SysAllocStringLen(wstr.data(), wstr.size());
+		return bs;
+	}
+
+	//Speziell bezogen auf dieses Frame
+
+    TColumn* ColumnByName(TDBGrid* Grid, const AnsiString& Name)
+{
+    for (int i = 0; i < Grid->Columns->Count; i++)
+	{
+		AnsiString temp = Grid->Columns->Items[i]->FieldName;
+		if (temp == Name)
+        {
+            return Grid->Columns->Items[i];
+        }
+    }
+	return NULL;
+}
+
+
+
+
+}
+__fastcall TForm5::TForm5(TComponent* Owner)
+	: TForm(Owner)
+{
+	TESTcounter_SAussen = 0;
+	TESTcounter_SInnen = 0;
+
+	onesCDS3Create = false;
+	eventChoosed = false;
+	dbGridXMLin = false;
+	fromDBGrid4XMLCard_Item = false;
+	OpenTextFileDialog1 = new TOpenTextFileDialog(this);
+	OpenTextFileDialog1->InitialDir = GetCurrentDir();
+	//Nocfh CancelWert einbringen
+	if (OpenTextFileDialog1->Execute())
+	{
+		//ShowMessage("Datei ausgewählt: " + OpenTextFileDialog1->FileName);
+	}
+	UnicodeString ustr = OpenTextFileDialog1->FileName;
+	delete OpenTextFileDialog1;          //Ok wenn
+	DBGridUserChoice->Cursor = crHandPoint;
+	Memo1->ReadOnly = true;
+	Memo1->Clear();
+	clickedRow = 0;
+	countUserWish = 0;
+	if(!ustr.IsEmpty())
+	{
+		xmlProcess = NULL;
+		xmlProcess = new XMLData();
+		this->BorderStyle = bsDialog;
+
+		std::wstring wstr(ustr.w_str());
+		DataSource1->DataSet = ClientDataSet1;
+		DBGrid4XMLin->DataSource = DataSource1;
+		DBGrid4XMLin->ReadOnly = true;
+		DBGrid4XMLin->DefaultDrawing = false;
+		ClientDataSet1->FieldDefs->Clear();
+		ClientDataSet1->FieldDefs->Add("Name", ftString, 50);
+		ClientDataSet1->FieldDefs->Add("Datum/Uhrzeit", ftString, 255);
+		ClientDataSet1->CreateDataSet();
+		//Das zweite
+		DataSource2->DataSet = ClientDataSet2;
+		DBGrid4XMLCard_Item->DataSource = DataSource2;
+		DBGrid4XMLin->ReadOnly = false; //true; RR142
+		ClientDataSet2->FieldDefs->Clear();
+		ClientDataSet2->FieldDefs->Add("Name der Messgroesse", ftString, 50);
+		ClientDataSet2->FieldDefs->Add("Wert mit Einheit", ftString, 255);
+		ClientDataSet2->CreateDataSet();
+		//Das dritte
+		DataSource3->DataSet = ClientDataSet3;
+		DBGridUserChoice->DataSource = DataSource3;
+		DBGridUserChoice->ReadOnly = true;  //prüfen ob evntuell Probleme mit Dund Drop
+		ClientDataSet3->FieldDefs->Clear();
+		xmlProcess->LoadXMLDocument(wstr);
+		try
+		{
+			XML2Grid(xmlProcess);
+		}
+			catch (const Exception &e)
+		{
+			ShowMessage("Beim einlesen der XML-Daten. An Position" + e.Message);
+			if(xmlProcess) {
+				delete xmlProcess;
+				xmlProcess = NULL;
+			}
+		}
+	}
+	else
+	{
+		ShowMessage("Sie haben die Aktion abgebrochen. Ohne die Wahl einer XML-Datei werden keine Daten geladen");
+		//Am besten auch die Form abbauen oder Button File Dialog mal sehen
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm5::DBGrid4XMLinOnCellClick(TColumn *Column)
+{
+	Memo1->Clear();
+	if(xmlProcess)
+	{
+		xmlProcess->DummyIfThis();  //RRR142
+			//TEST
+		AnsiString clickEreignis = DBGrid4XMLin->Columns->Items[0]->Field->AsString;
+		AnsiString clickDatum = DBGrid4XMLin->Columns->Items[1]->Field->AsString;
+
+		std::wstring ereignis = NS_TForm5::AnsiToWide(clickEreignis);
+		std::wstring datum = NS_TForm5::AnsiToWide(clickDatum);
+		int i = DBGrid4XMLin->DataSource->DataSet->RecNo;// GetRecNo(); // Eins - basiert mit 1 beginnend
+
+		if(xmlProcess->AnalyzeDOM_ProofTyp(i-1)==0) //RRR42           Index der Speicherung bei XMLData 0 - basiert
+		{
+			xmlProcess->AnalyzeDOM_PicEventUwish(ereignis, datum, 0); //bei 1: Nur Jede Art von Messwert einmalig
+
+			DBGrid4XMLCard_Item->DataSource->DataSet->Next();
+			std::vector<std::pair<std::wstring, std::wstring> > data = xmlProcess->GetXMLInfo();
+
+			for(size_t i = 0; i < data.size(); ++i)
+			{
+				const std::pair < std::wstring, std::wstring>& pair = (data)[i];
+				ClientDataSet2->Append();
+				ClientDataSet2->FieldByName("Name der Messgroesse")->AsString = pair.first.c_str();
+				ClientDataSet2->FieldByName("Wert mit Einheit")->AsString = pair.second.c_str();
+				ClientDataSet2->Post();
+			}
+
+			DBGrid4XMLCard_Item->DataSource->DataSet->RecNo = 1;
+		}
+		else
+		{
+			//ShowMessage("Noch zu erledigen : Informationen von anderen Typen in das Memo hinein");
+			std::wstring wcomment = xmlProcess->GetCommentIfType18();
+			AnsiString ansi = NS_TForm5::WStrToAnsiString(wcomment);
+
+			ClientDataSet2->EmptyDataSet();
+			Memo1->Clear();
+			Memo1->Lines->Add(ansi);
+
+		}
+
+	}
+
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm5::OnDestroyAndClear(TObject *Sender)
+{
+	if(xmlProcess)
+		delete xmlProcess;
+}
+//---------------------------------------------------------------------------
+//=============================================================================================================================================
+void __fastcall TForm5::FillTDBGridFromXML(XMLData* xmlProcess)
+//=============================================================================================================================================
+{
+	if(xmlProcess)
+	{
+		DBGrid4XMLin->DataSource->DataSet->Next();
+		std::vector<std::pair<std::wstring, std::wstring> > data = xmlProcess->GetXMLInfo();
+
+		for(size_t i = 0; i < data.size(); ++i)
+		{
+			const std::pair < std::wstring, std::wstring>& pair = (data)[i];
+			ClientDataSet1->Append();
+			ClientDataSet1->FieldByName("Name")->AsString = pair.first.c_str();
+			ClientDataSet1->FieldByName("Datum/Uhrzeit")->AsString = pair.second.c_str();
+			ClientDataSet1->Post();
+		}
+		dbGridXMLin = true;
+	}
+}
+
+//=============================================================================================================================================
+void __fastcall TForm5::XML2Grid(XMLData* xmlProcess)
+//=============================================================================================================================================
+{
+	//Zentrale Routine hier auch Filterung
+	xmlProcess->CollectCards_Items();
+	xmlProcess->AnalyzeDOM_PicAllEvents();  //dies ist Normal
+	//Zentrale Routine hier auch Filterung
+	FillTDBGridFromXML(xmlProcess);
+		//xmlProcess->AnalyzeDOM_PicEventUwish(L"C2", L"02/26/2019 10:59:09", 1);
+
+}
+
+void __fastcall TForm5::DBGrid4XMLinDrawColumnCell(TObject *Sender, const TRect &Rect,
+          int DataCol, TColumn *Column, TGridDrawState State)
+{
+    if(Column->Index ==1)
+	{
+		DBGrid4XMLin->Canvas->Brush->Color = TColor(RGB(225,225,225)); //(192,192,192));// clGray;
+	}
+	else
+	{
+		DBGrid4XMLin->Canvas->Brush->Color = clWindow;
+	}
+
+	DBGrid4XMLin->DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+}
+//---------------------------------------------------------------------------
+//=============================================================================================================================================
+//Hier wird das Drag und Drop Manuell erreicht. Entscheidend die bool-Variable: fromDBGrid4XMLCard_Item
+//=============================================================================================================================================
+
+void __fastcall TForm5::DBGrid4XMLCard_ItemOnCellKlick(TColumn *Column)
+{
+	eventChoosed = true;
+			fromDBGrid4XMLCard_Item = !false;  //RRR142
+				//DBGrid4XMLCard_Item->Cursor = crDrag;  //RRR142
+		DBGridUserChoice->Cursor = crHandPoint;
+			//DBGrid4XMLCard_Item->Cursor = crHandPoint;
+
+		AnsiString clickEreignis = DBGrid4XMLCard_Item->Columns->Items[0]->Field->AsString;
+		AnsiString clickDatum = DBGrid4XMLCard_Item->Columns->Items[1]->Field->AsString;
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm5::SBMouseEnterUserGrid(TObject *Sender)
+{
+	if(fromDBGrid4XMLCard_Item == true)
+	{
+		fromDBGrid4XMLCard_Item = false;
+		NewColumnName();
+		UpdateUserGrid();
+	}
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall TForm5::Form5MouseEnter(TObject *Sender)
+{
+	Form5->Cursor = crNoDrop;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm5::DBGrid4XMLCard_ItemMouseEnter(TObject *Sender)
+{
+
+	//DBGrid4XMLCard_Item->Cursor = crDrag;
+ return;
+	if(fromDBGrid4XMLCard_Item == !true)
+		DBGrid4XMLCard_Item->Cursor = crHandPoint;
+	else
+		DBGrid4XMLCard_Item->Cursor = crDrag;
+}
+//---------------------------------------------------------------------------
+
+//hier noch unterscheiden ob etwas gewählt wurde oder nicht also ob ein Card_Item gewählt wurde.
+void __fastcall TForm5::UserGridEnter(TObject *Sender)
+{
+return;
+	ShowMessage("UserGridEnter::Bitte die gewählten Messgrößen wie Spannung, Strom usw. von der linken Tabelle hier hinein ziehen");
+}
+//---------------------------------------------------------------------------
+
+//if(fromDBGrid4XMLCard_Item == true)
+void __fastcall TForm5::DBGrid4XMLCard_ItemMouseMove(TObject *Sender, TShiftState Shift,
+          int X, int Y)
+{ return; //RRR142
+	if(fromDBGrid4XMLCard_Item == true)
+	{
+				//ShowMessage("DBGrid4XMLCard_ItemMouseMove : ");
+		//DBGrid4XMLCard_Item->Cursor = crDrag;
+		Screen->Cursor = crDrag;
+	}
+
+}
+//---------------------------------------------------------------------------
+
+//Es fehlt noch das nur Abwurf wenn es darüber ist
+
+
+void __fastcall TForm5::SBDBGridUserChoiceEndDrag(TObject *Sender, TObject *Target,
+		  int X, int Y)
+{
+	return;
+	ShowMessage("SBDBGridUserChoiceEndDrag");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm5::SBUserGridMouseMove(TObject *Sender, TShiftState Shift, int X,
+		  int Y)
+{
+	return;
+	  if(fromDBGrid4XMLCard_Item == true)
+	{
+		AnsiString clickleft = DBGrid4XMLCard_Item->Columns->Items[0]->Field->AsString;
+		AnsiString clickright = DBGrid4XMLCard_Item->Columns->Items[1]->Field->AsString;
+
+		if (NS_TForm5::ColumnByName(DBGridUserChoice, clickleft) != NULL)
+		{
+			ShowMessage("Der Spaltenname existiert schon");	// Der Spaltenname existiert bereits
+			return;
+		}
+			ShowMessage("SBUserGridMouseMove");
+	}
+
+}
+//---------------------------------------------------------------------------
+//=============================================================================================================================================
+//Hilfsfunktionen
+//=============================================================================================================================================
+void __fastcall TForm5::NewColumnName()
+{
+	bool columnNameIsDouble = false;
+
+	AnsiString clickleft = DBGrid4XMLCard_Item->Columns->Items[0]->Field->AsString;
+	AnsiString clickright = DBGrid4XMLCard_Item->Columns->Items[1]->Field->AsString;
+	//prüfen ob schon mal gewählt wurde
+		std::vector<std::pair<std::wstring, std::wstring> > dataColumName = xmlProcess->GetXMLInfo4UserChoice();
+		for(size_t j = 0; j < dataColumName.size(); ++j)
+		{
+			const std::pair < std::wstring, std::wstring>& pair = dataColumName[j];
+			const std::wstring wstr = pair.first;
+
+			if((clickleft != L"") && (NS_TForm5::AnsiToWide(clickleft) == wstr))
+			{
+				ShowMessage("Der Spaltenname existiert schon");
+				columnNameIsDouble = true;
+			}
+
+		}
+
+		//prüfen ob schon mal gewählt wurde
+		if(ClientDataSet3->Active)
+		{
+			//ShowMessage("CLientDataSet is Active");
+			ClientDataSet3->Close();
+		}
+
+		if(!columnNameIsDouble)
+		{
+			//Info was der User anklickt
+			std::pair<std::wstring, std::wstring> info(NS_TForm5::AnsiToWide(clickleft), NS_TForm5::AnsiToWide(clickright)); //RRR42
+			xmlProcess->xmlInfo4UserChoice.push_back(info);
+			ClientDataSet3->FieldDefs->Add(clickleft, ftString, 12);
+
+		}
+
+		if(!ClientDataSet3->Active)
+		{
+			ClientDataSet3->CreateDataSet();
+			ClientDataSet3->Open();
+		}
+			//ClientDataSet3->CreateDataSet();
+			ClientDataSet3->FieldDefs->Update();
+			DBGridUserChoice->Refresh();
+			//ClientDataSet3->Open();
+
+}
+/*
+In Worten:
+Ich habe Vom Allgorythmus eine Sammlung sie kommt von : dataXML = xmlProcess->GetXMLInfo();
+Ich habe eine Sammlung die sich pro UserAktion erhöht. Bereits wenn Spaltenname generiert wurde
+	und bevor irgendein Doppelt-Test -> hier vielleicht ein Hinweis ? -> wenn doppelt wird nichts gemacht
+	wenn nicht doppelt erhöht sich diese sammlung in : dataUserChoice = xmlProcess->GetXMLInfo4UserChoice();
+Ich habe den aktuellen Choose des Users : clickleft aus DBGrid4XMLCard_Item->Columns->Items[0]...
+
+Was möchte ich:
+Sondersituation wenn noch leer
+
+Wenn schon da gewesen nur Editieren
+
+Eigentlich darf sich nie bia am Anfang die Append ergeben
+weil dann RecNo steigt
+
+
+
+*/
+
+
+
+
+//Achtung Append und Post aussen
+void __fastcall TForm5::UpdateUserGrid()
+{
+	//TESTcounter_SAussen++;
+	//TESTcounter_SInnen = 0;
+	size_t sizeIsOne = 1;
+	int seiI = -1;
+	int seiJ = -1;
+	bool schonSpate1Fall = false;
+
+	std::vector<std::pair<std::wstring, std::wstring> > dataMaxFromColumOne;
+
+	AnsiString clickleft = DBGrid4XMLCard_Item->Columns->Items[0]->Field->AsString;
+
+	if(xmlProcess)
+			{
+				std::vector<std::pair<std::wstring, std::wstring> > dataUserChoice = xmlProcess->GetXMLInfo4UserChoice();
+				size_t sizeUserChoice = dataUserChoice.size();
+
+				std::vector<std::pair<std::wstring, std::wstring> > dataXML = xmlProcess->GetXMLInfo();
+				//Schleife der Überschrift
+				for(size_t i = 0; i < dataUserChoice.size();++i )
+				{
+					const std::pair < std::wstring, std::wstring>& pairUserChoice = dataUserChoice[i];
+
+					//Nun schauen wo überall gleiche Userchoice als Einheit
+					for(size_t j = 0; j < dataXML.size(); ++j)
+					{
+
+						const std::pair < std::wstring, std::wstring>& pairOfXML = dataXML[j];
+
+						std::wstring w1User = pairUserChoice.first;
+						std::wstring w3XML = pairOfXML.first; //CaptionOfColum
+						std::wstring w5UserActual = NS_TForm5::AnsiToWide(clickleft); //ValueXML
+
+						//wenn in großen Pool von XML ein bereits gespeichertes UserEreignis gleich dann weiter schauen
+						if((w1User != L"") && (w1User == w3XML))
+						{
+							// Überprüfen Sie, ob ein Datensatz für die aktuelle Messreihe existiert
+							//________________________________________________________________________
+							bool found = false;
+
+							//Fall wenn sofort EOF da wäre bei nur eionem Eintrag dann immer Edit
+							if((42<=42) &&(i == 0))// && (sizeUserChoice == sizeIsOne))
+							{
+								std::pair<std::wstring, std::wstring> info(pairOfXML.second, L" "); //RRR42
+								dataMaxFromColumOne.push_back(info);
+								//found = false;
+							}
+							else if(true)
+							{
+								//AnsiString ansiFromUserData = NS_TForm5::WStrToAnsiString(w1User);
+								//AnsiString ansiUserActual = NS_TForm5::WStrToAnsiString(w5UserActual);
+                                std::pair<std::wstring, std::wstring> info(pairOfXML.second, L" "); //RRR42
+								dataMaxFromColumOne.push_back(info);
+
+                            }
+						}
+
+					}
+							//if (ClientDataSet3->RecordCount <=4)
+							if(i == 0)// && (sizeUserChoice == sizeIsOne))
+							{
+								for(size_t k = 0; k < dataMaxFromColumOne.size();++k )
+								{
+									const std::pair < std::wstring, std::wstring>& pairMaxFromColumOne = dataMaxFromColumOne[k];
+								//In bereits bestehenden Schreiben
+								ClientDataSet3->Append();//		Edit();
+								TESTcounter_SAussen++;
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = NS_TForm5::WStrToAnsiString(pairMaxFromColumOne.first);
+								ClientDataSet3->Post();
+								ClientDataSet3->Next();
+								}
+								dataMaxFromColumOne.clear();
+								schonSpate1Fall = true;
+								//ClientDataSet3->RecNo = 1;
+							}
+
+							else //if(!schonSpate1Fall)
+							{
+								ClientDataSet3->RecNo = 1;
+								for(size_t k = 0; k < dataMaxFromColumOne.size();++k )
+								{
+									const std::pair < std::wstring, std::wstring>& pairMaxFromColumOne = dataMaxFromColumOne[k];
+								//In bereits bestehenden Schreiben
+								ClientDataSet3->Edit();//       Append()
+								TESTcounter_SAussen++;
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = NS_TForm5::WStrToAnsiString(pairMaxFromColumOne.first);
+								ClientDataSet3->Post();
+								ClientDataSet3->Next();
+								}
+								dataMaxFromColumOne.clear();
+							}
+
+				}
+				//ClientDataSet3->RecNo = 1;
+
+				//ClientDataSet3->FieldDefs->Update();
+				//DBGridUserChoice->Refresh();
+					//ShowMessage (L"TestCount für Edit is : " + IntToStr(TESTcounter_SAussen));
+					//ShowMessage (L"TestCount für Append is : " + IntToStr(TESTcounter_SInnen));
+			}
+}
+
+
+
+
+
+//Achtung Append und Post aussen
+void __fastcall TForm5::UpdateUserGridBisher()
+{
+	TESTcounter_SAussen++;
+	size_t sizeIsOne = 1;
+	AnsiString clickleft = DBGrid4XMLCard_Item->Columns->Items[0]->Field->AsString;
+
+	if(xmlProcess)
+			{
+				std::vector<std::pair<std::wstring, std::wstring> > dataUserChoice = xmlProcess->GetXMLInfo4UserChoice();
+				size_t sizeUserChoice = dataUserChoice.size();
+								std::vector<std::pair<std::wstring, std::wstring> > dataXML = xmlProcess->GetXMLInfo();
+
+				//Schleife der Überschriften
+				for(size_t i = 0; i < dataUserChoice.size();++i )
+				{
+					TESTcounter_SInnen++;
+					if(i == 2)
+					{
+						int k  = 0;
+						k++;
+					}
+
+					const std::pair < std::wstring, std::wstring>& pairUserChoice = dataUserChoice[i];
+
+					//Nun schauen wo überall gleiche Userchoice als Einheit
+					for(size_t j = 0; j < dataXML.size(); ++j)
+					{
+						const std::pair < std::wstring, std::wstring>& pairOfXML = dataXML[j];
+
+						std::wstring w1User = pairUserChoice.first;
+						std::wstring w2User = pairUserChoice.second; //ValueUser
+						std::wstring w3XML = pairOfXML.first; //CaptionOfColum
+						std::wstring w4XML = pairOfXML.second; //ValueXML
+						std::wstring w5UserActual = NS_TForm5::AnsiToWide(clickleft); //ValueXML
+
+						//if((w5UserActual != L"") && (w5UserActual == w3XML)) //std::wcscmp(w1 ,w2) == 0)
+						if((w1User != L"") && (w1User == w3XML))
+						{
+							// Überprüfen Sie, ob ein Datensatz für die aktuelle Messreihe existiert
+							//________________________________________________________________________
+							bool found = false;
+							if((TESTcounter_SAussen == 2)&& i==2) //(TESTcounter_SInnen == 1))
+							{
+								int i;
+								i++;
+							}
+							//Fall wenn sofort EOF da wäre bei nur eionem Eintrag dann immer Edit
+							//if(ClientDataSet3->RecordCount ==0)
+							//if(i==0){
+							if((i == 0) && (sizeUserChoice == sizeIsOne))
+							{
+								found = !true;
+							}
+								else
+							{
+
+
+			//ClientDataSet3->First();
+							while (!ClientDataSet3->Eof)
+							{
+								AnsiString ansiFromUserData = NS_TForm5::WStrToAnsiString(w1User);
+								AnsiString ansiUserActual = NS_TForm5::WStrToAnsiString(w5UserActual);
+								AnsiString ansiFieldName = ClientDataSet3->FieldByName(ansiUserActual)->AsString;
+
+								bool test = false;
+								test = ClientDataSet3->FieldByName(ansiUserActual)->AsString != NULL;       //ansiUserActual
+								if (test && (ansiUserActual != NULL) && (ansiFromUserData != 0) && (AnsiCompareStr(ansiUserActual, ansiFromUserData)==0) ) // pairUserChoice.first.c_str())
+								//if(1==1)
+								{
+									found = true;
+									//ClientDataSet3->RecNo = 1;
+								break;
+								}
+								ClientDataSet3->Next();
+							}
+							}
+							if (found)
+							{
+							// Wenn ja, aktualisieren Sie den bestehenden Datensatz
+
+								ClientDataSet3->Edit();
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
+								ClientDataSet3->Post();
+								ClientDataSet3->Next();
+							}
+							else
+							{
+								// Wenn nicht, fügen Sie einen neuen Datensatz hinzu
+								ClientDataSet3->Append();
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
+								ClientDataSet3->Post();
+							}
+						}
+
+					}
+
+						ClientDataSet3->RecNo = 1;
+					//ClientDataSet3->First();
+				}
+
+				//
+				ClientDataSet3->FieldDefs->Update();
+				DBGridUserChoice->Refresh();
+			}
+}
+
+void __fastcall TForm5::UpdateUserGridError()
+{
+	if(!ClientDataSet3->Active)
+			{
+				ClientDataSet3->CreateDataSet();
+			}
+				if(xmlProcess)
+			{
+				//DBGrid4XMLin->DataSource->DataSet->Next();
+				std::vector<std::pair<std::wstring, std::wstring> > data = xmlProcess->GetXMLInfo4UserChoice();
+							//ClientDataSet3->Append();   //prüfen
+				for(size_t i = 0; i < data.size();++i )
+				{
+					const std::pair < std::wstring, std::wstring>& pair = (data)[i];
+					//ClientDataSet3->Append();  //hier sonst Diagonal
+					//ClientDataSet3->FieldByName(pair.first.c_str())->AsString = pair.second.c_str();
+					//ClientDataSet3->Post();
+
+					//Schleife welche Werte schon OK sind
+							//DBGridUserChoice->DataSource->DataSet->Next();  RRR42
+					std::vector<std::pair<std::wstring, std::wstring> > dataValues = xmlProcess->GetXMLInfo();
+
+					for(size_t j = 0; j < dataValues.size(); ++j)
+					{
+						const std::pair < std::wstring, std::wstring>& pairValue = (dataValues)[j];
+						//ClientDataSet3->Append();
+						//wcscmp(dataINodeName, L"bstrUnit")) == 0
+							//if(std::wcscmp(pair.first ,pairValue.first) == 0)
+						std::wstring w1 = pair.first;
+						std::wstring w2 = pairValue.first;
+
+						//char* p = pair.first;
+						if((w1 != L"") && (w1 == w2)) //std::wcscmp(w1 ,w2) == 0)
+						{
+							ClientDataSet3->Append();
+							ClientDataSet3->FieldByName(pair.first.c_str())->AsString = pair.second.c_str();
+						//ClientDataSet3->Post();
+							//ClientDataSet3->FieldByName("Name der Messgroesse")->AsString = pair.first.c_str();
+							//ClientDataSet3->FieldByName("Wert mit Einheit")->AsString = pair.second.c_str();
+						//ClientDataSet3->Post();
+						}
+					}
+					//Schleife welche Werte schon OK sind
+
+				}
+
+							ClientDataSet3->Post(); //prüfen
+			}
+
+}
+
+void __fastcall TForm5::DBGrid4XMLCard_ItemStartDrag(TObject *Sender, TDragObject *&DragObject)
+
+{
+	Screen->Cursor = crDrag;
+}
+//---------------------------------------------------------------------------
+
+//hier noch unterscheiden ob Voll oder nicht
+void __fastcall TForm5::DBGrid4XMLCard_ItemEnter(TObject *Sender)
+{
+
+	//if(!eventChoosed)
+
+	if(DBGrid4XMLCard_Item->DataSource->DataSet->RecNo == 0)
+		ShowMessage("Bitte die gewählte Messreihe von der oberen Tabelle hier hinein ziehen");
+}
+//---------------------------------------------------------------------------
+

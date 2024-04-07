@@ -1,0 +1,87 @@
+//---------------------------------------------------------------------------
+
+#ifndef Neu_XML_TDBGridH
+#define Neu_XML_TDBGridH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Data.DB.hpp>
+#include <Vcl.DBGrids.hpp>
+#include <Vcl.Grids.hpp>
+#include <Datasnap.DBClient.hpp>
+#include <Vcl.Dialogs.hpp>
+#include <Vcl.ExtDlgs.hpp>
+//---------------------------------------------------------------------------
+class XMLData;
+class TForm5 : public TForm
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TDBGrid *DBGrid4XMLin;
+	TClientDataSet *ClientDataSet1;
+	TDBGrid *DBGrid4XMLCard_Item;
+	TDataSource *DataSource1;
+	TOpenTextFileDialog *OpenTextFileDialog1;
+	TClientDataSet *ClientDataSet2;
+	TDataSource *DataSource2;
+	TMemo *Memo1;
+	TClientDataSet *ClientDataSet3;
+	TDataSource *DataSource3;
+	TDBGrid *DBGridUserChoice;
+	void __fastcall DBGrid4XMLinOnCellClick(TColumn *Column);
+	void __fastcall OnDestroyAndClear(TObject *Sender);
+	void __fastcall DBGrid4XMLinDrawColumnCell(TObject *Sender, const TRect &Rect, int DataCol,
+          TColumn *Column, TGridDrawState State);
+	void __fastcall DBGrid4XMLCard_ItemOnCellKlick(TColumn *Column);
+	void __fastcall SBMouseEnterUserGrid(TObject *Sender);
+	void __fastcall Form5MouseEnter(TObject *Sender);
+	void __fastcall DBGrid4XMLCard_ItemEnter(TObject *Sender);
+	void __fastcall UserGridEnter(TObject *Sender);
+	void __fastcall DBGrid4XMLCard_ItemMouseMove(TObject *Sender, TShiftState Shift,
+          int X, int Y);
+
+
+
+
+
+private:	// Benutzer-Deklarationen
+	void __fastcall FillTDBGridFromXML(XMLData* xmlProcess);
+public:		// Benutzer-Deklarationen
+	__fastcall TForm5(TComponent* Owner);
+	void __fastcall XML2Grid(XMLData* xmlProcess);
+	XMLData* xmlProcess;
+	int clickedRow;
+	bool fromDBGrid4XMLCard_Item;
+    int countUserWish;
+
+	/*
+	DragDrop ... BNDRDragDrop(TObject *Sender, TObject *Source, int x, int y)
+				PNausLagerDragDrop(TObject *Sender, TObject *Source, int X, int Y)
+				PNPapierloseFertigungDragDrop(TObject *Sender, TObject *Source, int X, int Y)
+
+	//#######################################
+
+	C:\CPP_Builder_Sydney\Projekte\00_MDELive_Sydney\Units_Visualisierung\Unit4_CardBoard.cpp
+	SBDragDrop(TObject *Sender, TObject *Source, int X, int Y)
+
+
+    void __fastcall TFrameDRstatus::FrameDragOver(TObject *Sender, TObject *Source, int x, int y, TDragState State, bool &Accept)
+//==============================================================================================================================================
+{
+	if(Source->InheritsFrom(__classid(TLabel))){
+		Accept = true;
+	}
+	else{
+		Accept = false;
+	}
+}
+
+
+
+	*/
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm5 *Form5;
+//---------------------------------------------------------------------------
+#endif

@@ -1,0 +1,513 @@
+﻿#ifndef RR_SYSTEM_H
+#define RR_SYSTEM_H
+
+#include <Windows.h> //BSTR
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+	//#include <comdef.h>  // _bstr_t    Probleme ohne das auskommen
+#include <msxml6.h>  // IXMLDOMNode      !!!!GANZ WICHTIG!!!!
+	//#pragma comment(lib, "msxml6.lib")
+
+//#include <memory>  //std::shared_ptr  wird nicht mit bcc32 unterstützt :(
+#include <vcl.h>
+
+//bcc32 akzeptiert kein nullptr, kein shared_ptr, keine Initialliste bei Konstruktoren, kein auto
+namespace RRTools {     //Für die Konsole zum schnellen Testen
+
+	const int WCEQUALOP = 0;
+	const int WCSCMP = 1;
+
+	static void TestVergleiche(IXMLDOMNode* pNode1, IXMLDOMNode* pNode2, int option = WCEQUALOP) {
+
+		BSTR nodeName1, nodeName2;
+		pNode1->get_nodeName(&nodeName1);
+		pNode2->get_nodeName(&nodeName2);
+
+		if (option == WCEQUALOP)
+		{
+			std::wcout << "Mit dem == Operator von std::wstring : " << L"Vergleiche Knoten: " << nodeName1 << L" und " << nodeName2 << std::endl;
+
+			std::wstring wnodeName1(nodeName1);
+			std::wstring wnodeName2(nodeName2);
+
+
+			if (wnodeName1 == wnodeName2) {
+                std::wcout << L"Die Knoten sind gleich." << std::endl;
+            }
+            else {
+                std::wcout << L"Die Knoten sind nicht gleich." << std::endl;
+            }
+
+        }
+        else if (option == WCSCMP)
+		{
+            std::wcout << "Mit std::wcscmp(nodeName1, nodeName2) : " << L"Vergleiche Knoten: " << nodeName1 << L" und " << nodeName2 << std::endl;
+
+            if (wcscmp(nodeName1, nodeName2) == 0) {
+                std::wcout << L"Die Knoten sind gleich." << std::endl;
+            }
+            else {
+                std::wcout << L"Die Knoten sind nicht gleich." << std::endl;
+            }
+        }
+		else
+        {
+            std::cout << "Parameterfehler bei RRTools::TestFirst2Nots. Bitte als zweiten Parameter die Option :  WCEQUALOP = 0 oder WCSCMP = 1 waehlen." << std::endl;
+        }
+
+        SysFreeString(nodeName1);
+        SysFreeString(nodeName2);
+    }
+
+    static bool TestFirst2Nots(IXMLDOMNode* pRootNode, int option = WCEQUALOP)
+    {
+        bool returner = false;
+        if (pRootNode) {
+
+            IXMLDOMNode* pNode1 = NULL;
+            IXMLDOMNode* pNode2 = NULL;
+
+            // Erster und zweiter Knoten des Wurzelknotens holen
+            pRootNode->get_firstChild(&pNode1);
+            if (pNode1) {
+                pNode1->get_nextSibling(&pNode2);
+                if (pNode2) {
+
+                    RRTools::TestVergleiche(pNode1, pNode2, option);
+                }
+                pNode1->Release();
+            }
+            if (pNode2) {
+                pNode2->Release();
+                returner = true;
+            }
+        }
+
+        return returner;
+
+    }
+
+    static void printNode(IXMLDOMNode* pNode, int depth = 0) {
+        BSTR nodeName, nodeValue;
+        pNode->get_nodeName(&nodeName);
+        pNode->get_text(&nodeValue);
+		if (nodeName && wcscmp(nodeName, L"#text") == 0) {
+            IXMLDOMNode* pParentNode;
+            pNode->get_parentNode(&pParentNode);
+            if (pParentNode) {
+                BSTR parentName;
+                pParentNode->get_nodeName(&parentName);
+                for (int i = 0; i < depth; ++i) std::wcout << L"  ";
+                std::wcout << L"Der Knoten hat den Namen \"" << parentName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+                SysFreeString(parentName);
+                pParentNode->Release();
+            }
+        }
+        SysFreeString(nodeName);
+        SysFreeString(nodeValue);
+
+        IXMLDOMNode* pChildNode;
+        pNode->get_firstChild(&pChildNode);
+		while (pChildNode) {
+            printNode(pChildNode, depth + 1);
+            IXMLDOMNode* pNextNode;
+			pChildNode->get_nextSibling(&pNextNode);
+			pChildNode->Release();
+			pChildNode = pNextNode;
+		}
+    }
+
+	static void printNodeV1(IXMLDOMNode* pNode, int depth = 0) {
+		BSTR nodeName, nodeValue;
+		pNode->get_nodeName(&nodeName);
+		pNode->get_text(&nodeValue);
+		//Erweiterter Teil
+		int rc = std::wcsncmp(nodeName, L"#", 1); //Compares at most count wide characters of two null-terminated wide strings.
+
+		//if ( nodeName && (wcscmp(nodeName, L"#text") == 0) && (wcscmp(nodeName, L"Position") == 0)) // && (rc != 0) )
+		//if (  (wcscmp(nodeName, L"Position") != 0) )
+		//Damit nur echte Werte
+		if ( nodeName && (wcscmp(nodeName, L"#text") == 0) )
+		{
+			//if (  (wcscmp(nodeName, L"Email") != 0) )
+			{
+			IXMLDOMNode* pParentNode;
+			pNode->get_parentNode(&pParentNode);
+			if (pParentNode) {
+				BSTR parentName;
+				pParentNode->get_nodeName(&parentName);
+				for (int i = 0; i < depth; ++i) std::wcout << L"  ";
+				if (  (wcscmp(parentName, L"Email") != 0) ) //Es scheint der Text als Kind vom Email
+				std::wcout << L"Der Knoten hat den Namen \"" << parentName << L"\" und den Wert \"" << nodeValue << L"\"." << std::endl;
+				SysFreeString(parentName);
+				pParentNode->Release();
+			}
+			}
+        }
+        SysFreeString(nodeName);
+        SysFreeString(nodeValue);
+
+        IXMLDOMNode* pChildNode;
+        pNode->get_firstChild(&pChildNode);
+		while (pChildNode) {
+			printNodeV1(pChildNode, depth + 1);
+			IXMLDOMNode* pNextNode;
+			pChildNode->get_nextSibling(&pNextNode);
+			pChildNode->Release();
+			pChildNode = pNextNode;
+		}
+	}
+
+
+	static std::pair<std::wstring, bool> getNodeInfo(IXMLDOMNode* pNode) {
+		std::wstring nodeType;
+        bool hasChild = false;
+
+		if (pNode == NULL) {
+
+            std::pair<std::wstring, bool> nodeinfotemp;
+			nodeinfotemp.first = L"";
+			nodeinfotemp.second = hasChild;
+			return nodeinfotemp;
+				//return { nodeType, hasChild }; wird von bcc32 nicht unterstützt
+        }
+
+		// Extrahieren des Knotentyps
+        DOMNodeType type;
+        pNode->get_nodeType(&type);
+        switch (type) {
+        case NODE_ELEMENT:
+            nodeType = L"Element"; // Beispiel: <Tag>...</Tag>
+            break;
+        case NODE_ATTRIBUTE:
+            nodeType = L"Attribut"; // Beispiel: name="value" in <Tag name="value">
+            break;
+        case NODE_TEXT:
+            nodeType = L"Text"; // Beispiel: Text innerhalb eines Tags wie <Tag>Text</Tag>
+            break;
+        case NODE_COMMENT:
+            nodeType = L"Kommentar"; // Beispiel: <!-- Kommentar -->
+            break;
+        case NODE_DOCUMENT:
+            nodeType = L"Dokument"; // Beispiel: Das gesamte XML-Dokument
+            break;
+        case NODE_DOCUMENT_TYPE:
+            nodeType = L"Dokumenttyp"; // Beispiel: <!DOCTYPE ...>
+            break;
+        case NODE_DOCUMENT_FRAGMENT:
+            nodeType = L"Dokumentfragment"; // Beispiel: Eine Gruppe von Knoten, die keinem Wurzelknoten zugeordnet sind
+            break;
+        default:
+            nodeType = L"Unbekannter Typ";
+            break;
+        }
+
+
+		IXMLDOMNodeList* pChildren;
+        pNode->get_childNodes(&pChildren);
+        long length;
+        pChildren->get_length(&length);
+        hasChild = (length > 0);
+		std::pair<std::wstring, bool> nodeinfotemp;
+		nodeinfotemp.first = nodeType;
+		nodeinfotemp.second = hasChild;
+		return nodeinfotemp; // { nodeType, hasChild }; //Bcc32 unterstützt dies nicht
+	}
+
+	static void processNode(IXMLDOMNode* pNode) {
+		if (pNode == NULL) {
+			return;
+		}
+
+		std::pair<std::wstring, bool> nodeInfo = RRTools::getNodeInfo(pNode);
+		std::wcout << L"Knotentyp: " << nodeInfo.first << L", Hat Kinder: " << (nodeInfo.second ? L"Ja" : L"Nein") << std::endl;
+
+		IXMLDOMNodeList* pChildren;
+		pNode->get_childNodes(&pChildren);
+		long length;
+		pChildren->get_length(&length);
+
+		for (long i = 0; i < length; i++) {
+			IXMLDOMNode* pChild;
+			pChildren->get_item(i, &pChild);
+			RRTools::processNode(pChild);
+		}
+	}
+
+	static void processNodePlus(IXMLDOMNode* pNode) {
+        if (pNode == NULL) {
+            return;
+		}
+
+		std::pair<std::wstring, bool> nodeInfo = RRTools::getNodeInfo(pNode);
+
+        // Extrahieren des Knotennamens und des Knotenwerts
+		BSTR nodeName, nodeValue;
+        pNode->get_nodeName(&nodeName);
+        pNode->get_text(&nodeValue);
+
+		std::wcout << L"Knotentyp: " << nodeInfo.first << L", Hat Kinder: " << (nodeInfo.second ? L"Ja" : L"Nein");
+        std::wcout << L", Name: " << nodeName << L", Wert: " << nodeValue << std::endl;
+
+        // Freigeben der Speicherressourcen
+        SysFreeString(nodeName);
+        SysFreeString(nodeValue);
+
+        IXMLDOMNodeList* pChildren;
+        pNode->get_childNodes(&pChildren);
+        long length;
+        pChildren->get_length(&length);
+
+        for (long i = 0; i < length; i++) {
+            IXMLDOMNode* pChild;
+            pChildren->get_item(i, &pChild);
+            RRTools::processNodePlus(pChild);
+        }
+	}
+
+    static void getNodeInfoByTagName(IXMLDOMNode* pNode, const std::wstring& tagName) {
+        BSTR nodeName;
+        pNode->get_nodeName(&nodeName);
+        std::wstring wnodeName(nodeName);
+        SysFreeString(nodeName);
+
+        if (wnodeName == tagName) {
+            // Die Bezeichnung des aktuellen Knotens entspricht der Ziel-Zeichenkette
+			RRTools::processNodePlus(pNode); //achtung sonst hier
+        }
+
+        // Rekursiv die Kinderknoten durchlaufen
+        IXMLDOMNode* pChildNode;
+        pNode->get_firstChild(&pChildNode);
+        while (pChildNode) {
+            RRTools::getNodeInfoByTagName(pChildNode, tagName);
+			IXMLDOMNode* pNextNode;
+			pChildNode->get_nextSibling(&pNextNode);
+			pChildNode->Release();
+			pChildNode = pNextNode;
+		}
+	}
+
+}// namespace RRTools
+
+//class 4 XML-Handling
+/*
+	class XMLProcess {
+
+	public:
+		XMLProcess();
+		~XMLProcess();
+
+		VARIANT_BOOL LoadXMLDocument(const std::wstring& filename);
+		IXMLDOMDocument3* GetDocOfDOM()const {
+			return  pXMLDom;
+		}
+
+		//Trotz Vererbung:Leider nötig im C++ Builder weil sonst [bcc32c Fehler] xyz.cpp : no member named XXX in 'XMLProcess' :(
+		virtual int CollectCards_Items(){ return 0;}    //kein logischer Sinn nur bcc32 dann nicht mehr spinnt :(
+		virtual int AnalyzeDOM_PicAllEvents(){return 0;}    //kein logischer Sinn nur bcc32 dann nicht mehr spinnt :(
+		virtual const std::vector <std::pair<std::wstring, std::wstring> >& GetXMLInfo() const
+		{
+		//kein logischer Sinn nur bcc32 dann nicht mehr spinnt :(
+			std::vector < std::pair < std::wstring, std::wstring > > dummy;
+			//std::pair<std::wstring, std::wstring> dummy(L"", L"");
+			return dummy;
+		}
+
+	protected:
+		IXMLDOMDocument3* pXMLDom;
+		//std::shared_ptr<IXMLDOMDocument3> pXMLDom;  wird nicht mit bcc32 unterstützt :(
+		bool isInitializedCOM;
+		void ReleaseResources();
+
+	};
+  */
+	class XMLData;
+
+	class BasicNode
+	{
+	public:
+		BasicNode();
+		~BasicNode();
+
+		IXMLDOMNode* GetTheNodeIam()const
+		{
+			return Iam;
+		}
+
+		void SetGuiEnable(bool wish)
+		{
+			guiEnable = wish;
+		}
+
+		bool GetGuiEnable()const
+		{
+			return guiEnable;
+		}
+
+		void SetGuiVisible(bool wish)
+		{
+			guiVisible = wish;
+		}
+
+		bool GetGuiVisible()const
+		{
+			return guiVisible;
+		}
+
+		void SetCustomSpecific(std::wstring wish)
+		{
+			custom = wish;
+		}
+
+		std::wstring GetCustomSpecific()const
+		{
+			return custom;
+		}
+
+		friend class XMLData;
+
+		//Anderen zur Zeit keine Relevanz
+		//später dazu wenn Zeit. Für diese Projekt nicht nötig
+
+	private:
+
+		void SetNodeIam(IXMLDOMNode* node) {
+			Iam = node;
+		}
+
+		IXMLDOMNode* Iam;
+
+		bool IamTheRoot;
+		bool HaveChilds;
+		bool HaveSiblings;
+
+		bool guiEnable;
+		bool guiVisible;
+		std::wstring custom;
+	};
+
+
+	class XMLData //: public XMLProcess
+	{
+	public:
+		XMLData();
+		~XMLData();
+		void ReleaseResourcesWegenBcc32Schei_();
+		void DummyIfThis(){if(!this){ShowMessage("THIS::XMLData Ich bin NULL !");}}
+        int AnalyzeDOM_PicEventUwish(std::wstring ereignis, std::wstring datum, int option = 0);
+//______
+		//Von Process
+		VARIANT_BOOL LoadXMLDocument(const std::wstring& filename);
+		IXMLDOMDocument3* GetDocOfDOM()const {
+			return  pXMLDom;
+		}
+
+	//protected:
+		IXMLDOMDocument3* pXMLDom;
+		//std::shared_ptr<IXMLDOMDocument3> pXMLDom;  wird nicht mit bcc32 unterstützt :(
+		bool isInitializedCOM;
+		//void ReleaseResources();
+		//von Process
+		//--------------------------
+		void addNode(IXMLDOMNode* node) {
+			nodes.push_back(node);
+		}
+
+		IXMLDOMNode* GetNode(size_t index)const;
+
+		size_t GetInfoCount() const {
+			return xmlInfo.size();
+		}
+
+		size_t GetNodeCount() const {
+			return nodes.size();
+		}
+//--------------------------
+		virtual const std::vector<std::pair<std::wstring, std::wstring> >& GetXMLInfo()const;
+		virtual const std::vector<std::pair<std::wstring, std::wstring> >& GetXMLInfo4UserChoice()const;
+
+		const std::vector<std::pair<BasicNode, int> >& GetXMLInfo4Gui() const {
+			return xmlInfo4Gui;
+		}
+
+		std::pair<std::wstring, std::wstring> GetNodeInfo(IXMLDOMNode* pNode)const;
+
+		std::wstring GetCommentIfType18() const {
+			return commentIfType18;
+		}
+//--------------------------
+		HRESULT AnalyzeDOM();
+					//int AnalyzeDOM_PicEventUwish(std::wstring ereignis, std::wstring datum, int option = 0);
+		virtual int AnalyzeDOM_PicAllEvents();
+		//Aufruf in der VCL-Anwendung
+		virtual int CollectCards_Items();
+		int FindTheMeasurementData(IXMLDOMNodeList* pSiblings,int option = 0);
+        int FindTheMeasurementDataStrCat(IXMLDOMNodeList* pSiblings,int option = 0);
+
+		virtual int AnalyzeDOM_ProofTyp(size_t coiceInList);
+
+		//-------------TEST
+		//Maximale Anzahl verschiedener Messdaten-Arten
+		int countMaxDifferM;
+		void WriteInfos();
+		//-------------TEST
+
+
+		//Usefull Things
+		BSTR StringToBSTR(const std::wstring& str) {
+			return SysAllocStringLen(str.c_str(), str.length());
+		}
+
+		wchar_t* StringToWCHAR(const std::wstring& str) {
+			return const_cast<wchar_t*>(str.c_str());
+		}
+
+		//später privat
+
+		std::vector < std::pair < std::wstring, std::wstring > > xmlInfo4UserChoice;
+
+
+	private:
+		HRESULT IniRoot();
+		void ReleaseResources();
+		void ClearTheNodes();
+		void ClearTheInfo();
+		void ClearTheInfo4GUI();
+
+		void CreateGuiNode(IXMLDOMNode* node);
+
+		void addBasicNode(const std::pair<BasicNode, int>& node4Gui)
+		{
+			xmlInfo4Gui.push_back(node4Gui);
+		}
+
+
+		IXMLDOMElement* pRootNode;
+		IXMLDOMNode* findTheNode__Card_Item; //(1)
+		//Speichert Nodes
+		std::vector<IXMLDOMNode*> nodes;
+		//Speichert Pärchen von Info. Beispiele Knotenname und Wert als Text. Deweiteren aber auch nutzbar wie im speziellen Fall: Ereignis (Messung oder Kommentar) und Datum
+		std::vector < std::pair < std::wstring, std::wstring > > xmlInfo;
+		std::vector < std::pair < std::wstring, std::wstring > > xmlInfo4UserChoice;
+		//Fuer die GUI
+		std::vector < std::pair < BasicNode, int > > xmlInfo4Gui;
+
+		std::string strError;
+		std::wstring commentIfType18;
+
+	 };
+
+
+#endif  // RR_SYSTEM RRTOOLS_H
+
+/*
+ZU 1:
+//Wichtiger Zeiger auf die rictige Cards-Item
+//vector vecCard_Item mit allen cards jeweils mit einer Card_Item- Instanz der Klasse Card_Item
+*/
+
+
+
