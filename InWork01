@@ -516,7 +516,111 @@ void __fastcall TForm5::UpdateUserGrid()
 }
 
 //<<<<<_______________________________
-So nun das Problem das bei Edit() die zweite Spalte bei 1 bleibt. Kann ich irgendwie die Schreibposition von Edit immer um eins erhöhen. Vorausgesetzt diesen Rekord gibt es natürlich.
+void __fastcall TForm5::UpdateUserGrid()
+{
+	TESTcounter_SAussen++;
+	size_t sizeIsOne = 1;
+	AnsiString clickleft = DBGrid4XMLCard_Item->Columns->Items[0]->Field->AsString;
+
+	if(xmlProcess)
+			{
+				std::vector<std::pair<std::wstring, std::wstring> > dataUserChoice = xmlProcess->GetXMLInfo4UserChoice();
+				size_t sizeUserChoice = dataUserChoice.size();
+								std::vector<std::pair<std::wstring, std::wstring> > dataXML = xmlProcess->GetXMLInfo();
+
+				//Schleife der Überschriften
+				for(size_t i = 0; i < dataUserChoice.size();++i )
+				{
+					TESTcounter_SInnen++;
+					if(i == 2)
+					{
+						int k  = 0;
+						k++;
+					}
+
+					const std::pair < std::wstring, std::wstring>& pairUserChoice = dataUserChoice[i];
+
+					//Nun schauen wo überall gleiche Userchoice als Einheit
+					for(size_t j = 0; j < dataXML.size(); ++j)
+					{
+						const std::pair < std::wstring, std::wstring>& pairOfXML = dataXML[j];
+
+						std::wstring w1User = pairUserChoice.first;
+						std::wstring w2User = pairUserChoice.second; //ValueUser
+						std::wstring w3XML = pairOfXML.first; //CaptionOfColum
+						std::wstring w4XML = pairOfXML.second; //ValueXML
+						std::wstring w5UserActual = NS_TForm5::AnsiToWide(clickleft); //ValueXML
+
+						//if((w5UserActual != L"") && (w5UserActual == w3XML)) //std::wcscmp(w1 ,w2) == 0)
+						if((w1User != L"") && (w1User == w3XML))
+						{
+							// Überprüfen Sie, ob ein Datensatz für die aktuelle Messreihe existiert
+							//________________________________________________________________________
+							bool found = false;
+							if((TESTcounter_SAussen == 2)&& i==2) //(TESTcounter_SInnen == 1))
+							{
+								int i;
+								i++;
+							}
+							//Fall wenn sofort EOF da wäre bei nur eionem Eintrag dann immer Edit
+							//if(ClientDataSet3->RecordCount ==0)
+							//if(i==0){
+							if((i == 0) && (sizeUserChoice == sizeIsOne))
+							{
+								found = !true;
+							}
+								else
+							{
+
+
+			//ClientDataSet3->First();
+							while (!ClientDataSet3->Eof)
+							{
+								AnsiString ansiFromUserData = NS_TForm5::WStrToAnsiString(w1User);
+								AnsiString ansiUserActual = NS_TForm5::WStrToAnsiString(w5UserActual);
+								AnsiString ansiFieldName = ClientDataSet3->FieldByName(ansiUserActual)->AsString;
+
+								bool test = false;
+								test = ClientDataSet3->FieldByName(ansiUserActual)->AsString != NULL;       //ansiUserActual
+								if (test && (ansiUserActual != NULL) && (ansiFromUserData != 0) && (AnsiCompareStr(ansiUserActual, ansiFromUserData)==0) ) // pairUserChoice.first.c_str())
+								//if(1==1)
+								{
+									found = true;
+									//ClientDataSet3->RecNo = 1;
+								break;
+								}
+								ClientDataSet3->Next();
+							}
+							}
+							if (found)
+							{
+							// Wenn ja, aktualisieren Sie den bestehenden Datensatz
+
+								ClientDataSet3->Edit();
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
+								ClientDataSet3->Post();
+								ClientDataSet3->Next();
+							}
+							else
+							{
+								// Wenn nicht, fügen Sie einen neuen Datensatz hinzu
+								ClientDataSet3->Append();
+								ClientDataSet3->FieldByName(pairUserChoice.first.c_str())->AsString = pairOfXML.second.c_str();
+								ClientDataSet3->Post();
+							}
+						}
+
+					}
+
+						ClientDataSet3->RecNo = 1;
+					//ClientDataSet3->First();
+				}
+
+				//
+				ClientDataSet3->FieldDefs->Update();
+				DBGridUserChoice->Refresh();
+			}
+}
 
 
 
