@@ -622,5 +622,74 @@ void __fastcall TForm5::UpdateUserGrid()
 			}
 }
 
+//>>>>
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit1.h"
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+
+TForm1 *Form1;
+
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    // Initialisieren Sie die Komponenten
+    ClientDataSet1->FieldDefs->Clear(); // Löschen Sie vorhandene Felddefinitionen
+    ClientDataSet1->FieldDefs->Add("ID", ftInteger); // Fügen Sie eine ID-Spalte hinzu
+    ClientDataSet1->CreateDataSet(); // Erstellen Sie das Dataset
+    DataSource1->DataSet = ClientDataSet1;
+    DBGrid1->DataSource = DataSource1;
+}
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    // Überprüfen Sie, ob die erste Spalte bereits gefüllt ist
+    if (ClientDataSet1->RecordCount == 0)
+    {
+        // Fügen Sie genau 4 Datensätze zur ersten Spalte hinzu
+        for (int i = 0; i < 4; ++i)
+        {
+            ClientDataSet1->Append(); // Fügen Sie einen neuen Datensatz hinzu
+            ClientDataSet1->FieldByName("ID")->AsInteger = i + 1; // ID setzen (optional)
+            ClientDataSet1->FieldByName("Spalte1")->AsString = InputBox("Daten eingeben", "Geben Sie die Daten für die erste Spalte ein:", "");
+            ClientDataSet1->Post(); // Speichern Sie den Datensatz
+        }
+
+        // Aktualisieren Sie die Anzeige des DBGrids
+        DBGrid1->Columns->Clear();
+        DBGrid1->DataSource = DataSource1;
+    }
+    else
+    {
+        // Dynamisch eine neue Spalte hinzufügen
+        UnicodeString columnName = InputBox("Spaltenüberschrift", "Geben Sie die Spaltenüberschrift ein:", "");
+        if (!columnName.IsEmpty())
+        {
+            // Füge die Spalte zur Felddefinition hinzu
+            ClientDataSet1->FieldDefs->Add(columnName, ftString, 50); // 50 ist die Länge des Strings, Sie können sie anpassen
+
+            // Erstellen Sie das Dataset mit den aktualisierten Felddefinitionen neu
+            ClientDataSet1->CreateDataSet();
+
+            // Aktualisieren Sie die Anzeige des DBGrids
+            DBGrid1->Columns->Clear();
+            DBGrid1->DataSource = DataSource1;
+
+            // Füge die Daten in die neue Spalte ein
+            ClientDataSet1->First(); // Gehen Sie zum ersten Datensatz
+
+            do
+            {
+                ClientDataSet1->Edit(); // Bearbeiten Sie den aktuellen Datensatz
+                ClientDataSet1->FieldByName(columnName)->AsString = InputBox("Daten eingeben", "Geben Sie die Daten für die Spalte ein:", "");
+                ClientDataSet1->Post(); // Speichern Sie den Datensatz
+            } while (!ClientDataSet1->Eof); // Wiederholen Sie den Vorgang für alle Datensätze
+        }
+    }
+}
+
 
 
