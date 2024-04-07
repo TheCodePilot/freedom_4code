@@ -691,5 +691,38 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
     }
 }
 
+//<<<--------------
 
+Um den Drag & Drop-Cursor (crDrag) beim Ziehen eines Elements über ein anderes anzuzeigen, müssen Sie die Drag & Drop-Ereignisse der entsprechenden Steuerelemente behandeln und den Cursor entsprechend ändern. Hier ist ein Beispiel, wie Sie das in einem trivialen Testprojekt mit zwei Edit-Feldern (Edit1 und Edit2) tun können:
+
+Binden Sie die Drag & Drop-Ereignisse an die entsprechenden Ereignishandler:
+
+cpp
+Copy code
+// Binden Sie die Drag & Drop-Ereignisse an die Ereignishandler
+Edit1->OnStartDrag = Edit1StartDrag;
+Edit1->OnEndDrag = Edit1EndDrag;
+Edit2->OnDragOver = Edit2DragOver;
+Implementieren Sie die Ereignishandler, um den Cursor entsprechend zu ändern:
+
+cpp
+Copy code
+void __fastcall TForm1::Edit1StartDrag(TObject *Sender, TDragObject *&DragObject)
+{
+    Screen->Cursor = crDrag; // Ändern Sie den Cursor auf crDrag
+}
+
+void __fastcall TForm1::Edit1EndDrag(TObject *Sender, TObject *Target, int X, int Y)
+{
+    Screen->Cursor = crDefault; // Setzen Sie den Cursor zurück auf crDefault
+}
+
+void __fastcall TForm1::Edit2DragOver(TObject *Sender, TObject *Source, int X, int Y, TDragState State, bool &Accept)
+{
+    if (Source == Edit1) // Wenn die Quelle Edit1 ist
+        Screen->Cursor = crDrag; // Ändern Sie den Cursor auf crDrag
+    else
+        Screen->Cursor = crDefault; // Andernfalls verwenden Sie den Standardcursor
+}
+Auf diese Weise ändert sich der Cursor beim Ziehen von Edit1 über Edit2 auf crDrag. Wenn das Ziehen abgeschlossen ist oder wenn der Cursor den Bereich von Edit2 verlässt, wird der Cursor auf den Standardcursor (crDefault) zurückgesetzt.
 
