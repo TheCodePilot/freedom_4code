@@ -835,3 +835,54 @@ void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
     }
 }
 
+//------------------------------3--------------
+class MyFunctor
+{
+public:
+    MyFunctor(Typ1 erfüllt1, Typ2 erfüllt2) : m_erfüllt1(erfüllt1), m_erfüllt2(erfüllt2) {}
+
+    bool operator()(const std::pair<Typ1, Typ2>& p)
+    {
+        return p.first == m_erfüllt1 && p.second == m_erfüllt2;
+    }
+
+private:
+    Typ1 m_erfüllt1;
+    Typ2 m_erfüllt2;
+};
+---
+void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
+{
+    MyFunctor functor(erfüllt1, erfüllt2);
+    auto it = std::find_if(SelectedRows.begin(), SelectedRows.end(), functor);
+
+    if (it != SelectedRows.end())
+    {
+        // Das Paar wurde gefunden
+    }
+    else
+    {
+        // Das Paar wurde nicht gefunden
+    }
+}
+---
+class MyFunctor
+{
+public:
+    MyFunctor(Typ1 erfüllt1, Typ2 erfüllt2) : m_erfüllt1(erfüllt1), m_erfüllt2(erfüllt2) {}
+
+    bool operator()(const std::pair<Typ1, Typ2>& p)
+    {
+        return p.first == m_erfüllt1 && p.second == m_erfüllt2;
+    }
+
+    // Überladung von operator() für einen anderen Parametertyp
+    bool operator()(const Typ3& param)
+    {
+        // Implementieren Sie hier die Logik für Typ3
+    }
+
+private:
+    Typ1 m_erfüllt1;
+    Typ2 m_erfüllt2;
+};
