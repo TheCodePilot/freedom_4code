@@ -683,3 +683,15 @@ void __fastcall TForm1::DBGrid1MouseUp(TObject *Sender, TMouseButton Button, TSh
 }
 
 
+
+//------------------------------------------------------------------
+void __fastcall TForm1::DBGrid1DrawColumnCell(TObject *Sender, const TRect &Rect, int DataCol, TColumn *Column, TGridDrawState State)
+{
+    if (DBGrid1->DataSource->DataSet->RecNo == DBGrid1->SelectedRows->CurrentRowSelected)
+    {
+        DBGrid1->Canvas->Brush->Color = clBlue;
+        DBGrid1->DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    }
+}
+
+
