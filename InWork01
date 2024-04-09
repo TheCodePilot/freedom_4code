@@ -611,33 +611,75 @@ In diesem Beispiel wird die MyTupleNode-Klasse definiert, die ein Tupel von vier
 
 Das Erstellen und Verwenden verketteter Listen ist ein häufiges Muster in der Programmierung und sollte auch vom bcc32-Compiler unterstützt werden. Solange Sie nicht zu viele Objekte erstellen und den Speicher sorgfältig verwalten, sollten Sie keine Probleme haben.
 
-User
-Es gibt glaube ich auch eine verkettete Liste als Container-Klasse in der STL. Können wir ein einfachen Test machen ob dies ginge mit einfachen int werten. Nur so weit das gesehen wird ob dies unterstützt wird vom bcc32.
-ChatGPT
-Natürlich, wir können einen einfachen Test mit einer verketteten Liste aus der Standardbibliothek durchführen. In C++ wird eine verkettete Liste durch die Klasse std::list aus der Header-Datei <list> bereitgestellt.
+<<-------------------9 April ------------------------------
 
-Hier ist ein einfaches Beispiel, das zeigt, wie Sie std::list verwenden können, um eine verkettete Liste von int-Werten zu erstellen und zu manipulieren:
+void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
+{
+    // Sperren Sie die Zelle, indem Sie die Bearbeitung deaktivieren
+    DBGrid1->Options = DBGrid1->Options >> dgEditing;
 
-cpp
-Copy code
-#include <iostream>
-#include <list>
-
-int main() {
-    // Erstellen einer leeren verketteten Liste von int-Werten
-    std::list<int> myList;
-
-    // Hinzufügen von Elementen zur Liste
-    myList.push_back(1);
-    myList.push_back(2);
-    myList.push_back(3);
-
-    // Ausgabe der Elemente der Liste
-    std::cout << "Elemente der Liste: ";
-    for (auto it = myList.begin(); it != myList.end(); ++it) {
-        std::cout << *it << " ";
-    }
-    std::cout << std::endl;
-
-    return 0;
+    // Ändern Sie die Hintergrundfarbe der Zelle in Blau
+    Column->Color = clBlue;
 }
+
+void __fastcall TForm1::DBGrid2CellClick(TColumn *Column)
+{
+    // Löschen Sie die angeklickte Spalte in DBGrid2
+    DBGrid2->Columns->Items[Column->Index]->Visible = false;
+
+    // Machen Sie die Änderungen in DBGrid1 rückgängig
+    DBGrid1->Options = DBGrid1->Options << dgEditing;
+    Column->Color = clWindow; // Setzen Sie die Hintergrundfarbe der Zelle auf die Standardfarbe zurück
+}
+
+void __fastcall TForm1::DBGrid2CellClick(TColumn *Column)
+{
+    // Entfernen Sie das entsprechende Feld aus dem Datensatz
+    ClientDataSet2->DeleteField(Column->FieldName);
+
+    // Aktualisieren Sie DBGrid2
+    DBGrid2->Columns->UpdateColumns();
+}
+
+void __fastcall TForm1::AddColumnClick(TObject *Sender)
+{
+    // Erstellen Sie ein neues Feld
+    TFieldDef *fieldDef = ClientDataSet2->FieldDefs->AddFieldDef();
+    fieldDef->Name = "NeuesFeld";
+    fieldDef->DataType = ftString;
+    fieldDef->Size = 50;
+
+    // Aktualisieren Sie DBGrid2
+    DBGrid2->Columns->UpdateColumns();
+}
+
+DBGrid1->ReadOnly = true;
+
+int StartCol = -1;
+
+void __fastcall TForm1::DBGrid1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+    int Col = -1, Row = -1;
+    DBGrid1->MouseCoord(X, Y, Col, Row);
+    if (Row == 0) // Nur wenn auf die Kopfzeile geklickt wird
+    {
+        StartCol = Col;
+    }
+}
+
+void __fastcall TForm1::DBGrid1MouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+    if (StartCol != -1)
+    {
+        int Col = -1, Row = -1;
+        DBGrid1->MouseCoord(X, Y, Col, Row);
+        if (Row == 0 && Col != StartCol) // Nur wenn auf eine andere Kopfzeile geklickt wird
+        {
+            // Tauschen Sie die Spalten
+            DBGrid1->Columns->Items[StartCol]->Index = Col;
+        }
+    }
+    StartCol = -1;
+}
+
+
