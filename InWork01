@@ -694,4 +694,112 @@ void __fastcall TForm1::DBGrid1DrawColumnCell(TObject *Sender, const TRect &Rect
     }
 }
 
+//>>------------------------------Versuchen ob geht--------------------
+void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
+{
+    // Koordinaten des Mausklicks relativ zum Grid erhalten
+    TPoint mousePos = ScreenToClient(Mouse->CursorPos);
+
+    // Zeile und Spalte anhand der Mauskoordinaten erhalten
+    int row, col;
+    DBGrid1->MouseToCell(mousePos.x, mousePos.y, col, row);
+
+    // Überprüfen, ob die Zelle bereits angeklickt wurde
+    if (!IsCellClicked(row, col))
+    {
+        // Zelle als angeklickt markieren
+        MarkCellClicked(row, col);
+
+        // Grafische Kennzeichnung der Zelle (Hintergrund blau)
+        int cellWidth = DBGrid1->ColWidths[col];
+        int cellHeight = DBGrid1->RowHeights[row];
+        TRect cellRect(col, row, col + cellWidth, row + cellHeight);
+        DBGrid1->Canvas->Brush->Color = clBlue;
+        DBGrid1->Canvas->FillRect(cellRect);
+    }
+}
+
+bool TForm1::IsCellClicked(int row, int col)
+{
+    // Implementieren Sie Ihre Logik, um zu überprüfen, ob die Zelle bereits angeklickt wurde
+    // Rückgabe true, wenn die Zelle bereits angeklickt wurde, andernfalls false
+    // Hier ein Platzhalter für die Implementierung
+    return false;
+}
+
+void TForm1::MarkCellClicked(int row, int col)
+{
+    // Implementieren Sie Ihre Logik, um die Zelle als angeklickt zu markieren
+    // Hier ein Platzhalter für die Implementierung
+}
+___
+void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
+{
+    // Koordinaten des Mausklicks relativ zum Grid erhalten
+    TPoint mousePos = ScreenToClient(Mouse->CursorPos);
+
+    // Zeile und Spalte anhand der Mauskoordinaten erhalten
+    int row, col;
+    DBGrid1->MouseToCell(mousePos.x, mousePos.y, col, row);
+
+    // Überprüfen, ob die Zelle bereits angeklickt wurde
+    if (!IsCellClicked(row, col))
+    {
+        // Zelle als angeklickt markieren
+        MarkCellClicked(row, col);
+
+        // Grafische Kennzeichnung der Zelle (Hintergrund blau)
+        int cellWidth = DBGrid1->ColWidths[col];
+        int cellHeight = DBGrid1->RowHeights[row];
+        TRect cellRect(
+            DBGrid1->Left + DBGrid1->RowHeights[0] + std::accumulate(std::begin(DBGrid1->ColWidths), std::begin(DBGrid1->ColWidths) + col, 0),
+            DBGrid1->Top + DBGrid1->ColWidths[0] + std::accumulate(std::begin(DBGrid1->RowHeights), std::begin(DBGrid1->RowHeights) + row, 0),
+            DBGrid1->Left + DBGrid1->RowHeights[0] + std::accumulate(std::begin(DBGrid1->ColWidths), std::begin(DBGrid1->ColWidths) + col + 1, 0),
+            DBGrid1->Top + DBGrid1->ColWidths[0] + std::accumulate(std::begin(DBGrid1->RowHeights), std::begin(DBGrid1->RowHeights) + row + 1, 0)
+        );
+        
+        DBGrid1->Canvas->Brush->Color = clBlue;
+        DBGrid1->Canvas->FillRect(cellRect);
+    }
+}
+
+bool TForm1::IsCellClicked(int row, int col)
+{
+    // Implementieren Sie Ihre Logik, um zu überprüfen, ob die Zelle bereits angeklickt wurde
+    // Rückgabe true, wenn die Zelle bereits angeklickt wurde, andernfalls false
+    // Hier ein Platzhalter für die Implementierung
+    return false;
+}
+
+void TForm1::MarkCellClicked(int row, int col)
+{
+    // Implementieren Sie Ihre Logik, um die Zelle als angeklickt zu markieren
+    // Hier ein Platzhalter für die Implementierung
+}
+___
+void __fastcall TForm1::DBGrid1MouseDown(TObject *Sender, TMouseButton Button,
+      TShiftState Shift, int X, int Y)
+{
+    // Mausklick-Koordinaten relativ zum Grid erhalten
+    int row, col;
+    DBGrid1->MouseToCell(X, Y, col, row);
+
+    // Überprüfen, ob die Zelle bereits angeklickt wurde
+    if (!IsCellClicked(row, col))
+    {
+        // Zelle als angeklickt markieren
+        MarkCellClicked(row, col);
+
+        // Grafische Kennzeichnung der Zelle (Hintergrund blau)
+        TRect cellRect(
+            DBGrid1->Left + DBGrid1->RowHeights[0] + std::accumulate(std::begin(DBGrid1->ColWidths), std::begin(DBGrid1->ColWidths) + col, 0),
+            DBGrid1->Top + DBGrid1->ColWidths[0] + std::accumulate(std::begin(DBGrid1->RowHeights), std::begin(DBGrid1->RowHeights) + row, 0),
+            DBGrid1->Left + DBGrid1->RowHeights[0] + std::accumulate(std::begin(DBGrid1->ColWidths), std::begin(DBGrid1->ColWidths) + col + 1, 0),
+            DBGrid1->Top + DBGrid1->ColWidths[0] + std::accumulate(std::begin(DBGrid1->RowHeights), std::begin(DBGrid1->RowHeights) + row + 1, 0)
+        );
+        
+        DBGrid1->Canvas->Brush->Color = clBlue;
+        DBGrid1->Canvas->FillRect(cellRect);
+    }
+}
 
