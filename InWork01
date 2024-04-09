@@ -802,4 +802,36 @@ void __fastcall TForm1::DBGrid1MouseDown(TObject *Sender, TMouseButton Button,
         DBGrid1->Canvas->FillRect(cellRect);
     }
 }
+//-----------------------------------------------2________________________________________
+void __fastcall TForm1::DBGrid1DrawColumnCell(TObject *Sender, const TRect &Rect, int DataCol, TColumn *Column, TGridDrawState State)
+{
+    int currentRow = DBGrid1->DataSource->DataSet->RecNo;
+    if (std::find(SelectedRows.begin(), SelectedRows.end(), currentRow) != SelectedRows.end())
+    {
+        DBGrid1->Canvas->Brush->Color = clBlue;
+    }
+    else
+    {
+        DBGrid1->Canvas->Brush->Color = clWindow; // Standardfarbe
+    }
+    DBGrid1->DefaultDrawColumnCell(Rect, DataCol, Column, State);
+}
+
+
+
+void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
+{
+    int currentRow = DBGrid1->DataSource->DataSet->RecNo;
+    if (std::find(SelectedRows.begin(), SelectedRows.end(), currentRow) != SelectedRows.end())
+    {
+        // Wenn die Zeile bereits im Vector ist, tun Sie nichts
+        return;
+    }
+    else
+    {
+        // Fügen Sie die Zeile zu Ihrem Vektor hinzu
+        SelectedRows.push_back(currentRow);
+        DBGrid1->Invalidate(); // Erzwingt das Neuzeichnen des TDBGrid
+    }
+}
 
