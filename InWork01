@@ -835,54 +835,197 @@ void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
     }
 }
 
-//------------------------------3--------------
-class MyFunctor
+//------------------------------4--------------
+void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-public:
-    MyFunctor(Typ1 erfüllt1, Typ2 erfüllt2) : m_erfüllt1(erfüllt1), m_erfüllt2(erfüllt2) {}
-
-    bool operator()(const std::pair<Typ1, Typ2>& p)
+    TForm *NewForm = new TForm(this);
+    try
     {
-        return p.first == m_erfüllt1 && p.second == m_erfüllt2;
+        NewForm->Show();
+        NewForm->BringToFront();
     }
-
-private:
-    Typ1 m_erfüllt1;
-    Typ2 m_erfüllt2;
-};
----
-void __fastcall TForm1::DBGrid1CellClick(TColumn *Column)
-{
-    MyFunctor functor(erfüllt1, erfüllt2);
-    auto it = std::find_if(SelectedRows.begin(), SelectedRows.end(), functor);
-
-    if (it != SelectedRows.end())
+    catch(...)
     {
-        // Das Paar wurde gefunden
-    }
-    else
-    {
-        // Das Paar wurde nicht gefunden
+        delete NewForm;
+        throw;
     }
 }
----
-class MyFunctor
+__
+
+#include <memory>
+
+class NewForm : public TForm
 {
 public:
-    MyFunctor(Typ1 erfüllt1, Typ2 erfüllt2) : m_erfüllt1(erfüllt1), m_erfüllt2(erfüllt2) {}
-
-    bool operator()(const std::pair<Typ1, Typ2>& p)
+    __fastcall NewForm(TComponent* Owner) : TForm(Owner)
     {
-        return p.first == m_erfüllt1 && p.second == m_erfüllt2;
+        TOpenDialog *OpenDialog = new TOpenDialog(this);
+        OpenDialog->Execute();
+        delete OpenDialog;
     }
-
-    // Überladung von operator() für einen anderen Parametertyp
-    bool operator()(const Typ3& param)
-    {
-        // Implementieren Sie hier die Logik für Typ3
-    }
-
-private:
-    Typ1 m_erfüllt1;
-    Typ2 m_erfüllt2;
 };
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    std::unique_ptr<NewForm> NewFormPtr(new NewForm(this));
+    NewFormPtr->Show();
+    NewFormPtr->BringToFront();
+}
+__
+
+#include <memory>
+
+class NewForm : public TForm
+{
+public:
+    __fastcall NewForm(TComponent* Owner) : TForm(Owner)
+    {
+        TOpenDialog *OpenDialog = new TOpenDialog(this);
+        OpenDialog->Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
+        OpenDialog->Execute();
+        delete OpenDialog;
+    }
+};
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    std::unique_ptr<NewForm> NewFormPtr(new NewForm(this));
+    NewFormPtr->Show();
+    NewFormPtr->BringToFront();
+}
+
+__
+
+#include <memory>
+
+class NewForm : public Tform !!!!!!
+{
+public:
+    __fastcall NewForm(TComponent* Owner) : TForm(Owner)
+    {
+        TOpenTextFileDialog *OpenDialog = new TOpenTextFileDialog(this);
+        OpenDialog->Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
+        //OpenDialog->Options << ofReadOnly; //Execute-Methode standardmäßig die ausgewählte //Datei nur zum Lesen.  
+        OpenDialog->Execute();
+        delete OpenDialog;
+    }
+};
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    std::unique_ptr<NewForm> NewFormPtr(new NewForm(this));
+    NewFormPtr->Show();
+    NewFormPtr->BringToFront();
+}
+
+___
+
+#include <memory>
+
+class NewForm : public TForm
+{
+public:
+    TComboBox *ComboBox;
+    __fastcall NewForm(TComponent* Owner) : TForm(Owner)
+    {
+        ComboBox = new TComboBox(this);
+        ComboBox->Parent = this;
+        ComboBox->Style = csDropDownList;
+        ComboBox->Items->Add("A");
+        ComboBox->Items->Add("B");
+        ComboBox->Items->Add("C");
+        ComboBox->ItemIndex = 0;
+    }
+};
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    std::unique_ptr<NewForm> NewFormPtr(new NewForm(this));
+    NewFormPtr->Show();
+    NewFormPtr->BringToFront();
+}
+
+___
+
+void __fastcall TForm1::cbnUebertragenClick(TObject *Sender)
+{
+    AnsiString ausgewaehlterText = ComboBox->Text;
+
+    if(ausgewaehlterText == "A")
+    {
+        // Führen  den Code für Option A aus
+    }
+    else if(ausgewaehlterText == "B")
+    {
+        // Führen  den Code für Option B aus
+    }
+    else if(ausgewaehlterText == "C")
+    {
+        // Führen  den Code für Option C aus
+    }
+}
+
+___
+
+#include <SqlExpr.hpp>
+#include <DBClient.hpp>
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    // Erstellen  eine SQL-Verbindung
+    TSQLConnection *SQLConnection = new TSQLConnection(this);
+    SQLConnection->DriverName = "MSSQL";
+    SQLConnection->GetDriverFunc = "getSQLDriverMSSQL";
+    SQLConnection->LibraryName = "dbxmss.dll";
+    SQLConnection->VendorLib = "sqlncli10.dll";
+    SQLConnection->Params->Values["HostName"] = "localhost";
+    SQLConnection->Params->Values["Database"] = "mydatabase";
+    SQLConnection->Params->Values["User_Name"] = "username";
+    SQLConnection->Params->Values["Password"] = "password";
+    SQLConnection->LoginPrompt = false;
+    SQLConnection->Connected = true;
+
+    // Erstellen  eine SQL-Abfrage
+    TSQLQuery *SQLQuery = new TSQLQuery(this);
+    SQLQuery->SQLConnection = SQLConnection;
+    SQLQuery->SQL->Add("SELECT * FROM mytable");
+    SQLQuery->Open();
+
+    // Laden  die Daten in das ClientDataSet
+    ClientDataSet1->Close();
+    ClientDataSet1->LoadFromDataSet(SQLQuery, 0, lmAppend);
+    ClientDataSet1->Open();
+
+    // Bereinigen
+    delete SQLQuery;
+    delete SQLConnection;
+}
+
+___
+
+//Besser…
+
+#include <memory>
+#include <SqlExpr.hpp>
+#include <DBClient.hpp>
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    // Erstellen  eine SQL-Verbindung
+    std::unique_ptr<TSQLConnection> SQLConnection(new TSQLConnection(this));
+    // ... Setzen  die Verbindungsparameter ...
+
+    // Erstellen  eine SQL-Abfrage
+    std::unique_ptr<TSQLQuery> SQLQuery(new TSQLQuery(this));
+    SQLQuery->SQLConnection = SQLConnection.get();
+    // ... Führen  die Abfrage aus ...
+
+    // Laden  die Daten in das ClientDataSet
+    ClientDataSet1->Close();
+    ClientDataSet1->LoadFromDataSet(SQLQuery.get(), 0, lmAppend);
+    ClientDataSet1->Open();
+}
+
+___
+
+
