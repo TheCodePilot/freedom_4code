@@ -1026,6 +1026,12 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
     ClientDataSet1->Open();
 }
 
+<<<<<<----------------
+ClientDataSet1->Close();
+	ClientDataSet1->LoadFromDataSet(SQLQuery, 0, lmAppend);
+	ClientDataSet1->Open();
+
+
 ___
 
 
