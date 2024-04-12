@@ -1427,5 +1427,49 @@ Ja, hier sind einige zusätzliche Tipps zur Arbeit mit dynamisch erstellten Data
     6. Schließen Sie das Dataset, wenn es nicht verwendet wird: Um Ressourcen zu sparen, sollten Sie das Dataset schließen, wenn es nicht verwendet wird. Sie können es später wieder öffnen, wenn Sie es benötigen.
     7. Verwenden Sie Parameter in Ihren Abfragen: Wenn Sie Abfragen mit variablen Werten ausführen, sollten Sie Parameter verwenden. Dies verbessert die Leistung Ihrer Abfragen und schützt vor SQL-Injection-Angriffen.
 
+//--------------------Von : https://docwiki.embarcadero.com/CodeExamples/Alexandria/en/CreateTable_(C%2B%2B)--------------------//
 
+__fastcall TForm1::TForm1(TComponent* Owner)
+	: TForm(Owner)
+{
+  Table1 = new TTable(Form1);
+  Table1->Active = false; // The Table component must not be active.
+  Table1->DatabaseName = "DBDEMOS";
+  Table1->TableType = ttParadox;
+  Table1->TableName = "CustInfo";
+  if (Table1->Exists)
+	MessageDlg("CustInfo table already exists.", mtWarning, TMsgDlgButtons() << mbOK, 0);
+  else // Do not overwrite an existing table.
+  {
+	// describe the fields in the table
+	Table1->FieldDefs->Clear();
+	TFieldDef *newDef = Table1->FieldDefs->AddFieldDef();
+	newDef->Name = "Field1";
+	newDef->DataType = ftInteger;
+	newDef->Required = true;
+	newDef = Table1->FieldDefs->AddFieldDef();
+	newDef->Name = "Field2";
+	newDef->DataType = ftString;
+	newDef->Size = 30;
+	// Next, describe any indexes
+	Table1->IndexDefs->Clear();
+	/* The first index has no name because it is a Paradox primary key. */
+	Table1->IndexDefs->Add("","Field1", TIndexOptions() <<ixPrimary << ixUnique);
+	Table1->IndexDefs->Add("Fld2Index", "Field2", TIndexOptions() << ixCaseInsensitive);
+	// Now that you have specified what you want, create the table.
+	Table1->CreateTable();
+	Table1->Active = True;
+	for (int i = 1; i <= 20; i++)
+	  Table1->AppendRecord(ARRAYOFCONST((i*111, i*222)));
+  }
+  DS2->DataSet = Table1;
+  DBGrid2->DataSource->DataSet = Table1;
+  Table1->Active = True;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+  Table1->Close();
+  Table1->DeleteTable();
+}
 
