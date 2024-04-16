@@ -1,3 +1,94 @@
+//---------------
+int __fastcall TForm1::SendSQLLine(AnsiString Line, TMSQuery *SQ) // Nur gültig für Haupt-DB (MDE)
+{
+	if(DBM.Connected==false) return 1;
+
+	if(Form00_SU->Visible && Form00_SU->CBallowMonitorSQL->Checked) Form00_SU->MMdb->Lines->Add("     SQL: "+Line);
+
+	if(SQ->Connection!=DBM.Connection) SQ->Connection=DBM.Connection;
+
+	SQ->Close();
+	SQ->SQL->Clear();
+	SQ->SQL->Add(Line);
+
+	try
+	{
+	  SQ->ExecSQL();
+
+	  if(Line.Pos("SELECT ")==1)
+	  {
+		 if   (SQ->Eof)     return 2;
+		 else {SQ->First(); return 0;}
+	  }
+	  else                  return 0;
+	}
+	catch (...)            {return 1;}
+}
+
+------------------------------------------------
+
+EVENTUELL:
+try
+{
+  SQ->ExecSQL();
+  // ...
+}
+catch (const sql::SQLException &e)
+{
+  std::cerr << "SQLException caught: " << e.what() << std::endl;
+  std::cerr << "SQLState: " << e.getSQLState() << " ErrorCode: " << e.getErrorCode() << std::endl;
+  return 3; // Rückgabe eines spezifischen Fehlertyps
+}
+catch (...)
+{
+  // Alle anderen Ausnahmen
+  return 1;
+}
+____
+
+int __fastcall TForm1::SendSQLLine(AnsiString Line, TMSQuery *SQ, bool showMessage = false) // Nur gültig für Haupt-DB (MDE)
+{
+	if(DBM.Connected==false) 
+	{
+		if(showMessage) ShowMessage("Datenbankverbindung nicht aktiv");
+		return 1;
+	}
+
+	// ...
+
+	try
+	{
+	  SQ->ExecSQL();
+	  // ...
+	}
+	catch (const sql::SQLException &e)
+	{
+		if(showMessage) ShowMessage("SQLException gefangen: " + AnsiString(e.what()));
+		return 3; // Rückgabe eines spezifischen Fehlertyps
+	}
+	catch (...)
+	{
+		// Alle anderen Ausnahmen
+		if(showMessage) ShowMessage("Unbekannter Fehler aufgetreten");
+		return 1;
+	}
+}
+
+--------------------------------
+
+// rr_systems.h
+#include "vcl.h" // Für AnsiString und ShowMessage
+#include "TMSQuery.h" // Für TMSQuery
+#include "DBM.h" // Für DBM
+
+namespace RRTools
+{
+    int SendSQLLine(AnsiString Line, TMSQuery *SQ, bool showMessage = false);
+}
+
+_____________________________________________________________________
+
+//----------------
 #include <vector>
 #include <utility>
 #include <string>
