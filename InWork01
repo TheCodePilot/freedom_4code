@@ -1,3 +1,4 @@
+//eigentlich dbo.X10K
 INSERT INTO X10K (PROT_ID,Utest,Uist,Frequenz,Cp,tan,TS,Test_Art) VALUES ("+IntToStr(ProtokolID)+",0,0,0,0,0,0,"+IntToStr(TestArt)+")
 
 #include <vector>
