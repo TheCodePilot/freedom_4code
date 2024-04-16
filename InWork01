@@ -1,6 +1,10 @@
+if(Form1->SendSQLLine("SELECT * FROM dbo.Hilfsmittel WHERE Typ='Messmittel' AND Protokoll_XTYP='X10K' ORDER BY Beschreibung",QH))
+		{while(!QH->Eof){ ComBoxMessg->Items->Add(QH->FieldByName("Beschreibung")->AsString+" # "+QH->FieldByName("WNummer")->AsString.Trim()); QH->Next();}}
+
+
 //eigentlich dbo.X10K
 INSERT INTO X10K (PROT_ID,Utest,Uist,Frequenz,Cp,tan,TS,Test_Art) VALUES ("+IntToStr(ProtokolID)+",0,0,0,0,0,0,"+IntToStr(TestArt)+")
-
+//---------------------
 #include <vector>
 #include <utility>
 #include <string>
