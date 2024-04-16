@@ -1,3 +1,41 @@
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+------------------------------
+// Angenommen, du hast bereits TMSConnection mit dem Namen "MSConnection" erstellt.
+
+// Erstelle ein TMSQuery-Objekt
+TMSQuery *MSQuery = new TMSQuery(this);
+
+// Setze die Verbindung des TMSQuery auf die vorhandene TMSConnection
+MSQuery->Connection = MSConnection;
+
+// Setze den SQL-Befehl für den TMSQuery (zum Beispiel ein SELECT-Statement)
+MSQuery->SQL->Text = "SELECT * FROM deine_tabelle";
+
+// Erstelle ein TMSDataSource-Objekt
+TMSDataSource *MSDataSource = new TMSDataSource(this);
+
+// Setze das DataSet des TMSDataSource auf den TMSQuery
+MSDataSource->DataSet = MSQuery;
+
+// Füge das TMSDataSource-Objekt dem Formular hinzu (es wird nicht visuell angezeigt)
+this->InsertComponent(MSDataSource);
+
+// Füge das TDBGrid-Objekt dem Formular hinzu und binde es an das TMSDataSource
+TDBGrid *DBGrid1 = new TDBGrid(this);
+DBGrid1->Parent = this;
+DBGrid1->DataSource = MSDataSource;
+
+// Öffne den TMSQuery, um die Daten abzurufen
+MSQuery->Open();
+
+-------------------------
+
+// Setze die DataSource-Eigenschaft des TDBGrid auf NULL
+DBGrid1->DataSource = NULL;
+
+
+
 #include <vector>
 #include <utility>
 #include <string>
