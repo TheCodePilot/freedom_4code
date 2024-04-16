@@ -1,3 +1,30 @@
+bool __fastcall TForm1::SendSQLLine(AnsiString Line, TMSQuery *SQ) // Nur gültig für Haupt-DB (MDE)
+//===============================================================================================================================================
+{
+	if(DBM.Connected==false) return(false);
+
+	if(Form00_SU->Visible && Form00_SU->CBallowMonitorSQL->Checked) Form00_SU->MMdb->Lines->Add("     SQL: "+Line);
+
+	if(SQ->Connection!=DBM.Connection) SQ->Connection=DBM.Connection;
+
+	SQ->Close();
+	SQ->SQL->Clear();
+	SQ->SQL->Add(Line);
+
+	try
+	{
+	  SQ->ExecSQL();
+
+	  if(Line.Pos("SELECT ")==1)
+	  {
+		 if   (SQ->Eof)     return false;
+		 else {SQ->First(); return true;}
+	  }
+	  else                  return true;
+	}
+	catch (...)            {return false;}
+}
+//----------------------
 if(Form1->SendSQLLine("SELECT * FROM dbo.Hilfsmittel WHERE Typ='Messmittel' AND Protokoll_XTYP='X10K' ORDER BY Beschreibung",QH))
 		{while(!QH->Eof){ ComBoxMessg->Items->Add(QH->FieldByName("Beschreibung")->AsString+" # "+QH->FieldByName("WNummer")->AsString.Trim()); QH->Next();}}
 
