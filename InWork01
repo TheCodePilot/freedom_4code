@@ -1,3 +1,18 @@
+class TMyForm : public TForm
+{
+public:
+    TFrame* MyFrame;
+    //...
+};
+
+void TMyFrame::ShowMyForm()
+{
+    TMyForm* MyForm = new TMyForm(this);
+    MyForm->MyFrame = this;
+    MyForm->ShowModal();
+}
+
+
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
 
 Initialisierung: Bevor Sie TeeChart verwenden können, müssen Sie normalerweise eine Instanz eines Diagrammobjekts erstellen und es konfigurieren, um Ihren Anforderungen zu entsprechen. Dazu gehören die Auswahl des Diagrammtyps, das Festlegen von Achsenbeschriftungen, das Hinzufügen von Datenreihen und das Anpassen von Farben und Stilen.
