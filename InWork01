@@ -1,3 +1,26 @@
+In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
+
+Initialisierung: Bevor Sie TeeChart verwenden können, müssen Sie normalerweise eine Instanz eines Diagrammobjekts erstellen und es konfigurieren, um Ihren Anforderungen zu entsprechen. Dazu gehören die Auswahl des Diagrammtyps, das Festlegen von Achsenbeschriftungen, das Hinzufügen von Datenreihen und das Anpassen von Farben und Stilen.
+
+Zum Beispiel:
+
+cpp
+Copy code
+#include <tchart.h>
+
+TChart *chart1 = new TChart(this); // Erstellen eines neuen Diagrammobjekts
+chart1->Parent = this; // Festlegen des übergeordneten Steuerelements
+chart1->AddSeries(new TLineSeries(chart1)); // Hinzufügen einer Datenreihe (hier Linienreihe)
+chart1->Series[0]->AddXY(1, 10); // Hinzufügen von Datenpunkten zur Datenreihe
+Anzeige und Aktualisierung: Nachdem das Diagramm initialisiert wurde, können Sie es anzeigen und bei Bedarf Daten aktualisieren oder anpassen.
+
+Zum Beispiel:
+
+cpp
+Copy code
+chart1->Series[0]->AddXY(2, 20); // Hinzufügen weiterer Datenpunkte
+chart1->Refresh(); // Aktualisieren des Diagramms, um Änderungen anzuzeigen
+//------------
 #include <vector>
 #include <utility>
 #include <string>
