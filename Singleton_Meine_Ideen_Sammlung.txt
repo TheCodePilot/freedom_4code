@@ -1,3 +1,12 @@
+
+https://www.informit.com/articles/article.aspx?p=31668
+
+
+
+https://www.google.com/search?q=C%2B%2B+Builder+Embarcadero+Singleton+Pattern&sca_esv=6b1c5e95a3d0b06b&rlz=1C1GCEA_enDE1099DE1100&ei=WIohZpevPKf_7_UP35ql6AI&ved=0ahUKEwiXu5HK1MyFAxWn_7sIHV9NCS0Q4dUDCBA&uact=5&oq=C%2B%2B+Builder+Embarcadero+Singleton+Pattern&gs_lp=Egxnd3Mtd2l6LXNlcnAaAhgDIilDKysgQnVpbGRlciBFbWJhcmNhZGVybyBTaW5nbGV0b24gUGF0dGVybjILEAAYgAQYogQYiwMyCxAAGKIEGIkFGIsDSPRaUIsXWMs5cAF4AZABAJgBbKAB-giqAQM4LjS4AQPIAQD4AQGYAg2gAqIJwgIKEAAYsAMY1gQYR8ICBBAhGArCAggQABiiBBiJBcICCBAAGIAEGKIEmAMAiAYBkAYIkgcDOC41oAebIw&sclient=gws-wiz-serp#ip=1
+
+//----------------------------
+
 Ja,    hast Recht! Das von dir erwähnte Pattern nennt sich Singleton-Pattern. Es wird verwendet, um sicherzustellen, dass von einer Klasse nur eine einzige Instanz erstellt wird und auf diese Instanz global zugegriffen werden kann. Hier ist ein einfaches Beispiel, wie    das Singleton-Pattern in C++ implementieren kannst:
 
 cpp
