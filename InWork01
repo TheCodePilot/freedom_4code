@@ -1,17 +1,17 @@
-class TMyForm : public TForm
+void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-public:
-    TFrame* MyFrame;
-    //...
-};
-
-void TMyFrame::ShowMyForm()
-{
-    TMyForm* MyForm = new TMyForm(this);
-    MyForm->MyFrame = this;
-    MyForm->ShowModal();
+    Ng->AddRow(3);
+    Ng->Cell[0][0]->AsString = "A11";
+    Ng->Cell[0][1]->AsString = "A12";
+    Ng->Cell[0][2]->AsString = "A13";
+    Ng->Cell[1][0]->AsString = "B21";
+    Ng->Cell[1][1]->AsString = "B22";
+    Ng->Cell[1][2]->AsString = "B23";
+    Ng->Cell[2][0]->AsString = "C31";
+    Ng->Cell[2][1]->AsString = "C32";
+    Ng->Cell[2][2]->AsString = "C33";
 }
-
+____
 
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
 
