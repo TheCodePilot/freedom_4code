@@ -1,16 +1,17 @@
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-    Ng->AddRow(3);
-    Ng->Cell[0][0]->AsString = "A11";
-    Ng->Cell[0][1]->AsString = "A12";
-    Ng->Cell[0][2]->AsString = "A13";
-    Ng->Cell[1][0]->AsString = "B21";
-    Ng->Cell[1][1]->AsString = "B22";
-    Ng->Cell[1][2]->AsString = "B23";
-    Ng->Cell[2][0]->AsString = "C31";
-    Ng->Cell[2][1]->AsString = "C32";
-    Ng->Cell[2][2]->AsString = "C33";
+    Ng->BeginUpdate();
+    Ng->ClearRows();
+    for(int i = 0; i < 3; i++)
+    {
+        Ng->AddRow();
+        Ng->Cell[i][0]->AsString = "A" + IntToStr(i+1) + "1";
+        Ng->Cell[i][1]->AsString = "A" + IntToStr(i+1) + "2";
+        Ng->Cell[i][2]->AsString = "A" + IntToStr(i+1) + "3";
+    }
+    Ng->EndUpdate();
 }
+
 ____
 
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
