@@ -1,21 +1,3 @@
-https://dn.bergsoft.net/nextdbgrid-quick-start.htm
-//---------------------
-
-void __fastcall TForm1::Button1Click(TObject *Sender)
-{
-    Ng->BeginUpdate();
-    Ng->ClearRows();
-    for(int i = 0; i < 3; i++)
-    {
-        Ng->AddRow();
-        Ng->Cell[i][0]->AsString = "A" + IntToStr(i+1) + "1";
-        Ng->Cell[i][1]->AsString = "A" + IntToStr(i+1) + "2";
-        Ng->Cell[i][2]->AsString = "A" + IntToStr(i+1) + "3";
-    }
-    Ng->EndUpdate();
-}
-
-____
 
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
 
