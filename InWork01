@@ -1,3 +1,6 @@
+https://dn.bergsoft.net/nextdbgrid-quick-start.htm
+//---------------------
+
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
     Ng->BeginUpdate();
