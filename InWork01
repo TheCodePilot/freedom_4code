@@ -1,38 +1,4 @@
-void __fastcall TFormXML::FirstRowHead()
-{
 
-	MyFrame->Ng->BeginUpdate();
-	MyFrame->Ng->ClearRows();
-	MyFrame->Ng->AddRow(1);
-	int rowIndex = 0;
-
-	for(int i = 0; i < NSIZEOF_CONTAINER; i++)
-	{
-		MyFrame->Ng->Columns->Add(__classid(TNxTextColumn));
-		MyFrame->Ng->Cell[i][rowIndex]->AsString = "NEU" + IntToStr(i+1) + "1";
-	}
-
-	Ng->EndUpdate();
-}
-
-//---------
-C:\Program Files (x86)\Embarcadero\Studio\21.0\lib\nextsuite5_7-22\Sources\Next DBGrid
-
-C:\Program Files (x86)\Embarcadero\Studio\21.0\lib\nextsuite5_7-22\Sources\Next Grid
-
-C:\Program Files (x86)\Embarcadero\Studio\21.0\lib\nextsuite5_7-22\Sources
-
-
-//--------
-
-[bcc32 Fehler] Neu_XML_TDBGrid.cpp(1002): E2015 Mehrdeutigkeit zwischen 
-'_fastcall Nxdbcolumns::TNxDBColumns::Add(System::TMetaClass *,bool) at C:\Program Files (x86)\Embarcadero\Studio\21.0\lib\nextsuite5_7-22\Sources\Next DBGrid\NxDBColumns.hpp:119' 
-und '_fastcall Nxdbcolumns::TNxDBColumns::Add(System::TMetaClass *,System::WideString) at C:\Program Files (x86)\Embarcadero\Studio\21.0\lib\nextsuite5_7-22\Sources\Next DBGrid\NxDBColumns.hpp:131'
-  Vollständiger Parser-Kontext
-    Neu_XML_TDBGrid.cpp(993): Analyse: void _fastcall TFormXML::FirstRowHead()
-//---------------
-http://www.fredshack.com/docs/nextgrid.html
-//---------------
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
 
 Initialisierung: Bevor Sie TeeChart verwenden können, müssen Sie normalerweise eine Instanz eines Diagrammobjekts erstellen und es konfigurieren, um Ihren Anforderungen zu entsprechen. Dazu gehören die Auswahl des Diagrammtyps, das Festlegen von Achsenbeschriftungen, das Hinzufügen von Datenreihen und das Anpassen von Farben und Stilen.
