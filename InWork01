@@ -1,16 +1,18 @@
-void __fastcall TFormXML::Uebertrage()
-{
+// Zugriff auf das DataSet
+TDataSet* dataSet = DataSource3->DataSet;
 
-	if(!dataSet)
-	{
-		dataSet = true;
-		MyFrame->NgDB->DataSource = DataSource3;
-	}
-	MyFrame->NgDB->DataSource->DataSet->EnableControls();
-	MyFrame->NgDB->Refresh();
-	MyFrame->NgDB->DataSource->DataSet->DisableControls();
+// Fügen Sie einen neuen Datensatz hinzu
+dataSet->Insert();
 
-}
+// Setzen Sie die Werte für die Felder
+dataSet->FieldByName("Feldname1")->AsString = "Wert1";
+dataSet->FieldByName("Feldname2")->AsString = "Wert2";
+dataSet->FieldByName("Feldname3")->AsString = "Wert3";
+
+// Bestätigen Sie den neuen Datensatz
+dataSet->Post();
+
+//-----------------
 
 
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
