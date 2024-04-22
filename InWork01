@@ -1,3 +1,25 @@
+void __fastcall TFormXML::FirstRowHead()
+{
+    MyFrame->Ng->BeginUpdate();
+    MyFrame->Ng->ClearRows();
+    MyFrame->Ng->AddRow(1);
+    int rowIndex = 0;
+
+    for(int i = 0; i < NSIZEOF_CONTAINER; i++)
+    {
+        TNxTextColumn *newColumn = dynamic_cast<TNxTextColumn*>(MyFrame->Ng->Columns->Add(__classid(TNxTextColumn)));
+        if(newColumn) // Überprüfen Sie, ob die Umwandlung erfolgreich war
+        {
+            MyFrame->Ng->Cell[i][rowIndex]->AsString = "NEU" + IntToStr(i+1) + "1";
+        }
+    }
+
+    MyFrame->Ng->EndUpdate();
+}
+
+
+//--------------
+
 
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
 
