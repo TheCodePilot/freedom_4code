@@ -1,72 +1,16 @@
-void __fastcall TFormXML::FirstRowHead()
+void __fastcall TFormXML::Uebertrage()
 {
 
-	MyFrame->Ng->BeginUpdate();
-	MyFrame->Ng->ClearRows();
-	MyFrame->Ng->AddRow(1);
-	int rowIndex = 0;
-
-	for(int i = 0; i < NSIZEOF_CONTAINER; i++)
+	if(!dataSet)
 	{
-		MyFrame->Ng->Columns->Add(__classid(TNxTextColumn)); //, System::WideString(""));
-		//MyFrame->Ng->Columns->Add(__classid(TNxTextColumn), true);
-		MyFrame->Ng->Cell[i][rowIndex]->AsString = "NEU" + IntToStr(i+1) + "1";
+		dataSet = true;
+		MyFrame->NgDB->DataSource = DataSource3;
 	}
+	MyFrame->NgDB->DataSource->DataSet->EnableControls();
+	MyFrame->NgDB->Refresh();
+	MyFrame->NgDB->DataSource->DataSet->DisableControls();
 
-	MyFrame->Ng->EndUpdate();
 }
-
-void __fastcall TFormXML::AddOtherRows(int rowIndex)
-{
-
-	MyFrame->Ng->BeginUpdate();
-	MyFrame->Ng->AddRow(1);
-	for(int i = 0; i < NSIZEOF_CONTAINER; i++)
-	{
-		MyFrame->Ng->Cell[i][rowIndex]->AsString = "A" + IntToStr(i+1) + "1";
-		MyFrame->Ng->Cell[i][rowIndex]->AsString = "A" + IntToStr(i+1) + "2";
-		MyFrame->Ng->Cell[i][rowIndex]->AsString = "A" + IntToStr(i+1) + "3";
-	}
-	MyFrame->Ng->EndUpdate();
-}
-
-
-void __fastcall TFormXML::FirstRowHeadDB()
-{
-
-	MyFrame->NgDB->BeginUpdate();
-	MyFrame->NgDB->ClearRows();
-	MyFrame->NgDB->AddRow(1);
-	int rowIndex = 0;
-	Variant var("Hallo");
-
-	for(int i = 0; i < NSIZEOF_CONTAINER; i++)
-	{
-		MyFrame->NgDB->Columns->Add(__classid(TNxTextColumn), System::WideString(""));
-		MyFrame->NgDB->SetCellValue(i,rowIndex,VarToStr(var));
-		//DBGrid1->Columns[i]->Field->
-		//MyFrame->NgDB->Columns->Add(__classid(TNxTextColumn), true);
-//MyFrame->NgDB->Cell[i][rowIndex]->AsStriNgDB = "NEU" + IntToStr(i+1) + "1";
-	}
-
-	MyFrame->NgDB->EndUpdate();
-}
-
-void __fastcall TFormXML::AddOtherRowsDB(int rowIndex)
-{
-
-	MyFrame->NgDB->BeginUpdate();
-	MyFrame->NgDB->AddRow(1);
-/*	for(int i = 0; i < NSIZEOF_CONTAINER; i++)
-	{
-		MyFrame->NgDB->Cell[i][rowIndex]->AsStriNgDB = "A" + IntToStr(i+1) + "1";
-		MyFrame->NgDB->Cell[i][rowIndex]->AsStriNgDB = "A" + IntToStr(i+1) + "2";
-		MyFrame->NgDB->Cell[i][rowIndex]->AsStriNgDB = "A" + IntToStr(i+1) + "3";
-	}*/
-	MyFrame->NgDB->EndUpdate();
-}
-
-//--------------
 
 
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
