@@ -1,0 +1,68 @@
+object Frame4XML: TFrame4XML
+  Left = 0
+  Top = 0
+  Width = 589
+  Height = 454
+  Color = clInfoBk
+  ParentBackground = False
+  ParentColor = False
+  TabOrder = 0
+  object Button1: TButton
+    Left = 256
+    Top = 180
+    Width = 75
+    Height = 25
+    Caption = 'XML'
+    TabOrder = 0
+    OnClick = cbnXMLOnClick
+  end
+  object Ng: TNextGrid
+    Left = 3
+    Top = 275
+    Width = 250
+    Height = 150
+    Touch.InteractiveGestures = [igPan, igPressAndTap]
+    Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
+    Caption = ''
+    Options = [goGrid, goHeader]
+    TabOrder = 1
+    TabStop = True
+  end
+  object NgDB: TNextDBGrid
+    Left = 3
+    Top = 3
+    Width = 250
+    Height = 150
+    Touch.InteractiveGestures = [igPan, igPressAndTap]
+    Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
+    Caption = ''
+    Options = [goGrid, goHeader]
+    TabOrder = 2
+    TabStop = True
+  end
+  object NgDB1: TNextDBGrid
+    Left = 328
+    Top = 3
+    Width = 250
+    Height = 150
+    Touch.InteractiveGestures = [igPan, igPressAndTap]
+    Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
+    Caption = ''
+    TabOrder = 3
+    TabStop = True
+  end
+  object CDS_Test: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 336
+    Top = 368
+  end
+  object DS: TMSDataSource
+    Left = 480
+    Top = 288
+  end
+  object QC1: TMSQuery
+    Left = 472
+    Top = 400
+  end
+end

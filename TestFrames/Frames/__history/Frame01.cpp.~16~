@@ -1,0 +1,62 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Frame01.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "NxCustomGrid"
+#pragma link "NxCustomGridControl"
+#pragma link "NxDBGrid"
+#pragma link "NxScrollControl"
+#pragma link "NxGrid"
+#pragma link "NxColumns"
+#pragma link "NxDBColumns"
+#pragma link "DBAccess"
+#pragma link "MemDS"
+#pragma link "MSAccess"
+#pragma resource "*.dfm"
+TFrame4XML *Frame4XML;
+//---------------------------------------------------------------------------
+
+
+__fastcall TFrame4XML::TFrame4XML(TComponent* Owner)
+	: TFrame(Owner)//, Form4XML(new TFormXML(this))
+{
+
+}
+
+//Bitte im großen Projekt prüfen
+__fastcall TFrame4XML::~TFrame4XML()
+{
+	ShowMessage("Destruktor : TFrame4XML::~TFrame4XML()");
+}
+//---------------------------------------------------------------------------
+void __fastcall TFrame4XML::cbnXMLOnClick(TObject *Sender)
+{
+	//ShowMyForm();
+	CreateAndShowForm();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFrame4XML::CreateAndShowForm()
+{
+	//TFormXML::instanceCount = 0;
+
+	// Eine Instanz von TFormXML erhalten
+	//TFormXML* form
+	TFormXML* Form4XML = NULL;
+	Application->CreateForm(__classid(TFormXML), &Form4XML);
+	//Form4XML = TFormXML::getInstance(this); // Annahme: this ist ein Frame
+	// Das Formular anzeigen
+	Form4XML->MyFrame = this;    //Im großen Projekt global sein
+	Form4XML->ShowModal();
+
+}
+
+//----------------------------------------------------------------------------
+//Teil zum testen in die Datenbank zu schreiben der Wechsel
+
+
+

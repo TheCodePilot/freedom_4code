@@ -1,0 +1,36 @@
+//---------------------------------------------------------------------------
+
+#ifndef Frame01H
+#define Frame01H
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+
+#include <memory>
+//---------------------------------------------------------------------------
+#include "Neu_XML_TDBGrid.h" //von Forms das Gegenstück   //!!!Wichtig
+class TFormXML; //ganz wichtig !!!
+class TFrame4XML : public TFrame
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TButton *Button1;
+	void __fastcall cbnXMLOnClick(TObject *Sender);
+private:	// Benutzer-Deklarationen
+
+	TFormXML* Form4XML;
+public:		// Benutzer-Deklarationen
+
+	__fastcall ~TFrame4XML();
+	__fastcall TFrame4XML(TComponent* Owner);
+	__fastcall void ShowMyForm();
+	//void __fastcall TFrame4XML::CreateAndShowForm();
+	void __fastcall CreateAndShowForm();
+
+	void __fastcall Ichframe(){ShowMessage("Ich bin ein Frame");}
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TFrame4XML *Frame4XML;
+//---------------------------------------------------------------------------
+#endif

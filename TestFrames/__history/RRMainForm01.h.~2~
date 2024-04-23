@@ -1,0 +1,23 @@
+//---------------------------------------------------------------------------
+
+#ifndef RRMainForm01H
+#define RRMainForm01H
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include "Frame01.h"
+//---------------------------------------------------------------------------
+class TForm5 : public TForm
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TFrame4XML *Frame4XML1;
+private:	// Benutzer-Deklarationen
+public:		// Benutzer-Deklarationen
+	__fastcall TForm5(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm5 *Form5;
+//---------------------------------------------------------------------------
+#endif

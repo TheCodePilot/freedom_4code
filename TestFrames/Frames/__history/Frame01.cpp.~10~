@@ -1,0 +1,75 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Frame01.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFrame4XML *Frame4XML;
+//---------------------------------------------------------------------------
+
+
+__fastcall TFrame4XML::TFrame4XML(TComponent* Owner)
+	: TFrame(Owner)//, Form4XML(new TFormXML(this))
+{
+
+}
+
+//Bitte im großen Projekt prüfen
+/*__fastcall TFrame4XML::~TFrame4XML()
+{
+	ShowMessage("Destruktor : TFrame4XML::~TFrame4XML()");
+} */
+//---------------------------------------------------------------------------
+void __fastcall TFrame4XML::cbnXMLOnClick(TObject *Sender)
+{
+	//ShowMyForm();
+	CreateAndShowForm();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFrame4XML::ShowMyForm()
+{
+	Form4XML->MyFrame = this;
+	Form4XML->IchFormXML();
+	Form4XML->ShowModal();
+
+}
+
+
+
+void __fastcall TFrame4XML::CreateAndShowForm()
+{
+	//TFormXML::instanceCount = 0;
+
+
+	// Eine Instanz von TFormXML erhalten
+	//TFormXML* form
+	Form4XML = TFormXML::getInstance(this); // Annahme: this ist ein Frame
+	//Form4XML->setInstanceCount(1);
+	//setInstanceCount
+	//if(Form4XML->getInstanceCount() >= 1)
+
+	//TFormXML* Form4XML1 = TFormXML::getInstance(this);
+	//TFormXML* Form4XML2 = TFormXML::getInstance(this);
+	//TFormXML* Form4XML3 = TFormXML::getInstance(this);
+	//int Form4XML::instanceCount = 0;
+	// Ein Formular mithilfe der erhaltenen Instanz erstellen
+	//std::unique_ptr<Form4XML> NewForm(new Form4XML(&form));
+
+	// Zugriff auf das MyFrame-Objekt über das TFormXML-Objekt
+	Form4XML->MyFrame = this;
+	//form->MyFrame = this;
+
+
+
+
+
+	// Das Formular anzeigen
+	Form4XML->ShowModal();
+
+	// Das Formular wird automatisch freigegeben, wenn es außerhalb des Gültigkeitsbereichs von NewForm ist
+}
+

@@ -1,0 +1,190 @@
+//---------------------------------------------------------------------------
+
+#ifndef Neu_XML_TDBGridH
+#define Neu_XML_TDBGridH
+//---------------------NEU--------------------
+#include "NxCustomGrid.hpp"
+#include "NxCustomGridControl.hpp"
+#include "NxGrid.hpp"
+#include "NxScrollControl.hpp"
+//#include <Vcl.Buttons.hpp>
+#include "NxColumnClasses.hpp"
+#include "NxColumns.hpp"
+
+
+//---------------------NEU--------------------
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Data.DB.hpp>
+#include <Vcl.DBGrids.hpp>
+#include <Vcl.Grids.hpp>
+#include <Datasnap.DBClient.hpp>
+#include <Vcl.Dialogs.hpp>
+#include <Vcl.ExtDlgs.hpp>
+//---------------------------------------------------------------------------
+#include "rr_system.h"
+#include <Datasnap.Provider.hpp>
+	//class RRClasses::XMLBasic;
+		#include "Frame01.h"   // wegen Funktionen  // !!! Wichtig
+		class TFrame4XML;   // !!! Wichtig
+
+
+
+class TFormXML : public TForm
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TDBGrid *DBGrid4XMLin;
+	TClientDataSet *ClientDataSet1;
+	TDBGrid *DBGrid4XMLCard_Item;
+	TDataSource *DataSource1;
+	TClientDataSet *ClientDataSet2;
+	TDataSource *DataSource2;
+	TMemo *Memo1;
+	TClientDataSet *ClientDataSet3;
+	TDataSource *DataSource3;
+	TDBGrid *DBGridUserChoice;
+	TButton *cbnLoescheAlles;
+	TButton *cbnLoescheSpalte;
+	TComboBox *ComboBoxDBGridUserChoice;
+	TButton *cbnUebertrage;
+	TDataSetProvider *DataSetProvider1;
+	TLabel *Label1;
+	TLabel *Label2;
+	TLabel *Label3;
+	TLabel *Label4;
+	TDataSource *DS_Dummy;
+	TClientDataSet *CDS_Dummy;
+	void __fastcall DBGrid4XMLinOnCellClick(TColumn *Column);
+	void __fastcall DBGrid4XMLinDrawColumnCell(TObject *Sender, const TRect &Rect, int DataCol,
+          TColumn *Column, TGridDrawState State);
+	void __fastcall DBGrid4XMLCard_ItemOnCellKlick(TColumn *Column);
+	void __fastcall DBGridUserChoiceMouseEnter(TObject *Sender);
+	void __fastcall DBGrid4XMLCard_ItemMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+	void __fastcall DBGrid4XMLCard_ItemMouseUp(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+	void __fastcall DBGridUserChoiceOnCellClick(TColumn *Column);
+	void __fastcall DBGrid4XMLCard_ItemOndrawColumnCell(TObject *Sender, const TRect &Rect,
+          int DataCol, TColumn *Column, TGridDrawState State);
+	void __fastcall cbnLoescheSpalteOnClick(TObject *Sender);
+	void __fastcall DBGridUserChoiceOnDraw(TObject *Sender, const TRect &Rect, int DataCol,
+          TColumn *Column, TGridDrawState State);
+	void __fastcall cbnLoescheAllesOnClick(TObject *Sender);
+	void __fastcall cbOnClick(TObject *Sender);
+	void __fastcall cbnUebertrageOnClick(TObject *Sender);
+	void __fastcall XMLShow(TObject *Sender);
+	void __fastcall OnDestroyNewsAllocated(TObject *Sender);
+
+	//__fastcall static int  getInstanceCount();
+
+
+
+
+
+
+
+
+private:	// Benutzer-Deklarationen
+	void __fastcall FillTDBGridFromXML(RRClasses::XMLBasic* xmlProcess);
+	void __fastcall NewColumnName();
+	void __fastcall UpdateDBGridUserChoice();
+	void __fastcall XML2Grid(RRClasses::XMLBasic* xmlProcess);
+	void __fastcall Uebertrage();
+	void __fastcall BuildRestOfFieldDefs();
+	bool __fastcall AllreadyChosed();
+	void __fastcall IniCard_Item();
+	int  __fastcall SomeFieldsExist();
+	void __fastcall G3ToGrid2Synchron(std::wstring wstr);
+
+	std::unique_ptr<RRClasses::XMLBasic> xmlProcess;
+    RRClasses::XMLData* xmlData;
+	std::unique_ptr<TOpenTextFileDialog> OpenTextFileDialog;
+	//steuert DBGridUserChoiceMouseEnter
+	bool fromDBGrid4XMLCard_Item;
+	bool cbnLöscheSpalten;
+	bool ersteSpalte;
+
+	int currentRowCard_Item;
+	int fieldCounterToDelete;
+	AnsiString clickMeasureCard_Item;
+	AnsiString clickValueCard_Item;
+
+    //Achtung hier ist das zweite also .second der WString sorry historisch gewachsen wenn Zeit ändere ich dies
+	std::vector<std::pair<int, std::wstring> > selectedRowsDBGrid4XMLCard_Item; // RecNo, Spalten - Name
+	std::vector<std::pair<int, int> > selectedColumnsUserDBGrid4Draw; //Nummer der Spalte [aktuell angeklickt], Ereignis = 1 : für eventuelles Löschen angeklickt
+	std::vector<std::pair<std::wstring, int> > fieldDefsColumnsUserDBGridAsStr;
+
+	__fastcall TFormXML(TComponent* Owner);
+	void __fastcall FirstRowHead();
+	void __fastcall AddOtherRows(int rowIndex);
+	void __fastcall FirstRowHeadDB();
+	void __fastcall AddOtherRowsDB(int rowIndex);
+
+public:		// Benutzer-Deklarationen
+
+	void __fastcall TFormXML_(TComponent* Owner);
+	//void __fastcall IchFormXML();
+	TFrame4XML* MyFrame;
+    bool dataSet;
+};
+//---------------------------------------------------------------------------
+//extern PACKAGE TFormXML *FormXML ;
+//---------------------------------------------------------------------------
+#endif
+
+
+//Unter die Lupe nehmen : NewColumnName()
+/*
+class Singleton
+{
+  public:
+	  static Singleton& Instance();
+
+protected:
+      Singleton(); // Not Implemented, Instantiation not possible
+};
+An implementation of Instance is
+
+Singleton& Singleton::Instance()
+{
+  static Singleton* NewSingleton = new Singleton();
+  return *NewSingleton;
+}
+The initial call to Instance will create a new Singleton and return a reference to it. Subsequent calls will simply return a reference. However, the destructor of the Singleton will not be called; the object is simply abandoned on free store. If there is important processing that must be executed in the destructor, the following implementation will ensure that the Singleton is destructed:
+
+Singleton& Singleton::Instance()
+{
+  static Singleton NewSingleton;
+  return NewSingleton;
+}
+
+*/
+
+
+
+/*
+    int getInstanceCount(); // Methode zum Abrufen der Anzahl der Instanzen
+private:
+    MyFrame(TComponent* Owner);
+
+    static int instanceCount; // Zählvariable für die Instanzen
+};
+
+// In MyFrame.cpp
+#include "MyFrame.h"
+#include "TComponent.h" // Header für TComponent
+
+int MyFrame::instanceCount = 0; // Initiali  rung der Zählvariable
+
+MyFrame& MyFrame::getInstance(TComponent* Owner) {
+	instanceCount++; // Inkrementiere die Zählvariable
+    static MyFrame instance(Owner);
+    return instance;
+}
+
+int MyFrame::getInstanceCount() {
+	return instanceCount;
+*/

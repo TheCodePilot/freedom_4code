@@ -1,0 +1,31 @@
+object MainForm01: TMainForm01
+  Left = 0
+  Top = 0
+  Caption = 'MainForm01'
+  ClientHeight = 299
+  ClientWidth = 635
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnShow = FrameMainOnShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  inline Frame4XML1: TFrame4XML
+    Left = 19
+    Top = 19
+    Width = 598
+    Height = 254
+    Color = clInfoBk
+    ParentBackground = False
+    ParentColor = False
+    TabOrder = 0
+    ExplicitLeft = 19
+    ExplicitTop = 19
+    ExplicitWidth = 598
+    ExplicitHeight = 254
+  end
+end
