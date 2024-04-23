@@ -13,6 +13,33 @@ for (int row = 0; row < NextDBGrid1->RowCount; ++row) {
 
 //-----------------
 
+void __fastcall TForm1::NextDBGrid1CellColoring(TObject *Sender, int ACol,
+    int ARow, TColor &CellColor, TColor &GridColor, TCellState CellState)
+{
+    TField *Field = NextDBGrid1->Columns->Items[ACol]->Field;
+    if (Field != NULL && Field->AsInteger == 0) {
+        CellColor = clRed;
+    }
+}
+//------------------
+
+void __fastcall TForm1::NextDBGrid1CellColoring(TObject *Sender, int ACol,
+    int ARow, TColor &CellColor, TColor &GridColor, TCellState CellState)
+{
+    TField *Field = NextDBGrid1->Columns->Items[ACol]->Field;
+    if (Field != NULL) {
+        if (Field->IsNull || Field->AsString.IsEmpty()) {
+            // Wenn das Feld leer ist
+            CellColor = clGray; // Hier die gewünschte Farbe für leere Zellen einsetzen
+        } else {
+            // Wenn das Feld nicht leer ist
+            CellColor = clRed; // Hier die gewünschte Farbe für nicht leere Zellen einsetzen
+        }
+    }
+}
+
+//----------------------
+
 
 In C++ bietet TeeChart eine Reihe von Funktionen und Klassen für die Erstellung und Anpassung von Diagrammen. Die wichtigsten Befehle und Konzepte sind:
 
