@@ -1,4 +1,19 @@
+void __fastcall TForm1::NextDBGrid1DrawColumnTitle(TNextColumn *Sender, const TRect &ARect, int ARowIndex, int AColumnIndex,
+    bool &DefaultDraw)
+{
+    TCanvas *Canvas = NextDBGrid1->Canvas;
+    TFontStyles FontStyle;
 
+    if (ARowIndex == 0) { // Überprüfe, ob es sich um die erste Zeile (Überschriftenzeile) handelt
+        FontStyle << fsBold; // Setze die Schriftart auf fett
+    } else {
+        FontStyle = TFontStyles(); // Setze die Schriftart auf normal
+    }
+
+    Canvas->Font->Style = FontStyle;
+}
+
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 // Setze die Überschriften der Spalten fett darstellen
 for (int i = 0; i < NextDBGrid1->Columns->Count; ++i) {
     NextDBGrid1->Columns->Items[i]->Title->Font->Style = TFontStyles() << fsBold;
