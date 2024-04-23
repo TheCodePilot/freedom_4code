@@ -1,16 +1,15 @@
-// Zugriff auf das DataSet
-TDataSet* dataSet = DataSource3->DataSet;
 
-// Fügen Sie einen neuen Datensatz hinzu
-dataSet->Insert();
+// Setze die Überschriften der Spalten fett darstellen
+for (int i = 0; i < NextDBGrid1->Columns->Count; ++i) {
+    NextDBGrid1->Columns->Items[i]->Title->Font->Style = TFontStyles() << fsBold;
+}
 
-// Setzen Sie die Werte für die Felder
-dataSet->FieldByName("Feldname1")->AsString = "Wert1";
-dataSet->FieldByName("Feldname2")->AsString = "Wert2";
-dataSet->FieldByName("Feldname3")->AsString = "Wert3";
-
-// Bestätigen Sie den neuen Datensatz
-dataSet->Post();
+// Ändere die Hintergrundfarbe aller Zellen
+for (int row = 0; row < NextDBGrid1->RowCount; ++row) {
+    for (int col = 0; col < NextDBGrid1->ColCount; ++col) {
+        NextDBGrid1->Cells[col][row]->Color = clYellow; // Hier die gewünschte Hintergrundfarbe einsetzen
+    }
+}
 
 //-----------------
 
