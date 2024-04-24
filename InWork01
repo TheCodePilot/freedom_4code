@@ -1,17 +1,15 @@
-void __fastcall TForm1::NextDBGrid1DrawColumnTitle(TNextColumn *Sender, const TRect &ARect, int ARowIndex, int AColumnIndex,
-    bool &DefaultDraw)
-{
-    TCanvas *Canvas = NextDBGrid1->Canvas;
-    TFontStyles FontStyle;
+// Überprüfe, ob die Spalte bereits vorhanden ist
+if (!MSQuery1->FieldDefs->FindField("Spaltenname")) {
+    // Spalte ist noch nicht vorhanden, füge sie hinzu
+    TFieldDef *newFieldDef = MSQuery1->FieldDefs->AddFieldDef();
+    newFieldDef->Name = "Spaltenname";
+    newFieldDef->DataType = ftInteger; // Datentyp entsprechend anpassen
+    // Weitere Einstellungen für die neue Spalte, falls erforderlich
 
-    if (ARowIndex == 0) { // Überprüfe, ob es sich um die erste Zeile (Überschriftenzeile) handelt
-        FontStyle << fsBold; // Setze die Schriftart auf fett
-    } else {
-        FontStyle = TFontStyles(); // Setze die Schriftart auf normal
-    }
-
-    Canvas->Font->Style = FontStyle;
+    // Aktualisiere die Spalteninformationen des DataSet
+    MSQuery1->CreateDataSet();
 }
+
 
 //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 // Setze die Überschriften der Spalten fett darstellen
