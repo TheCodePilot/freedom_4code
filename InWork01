@@ -1,3 +1,20 @@
+// Annahme: ACol und ARow sind die Spalten- und Zeilenindizes der Zelle
+// Annahme: NextDBGrid ist die Instanz deines TNextDBGrid-Objekts
+// Annahme: Canvas ist das Canvas-Objekt, das du verwenden möchtest (z.B. NextDBGrid->Canvas)
+
+// Bestimme die Größe und Position des Rechtecks in der Zelle
+int cellWidth = NextDBGrid->ColWidths[ACol];
+int cellHeight = NextDBGrid->RowHeights[ARow];
+int cellLeft = NextDBGrid->CellRect(ACol, ARow).Left;
+int cellTop = NextDBGrid->CellRect(ACol, ARow).Top;
+
+// Zeichne das Rechteck auf dem Canvas
+Canvas->Brush->Color = clRed; // Beispiel: Rote Farbe für das Rechteck
+Canvas->FillRect(TRect(cellLeft, cellTop, cellLeft + cellWidth, cellTop + cellHeight));
+
+
+
+//-----------------------------------------
 // Überprüfe, ob die Spalte bereits vorhanden ist
 if (!MSQuery1->FieldDefs->FindField("Spaltenname")) {
     // Spalte ist noch nicht vorhanden, füge sie hinzu
