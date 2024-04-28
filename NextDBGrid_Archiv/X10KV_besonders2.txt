@@ -1,0 +1,46 @@
+ Is there a way to delay the grid from repainting itself, and only repaint it when all the column widths have been adjusted? Thanks.
+ ___
+ inside procedure TNxCustomGridControl.DoColumnChange in NxCustomGridControl.pas, find next lines:
+
+CODE
+  if ChangeKind = ccWidth then
+  begin
+    ExpandColumn(AColumn, Param, GridStyle = gsSlides);
+    DoColumnResize(AColumn.Index);
+    UpdateHorzScrollBar;
+  end;
+
+try to change it into:
+
+CODE
+  if ChangeKind = ccWidth then
+  begin
+    if not IsUpdating then ExpandColumn(AColumn, Param, GridStyle = gsSlides); // <---- changed line
+    DoColumnResize(AColumn.Index);
+    UpdateHorzScrollBar;
+  end;
+  
+  
+  
+  
+  
+  
+  
+  
+NULL darstellen when in DB NULL
+https://www.bergsoft.net/forum/index.php?showtopic=1467
+
+
+
+
+
+
+
+
+
+Bei 14 dran.
+
+
+
+
+https://www.bergsoft.net/forum/index.php?showtopic=262

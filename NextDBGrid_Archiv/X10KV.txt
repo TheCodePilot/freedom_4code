@@ -1,0 +1,412 @@
+Custom Draw
+https://www.bergsoft.net/forum/index.php?showtopic=2903
+
+
+https://dn.bergsoft.net/numeric-formatmask.htm
+OnAfterEditText event.
+if Value = '1234' then Value := '12.34';
+
+
+CODE
+procedure TForm1.NextDBGrid1CellColoring(Sender: TObject; ACol, ARow: Integer; var CellColor, GridColor: TColor; CellState:TCellState);
+var
+Field:TField;
+begin
+if not(csSelected in CellState) and not(csEmpty in CellState) then
+begin
+Field:=NextDBGrid1.Columns[0].Field;
+if Field.AsString='17.04.2009' then CellColor:=clSkyBlue;
+if Field.AsString='16.04.2009' then CellColor:=clMoneyGreen;
+if Field.AsString='15.04.2009' then CellColor:=clYellow;
+end;
+end;
+
+
+
+
+
+
+
+NextGrid1.CellByName['mycolumn', 3].Color := clRed;
+
+
+
+
+
+
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  i : Integer;
+begin
+    //Here, open DB, open Query, etc.
+    [...]
+  With NextDBGrid1 do begin
+    DataSource := DataSource1;
+    Options := Options + [goSelectFullRow,goMultiSelect];
+
+    for i := 0 to Columns.Count - 1 do begin
+        //Set column name to its SQL name
+      Columns[i].Name := Columns[i].FieldName;
+    end;
+  end;
+end;
+
+//Pop-up menu has item "CD"
+procedure TForm1.CD1Click(Sender: TObject);
+var
+  i : Integer;
+begin
+  for i := 0 to NextDBGrid1.RowCount - 1 do begin
+    if NextDBGrid1.Selected[i] then begin
+      ShowMessage('ID=' +  NextDBGrid1.CellsByName['id', i]);
+    end;
+  end;
+end;
+
+
+
+
+
+
+
+
+
+~~~~
+//N.A.
+  //NextDBGrid1.Columns[0].Caption := 'Identification';
+
+  //E2010 Incompatible types: 'TColumnHeader' and 'string'
+  //NextDBGrid1.Columns[0].Header := 'Identification';
+
+  //N.A.
+  //NextDBGrid1.Columns[0].Header.Caption := 'Identification';
+~~~~
+
+
+
+
+
+
+
+second column of a check box type on the nextDbGrid, which has coEditing set to True. this works fine.
+
+
+
+
+
+
+
+
+https://dn.bergsoft.net/datetime-formatmask.htm
+
+
+
+
+
+
+
+
+
+Field := NextDBGrid.Columns[NextDBGrid1.SelectedColumn].Field;
+
+
+
+
+
+
+
+
+
+You may show only a VertScrollBar (property HideScrollBar set to false)
+
+
+
+
+
+
+
+
+
+Wenn ich DataSet aktiviere, werden Spalten automatisch hinzugefügt (doAddColumns ist aktiviert).
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Mal anschauen:
+https://www.bergsoft.net/res/screenshots/next-dbgrid/graphic-column.gif
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+I want change header font size to larger than cell?
+You may try to adjust Font property of NextDBGrid. Header's Font depend from Font property of NextDBGrid.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+How edit data of nextdbgrid cells by click on it ? 
+Set coEditing flag in Options property of column to True or double click on next icon:
+But please note that DataSet must be not Read-only.
+
+
+
+
+
+
+
+Eventuell mal anschauen
+Please look in \Demos\Delphi\ADO\Demo 1 sub-folder for source code, or there is it again.
+
+
+
+
+
+
+When the user double-clicks on a row, I need to check what value the Ref column contains, 
+since it's the row ID, so that I can then display a two-column grid and let the user make 
+changes to the dataset, save this to the DB, and refresh the dataset and the dbgrid.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+I'd like the right-most column to fill the available space
+Set coAutoSize flag in Options property of column
+
+
+
+
+
+
+
+
+You only need to read Columns[0].Field.AsInteger. Since this is active record, 
+Field of each column will contain active record data.
+
+
+
+
+
+
+
+
+if Field.AsString = ValueChecked ----> checkbox will be shown and checked.
+if Field.AsString = ValueUnchecked ----> checkbox will be shown but unchecked.
+
+
+
+
+
+//Morgen
+
+
+
+
+if NextDBGrid.Columns[i].ClassType = TNxDBNumberColumn then
+begin
+  TNxDBNumberColumn(NextDBGrid.Columns[i]).SpinButtons := False;
+end;
+
+
+
+
+
+
+
+var
+  Field: TField;
+begin
+  Field := NxDBGrid1.Columns[ACol].Field;
+  if Field.AsString = 'X' then CellColor := clRed;
+
+
+How can i put a new color, depending on one cell for the whole row ?
+___
+I am not sure that I understand question, but will try to answer:
+
+If cell is in same row, simply use cell's Index instead ACol . Record will not be changed in this case, but you will read another Field.
+
+CODE
+var
+  Field: TField;
+begin
+  Field := NxDBGrid1.Columns[5].Field; // for example if data is in 6th column of same row
+  if Field.AsString = 'X' then CellColor := clRed;
+
+If value is in another row, you may use Cells property, but please note that if grid is not in buffered mode you will not be able to read value unless you locate this record with DataSet.MoveBy or similar methods.
+
+But, please note that all coloring need to be done in OnCellColoring event.
+
+
+
+
+
+
+
+
+
+
+
+
+How can i change the color of a row, when i hove with mouse on it. Thanks !!
+___
+CODE
+var
+  Form1: TForm1;
+  NewHoverRow, OldHoverRow: Integer;
+.
+.
+.
+procedure TForm1.NextDBGrid1CellColoring(Sender: TObject; ACol,
+  ARow: Integer; var CellColor, GridColor: TColor; CellState: TCellState);
+var
+  CursorPoint: TPoint;
+begin
+  GetCursorPos(CursorPoint);
+  CursorPoint := NextDBGrid1.ScreenToClient(CursorPoint);
+  if NextDBGrid1.GetRowAtPos(CursorPoint.X, CursorPoint.Y) = ARow then
+  begin
+    CellColor := clCream;
+  end;
+end;
+
+procedure TForm1.NextDBGrid1MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  NewHoverRow := NextDBGrid1.GetRowAtPos(X, Y);
+  if NewHoverRow <> OldHoverRow then
+  begin
+    NextDBGrid1.RefreshRow(OldHoverRow);
+    OldHoverRow := NewHoverRow;
+    NextDBGrid1.RefreshRow(NewHoverRow);
+  end;
+end;
+
+
+
+
+
+
+
+
+ if NextDBGrid1.CellField[3, ARow].AsString  = '' then
+    TextColor := clred;
+end;
+
+
+
+
+
+
+
+
+You may also check for
+
+CODE
+if csSelected in CellState then Exit;
+
+I hope that this helps. This will cause that selected cell will not be painted.
+
+
+
+
+
+
+
+
+Hello,
+
+You may use OnCellColoring event and set CellColor parameter:
+
+CODE
+var
+  Field: TField;
+begin
+  Field := NxDBGrid1.Columns[ACol].Field;
+  if Field.AsString = 'X' then CellColor := clRed;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+Hello Emailaya,
+
+Now I think that maybe you can try with using BeginUpdate/EndUpdate of NextDbGrid itself. 
+You may set BeginUpdate then do some heavy changes and then call EndUpdate.
+
+Best regards  
+
+
+
+
+
+
+
+
+
+
+
+
+I am attempting to validate fields after each field and I cannot seem to figure out the right way to get field selection working.
+
+How do I force a cell to retain focus if the contents are the field are improper? In my case, 
+I have a text field where the user will enter a code and if the code is not contained in the database, 
+I need the user stopped.
+___
+Maybe OnEditAccept event may help. This event have Accept parameter which may be set to False in order to dismiss new value. You may also read Value parameter to inspect new value:
+
+CODE
+  if Value = 'none' then Accept := False;  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 

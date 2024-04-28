@@ -1,0 +1,351 @@
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  x: Integer;
+  Column: TNxDBCustomColumn;
+begin
+  Column := NextDBGrid1.Columns.Add(TNxDBTextColumn, 'Caption') as TNxDBTextColumn;
+  Column.FieldName := 'MYDBFIELD';
+  Column.Width := 40;
+  Column.Header.Caption := 'Test';
+end;
+
+
+
+
+Now I want to check the entry after editing a cell on EditAccept
+___
+procedure TForm1.NextDBGrid1EditAccept(Sender: TObject; ACol,
+  ARow: Integer; Value: WideString; var Accept: Boolean);
+begin
+  if NextDBGrid1.Columns[ACol].ColumnType = ctFloat then
+  begin
+
+  end;
+end;
+
+
+
+
+
+
+
+Hello Andrea,
+
+There are several ways to do this, but try to do next:
+
+- Add new TNxDBImageColumn
+- Assign field to it (FieldName property)
+- Assign Images property (link to TImageList with 2 images for letter "A" and "D")
+- Add similar code inside OnApplyCell event:
+
+CODE
+procedure TForm1.NextDBGrid1ApplyCell(Sender: TObject; ACol, ARow: Integer;
+  var Value: WideString);
+begin
+  if Value = 'A' then Value := '0'
+  else if Value = 'D' then Value := '1';
+end;
+
+
+
+
+
+
+
+
+
+
+Place next code in OnCellColoring event:
+
+CODE
+if not(csSelected in CellState) then
+begin
+  if ARow mod 2 = 0 then CellColor := $00F5FCFE;
+end;
+
+
+_____....
+
+You need to use OnCellColoring event, and in it add next code:
+
+CODE
+if csSelected in CellState then Exit;
+if ARow = 0 then CellColor := clYellow;
+if ARow = 1 then CellColor := clWhite;
+
+
+
+
+
+I want one column created at runtime that acts like a "TNxDBComboBoxColumn".
+
+"Like": NextDBGrid.Column[2] := TNxDBComboBoxColumn;
+
+If that works, I hope to fill the dropdownlist of this DBComboBox with Strings
+---
+Hello Franky,
+
+First you need to add 2 columns before this one, and then we will create a column:
+
+CODE
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  AColumn: TNxDBComboBoxColumn;
+begin
+  // After column is created, we will pass object to the AColumn variable
+  AColumn := NextDBGrid1.Columns.Add(TNxDBComboBoxColumn) as TNxDBComboBoxColumn;
+
+  // Now we may access to the Items property
+  AColumn.Items.Add('String 1');
+  AColumn.Items.Add('String 2');
+  AColumn.Items.Add('String 3');
+
+  AColumn.Options := AColumn.Options + [coEditing]; // Enable editing for this column
+end;
+___
+Unfortunatelly, when column is defined it can't be changed anymore.
+
+TNxDBComboBoxColumn is by default text column and you don't need to convert it smile.gif
+
+Here is what you may do with OnBeforeEdit:
+
+CODE
+procedure TForm1.NextDBGrid1BeforeEdit(Sender: TObject; ACol,
+  ARow: Integer; var Accept: Boolean);
+var
+  Column: TNxDBComboBoxColumn;
+begin
+  if ACol = <IndexOfComboBoxColumn> then
+  begin
+    Column := TNxDBComboBoxColumn(NextDBGrid1.Columns[ACol]);
+    if ARow = 2 then // <----- if RowIndex = 2, then we will fill list, othervise not.
+    begin
+      Column.Items.Clear;
+      Column.Items.Add('Item 1');
+      Column.Items.Add('Item 2');
+      Column.Items.Add('Item 3');
+    end else
+    begin
+      Column.Items.Clear;
+    end;
+  end;
+end;
+
+In this event (occur before edit is started), we have read ARow parameter and then fill list if required.
+
+
+
+
+
+
+
+how can I change the header of a column at runtime ?
+NextDBGrid.ColumnByName['OldHeader'].Header.Caption := 'NewHeader';
+
+('OldHeader' is the real fieldname of the DB, 'NewHeader' should only be the description // for multilanguage applications)
+
+it wont work at runtime, application crashes...
+___
+You need to use next code:
+
+CODE
+NextDBGrid1.Columns[ColumnIndex].Header.Caption := 'New Header';
+
+or
+
+if we have set that 2nd column have Name = colTotal;
+
+CODE
+NextDBGrid1.ColumnByName['colTotal'].Header.Caption := 'New Header';
+
+I hope that this helps. You only need to know that ColumnByName use Column.Name but not Column.Header.Caption.
+
+
+
+
+
+
+
+if (ACol = ngProjectCost.SelectedColumn) and (ARow =ngProjectCost.SelectedRow)  then
+  begin
+    CellColor := ClRed;
+  end;
+___
+Set Column.Color to desired color (example: Red), then manually change 
+Cell's color to something else than clRed inside OnCellColoring. 
+
+
+
+
+
+
+
+
+or selected text color we have a property called:
+HighlightedTextColor
+
+is there an equivalent property for inactive highlighted text color?
+___
+procedure TForm1.NextGrid1CellFormating(Sender: TObject; ACol,
+  ARow: Integer; var TextColor: TColor; var FontStyle: TFontStyles;
+  CellState: TCellState);
+begin
+  if (csSelected in CellState) and not(csFocused in CellState) then TextColor := clRed;
+end;
+___
+csSelected indicate when cell is selected (even if Grid is not focused). But csFocused tell if Grid is focused too.
+
+HighligtedTextColor is used for Selected cells when they are focused. If cells are not focused, black color will be used.
+
+
+
+
+
+
+
+
+Solution is to disable MultiSelect (goMultiSelect in Options), or enable buffered mode (doBufferRecords in DataAwareOptions).
+
+
+
+
+
+
+
+You need to set coEditing flag in Column's Options property to True (or double click in 4th column inside Columns Editor).
+
+
+
+
+
+
+
+Unfortunatelly not. But with one for loop in run-time, you may set them editable:
+
+CODE
+var
+  i: Integer;
+begin
+  for i := 0 to NextDBGrid1.Columns.Count - 1 do NextDBGrid1.Columns.Options := NextDBGrid1.Columns.Options + [coEditing];
+
+I may add global property for it, but maybe it is not good idea (it may confuse sometime), 
+and some columns don't need to be editable very often.
+
+
+
+
+
+
+
+
+
+ust notice that SelectedColumn returns the index of the column
+so i should check if it equals to <column>.index
+
+
+
+
+
+
+
+
+
+
+if the focus is on a TnxCheckboxColumn then pressing space makes it checked/unchecked
+if the focus is anywhere else on the grid, then space means nothing
+
+i didnt know that at first so in OnKeyUp i did the following:
+if (Key = VK_SPACE) then
+begin
+cds.Edit;
+cds.FieldByName('fieldname').AsBoolean := not cds.FieldByName('fieldname').AsBoolean;
+cds.Post;
+NextDBGrid1.CalculateFooter;
+end;
+
+but if the user first click with the mouse on the checkbox (causing it to be checked)
+and then press space, the value jumps to unchecked and then to checked again
+
+i tried to do the following:
+if (Key = VK_SPACE) and (not columnname.Focused) then
+but it didnt help
+
+please advice
+___
+Add next code:
+
+CODE
+if NextDBGrid1.SelectedColumn = <column with checkbox> then Exit;
+
+...yes, column index is needed here. This was happen for you because in your case SPACE was called twice.
+
+
+
+
+
+
+
+
+Wenn Zeit Behaviour
+https://www.bergsoft.net/forum/index.php?showtopic=1548
+
+
+
+
+
+
+
+
+. Whenever the underlying field is Null it is shown as 30.12.1899. I would like to show as blank/empty cells in the grid.___
+Maybe OnApplyCell event may help you?
+
+There you may read Value (var) parameter and set it back to some other value. You may also check ACol and ARow parameters too.
+
+Also, if you are using Date DBColumn, you may set property HideWhenEmpty to "True", to hide value when it is empty.
+
+
+
+
+
+
+
+...exit grid grid does not show the selected row high lighted. so user lost where he/she is. 
+___ 
+Maybe aoHideSelection flag in AppearanceOptions may help?
+
+
+
+
+
+
+
+
+
+In design mode, when the datasource is opened, all columns are being added to the dgGrid. I can then remove some columns, change order, header captions etc....
+
+Unfortunately as soon as I close the Datasource and reopen it all my changes are lost and I am left with all columns automatically added.
+
+Is there any way to keep the columns persistent ?
+___
+You need to set flag doClearColumnsOnDeactivate to False inside DataAwareOptions property.
+
+When is set to False, every auto-added column will be deleted on DataSet close.
+Mehr hier: https://www.bergsoft.net/forum/index.php?showtopic=1502
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
