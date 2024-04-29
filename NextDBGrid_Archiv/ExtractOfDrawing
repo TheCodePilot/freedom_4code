@@ -1,3 +1,139 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit5.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "NxCustomGrid"
+#pragma link "NxCustomGridControl"
+#pragma link "NxDBGrid"
+#pragma link "NxGrid"
+#pragma link "NxScrollControl"
+#pragma link "NxColumnClasses"
+#pragma link "NxColumns"
+#pragma resource "*.dfm"
+TForm5 *Form5;
+//---------------------------------------------------------------------------
+__fastcall TForm5::TForm5(TComponent* Owner)
+	: TForm(Owner)
+{
+	Ng->ReadOnly = false;
+    Ng->Enabled = true;
+	FirstRowHead();
+	AddOtherRows(1);
+	AddOtherRows(1);
+	AddOtherRows(1);
+
+
+	Ng->Columns->Item[0]->Options << coEditing;
+
+	NgU->BeginUpdate();
+		NgU->ClearRows();
+		NgU->AddRow(1);
+	int rowIndex = 0;
+
+	for(int i = 0; i < 5; i++)
+	{
+		NgU->Columns->Add(__classid(TNxTextColumn));
+		NgU->Cell[i][rowIndex]->AsString = "NEU" + IntToStr(i+1) + "1";
+	}
+
+	NgU->EndUpdate();
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm5::FirstRowHead()
+{
+	Ng->BeginUpdate();
+	Ng->ClearRows();
+	Ng->AddRow(1);
+	int rowIndex = 0;
+
+	for(int i = 0; i < 5; i++)
+	{
+		Ng->Columns->Add(__classid(TNxTextColumn));
+		Ng->Cell[i][rowIndex]->AsString = "NEU" + IntToStr(i+1) + "1";
+		Ng->Columns->Item[i]->Options << coEditing;
+	}
+
+	Ng->EndUpdate();
+}
+
+void __fastcall TForm5::AddOtherRows(int rowIndex)
+{
+	Ng->BeginUpdate();
+	Ng->AddRow(1);
+	for(int i = 0; i < 5; i++)
+	{
+
+		Ng->Cell[i][rowIndex]->AsString = "A" + IntToStr(i+1) + "1";
+		Ng->Cell[i][rowIndex]->AsString = "A" + IntToStr(i+1) + "2";
+		Ng->Cell[i][rowIndex]->AsString = "A" + IntToStr(i+1) + "3";
+	}
+
+	//TNxTextColumn* colum =
+	//Ng->Columns->Item[0]->Options << coEditing;
+
+	Ng->EndUpdate();
+}
+void __fastcall TForm5::app(TObject *Sender, int ACol, int ARow, WideString &Value)
+
+{
+    ;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm5::appedit(TObject *Sender, int ACol, int ARow, WideString &Value)
+
+{
+    ;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm5::befedit(TObject *Sender, int ACol, int ARow, bool &Accept)
+
+{
+	Accept = true;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm5::Ngdblklick(TObject *Sender)
+{
+	//Ng->StartEdit(1,1,) StartEditing(1,1);//"3Ng->");    //= true;
+    int ACol = 0; int ARow = 1;
+		Ng->StartEdit(ACol, ARow, VK_RETURN);
+		Ng->EndEditing(); // StartEdit(ACFol, ARow, Key);
+		//Key = 0;
+    ;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm5::keypress(TObject *Sender, System::WideChar &Key)
+{
+return;
+	if (Key == VK_RETURN)
+	{   int ACol = 0; int ARow = 1;
+		Ng->StartEdit(ACol, ARow, Key);
+		Ng->EndEditing(); // StartEdit(ACFol, ARow, Key);
+		Key = 0;
+    }
+}
+//---------------------------------------------------------------------------
+
+
+/*
+NxDBDateColumn2: TNxDBNumberColumn
+coCanClick, coCanInput, coCanSort, coDisableMoving, coPublicUsing, coShowTextFitHint]
+
+NxDBDateColumn3: TNxDBNumberColumn
+Options = [coCanInput, coDisableMoving, coEditing, coFixedSize]
+
+NxDBNumberColumn4: TNxDBNumberColumn
+Options = [coCanClick, coCanInput, coCanSort, coEditing, coPublicUsing]
+
+*/
+
+//-----------------
+
 Das Geheimnis liegt in:
 
 DBGrid1.DataSource.Enabled:=False; ... Änderungen vornehmen... DBGrid1.DataSource.Enabled:=Wahr;
