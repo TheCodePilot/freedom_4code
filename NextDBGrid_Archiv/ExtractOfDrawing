@@ -1,3 +1,37 @@
+Das Geheimnis liegt in:
+
+DBGrid1.DataSource.Enabled:=False; ... Änderungen vornehmen... DBGrid1.DataSource.Enabled:=Wahr;
+
+Getestet mit D5Pro
+
+
+void __fastcall TForm1::setDataSourceDataSet(TDataSource* &newDataSource)
+{
+    if (DBGrid1->DataSource == NULL) {
+        DBGrid1->DataSource = newDataSource;
+    } else {
+        if (DBGrid1->DataSource->Name == newDataSource->Name) return;
+        DBGrid1->DataSource->Enabled = false;
+        DBGrid1->DataSource = newDataSource;
+    }
+    if (DBGrid1->DataSource->DataSet->Active == false) {
+        DBGrid1->DataSource->DataSet->Active = true;
+    }
+    DBGrid1->DataSource->Enabled = true;
+}
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    setDataSourceDataSet(DataSource1);
+}
+
+void __fastcall TForm1::Button2Click(TObject *Sender)
+{
+    setDataSourceDataSet(DataSource2);
+}
+
+//------------------------------------------------------------------
+
 Bei der ersten Ini pro wechsel Card_Item record auf zack setzen...
 Menge +1 zum Beipiel
 !!!geht nur wenn so bleibt die anderen da sind
