@@ -1,3 +1,372 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Frame01.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "NxCustomGrid"
+#pragma link "NxCustomGridControl"
+#pragma link "NxDBGrid"
+#pragma link "NxScrollControl"
+#pragma link "NxGrid"
+#pragma link "NxColumns"
+#pragma link "NxDBColumns"
+#pragma link "DBAccess"
+#pragma link "MemDS"
+#pragma link "MSAccess"
+#pragma resource "*.dfm"
+TFrame4XML *Frame4XML;
+//---------------------------------------------------------------------------
+
+
+
+
+__fastcall TFrame4XML::TFrame4XML(TComponent* Owner)
+	: TFrame(Owner)//, Form4XML(new TFormXML(this))
+{
+	BereitZumSQL_Quest();
+	Row = -1; Col = -1; Col4Red = -1;
+}
+
+//Bitte im großen Projekt prüfen
+__fastcall TFrame4XML::~TFrame4XML()
+{
+	//ShowMessage("Destruktor : TFrame4XML::~TFrame4XML()");
+
+	if(QC1)
+		delete QC1;
+	QC1=NULL;
+}
+//---------------------------------------------------------------------------
+void __fastcall TFrame4XML::cbnXMLOnClick(TObject *Sender)
+{
+	//ShowMyForm();
+	CreateAndShowForm();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFrame4XML::CreateAndShowForm()
+{
+	//TFormXML::instanceCount = 0;
+
+	// Eine Instanz von TFormXML erhalten
+	//TFormXML* form
+	TFormXML* Form4XML = NULL;
+	Application->CreateForm(__classid(TFormXML), &Form4XML);
+	//Form4XML = TFormXML::getInstance(this); // Annahme: this ist ein Frame
+	// Das Formular anzeigen
+	Form4XML->MyFrame = this;    //Im großen Projekt global sein
+
+//NgDB1->DataSource = Form4XML->DataSource5;
+	Form4XML->ShowModal();
+
+}
+
+//----------------------------------------------------------------------------
+//Teil zum testen in die Datenbank zu schreiben der Wechsel
+void __fastcall TFrame4XML::IniDB()
+{
+	//MSCon = new TMSConnection(NULL);    nicht nötig von C++ Builder verwaltet
+	try
+	{
+		MSCon->Server = "detoic008A";
+		MSCon->Authentication = auWindows; //auServer;
+		//MSCon->Username = ""; //nicht nötig da auWindows
+		//MSCon->Password = ""; //nicht nötig da auWindows
+		MSCon->Database = "Nordwind";
+		MSCon->LoginPrompt = !False;
+		MSCon->Connect();
+	}
+	catch (const Exception &e)
+	{
+		ShowMessage("Fehler Beim Aufbau der Datenbank: " + e.Message);
+	}
+}
+
+//QSTab->SQL->Add("SELECT * FROM [Nordwind].[dbo].[rrNordwind]");
+
+void __fastcall TFrame4XML::BereitZumSQL_Quest()
+{
+	QC1 = NULL;
+	QC1 = new TMSQuery(NULL);
+	//QSTab=NULL;
+	//QSTab = new TMSQuery(NULL);
+
+	IniDB();
+	QC1->Connection = MSCon;
+	DS->DataSet = QC1;
+	//QSTab->Connection = MSCon;
+	//DSRC->DataSet = QSTab;
+	//Bemerkung das TNextDB ist schon im Designer mit DS verbunden
+
+	//SendSQLLine("SELECT * FROM [Nordwind].[dbo].[rrNordwind]",QC1,1);
+}
+
+
+void __fastcall TFrame4XML::cbnSQL_Query(TObject *Sender)
+{
+	QC1->Connection = MSCon;
+	DS->DataSet = QC1;
+	NgDB1->DataSource = DS;
+	SendSQLLine("SELECT * FROM [Nordwind].[dbo].[rrNordwind]",QC1,1);
+}
+//---------------------------------------------------------------------------
+
+int _fastcall TFrame4XML::SendSQLLine(AnsiString Line, TMSQuery *SQ, int showmessage) // Nur gültig für Haupt-DB (MDE)
+{
+   /*	if(DBM.Connected==false)
+	{
+		if(showmessage)
+				if(showmessage) ShowMessage("Keine Verbindung " + AnsiString(e.what()));
+		return 1;
+	}
+
+	if(Form00_SU->Visible && Form00_SU->CBallowMonitorSQL->Checked) Form00_SU->MMdb->Lines->Add("     SQL: "+Line);
+
+	if(SQ->Connection!=DBM.Connection) SQ->Connection=DBM.Connection;
+	*/
+	SQ->Connection = MSCon;
+
+	SQ->Close();
+	SQ->SQL->Clear();
+	SQ->SQL->Add(Line);
+
+	try
+	{
+	  SQ->ExecSQL();
+
+	  if(Line.Pos("SELECT ")==1)
+	  {
+		 if   (SQ->Eof)
+		 {
+			if(showmessage) ShowMessage("SQLException Ende der Tabelle erreicht: "); // + AnsiString(e.what()));
+				return 2;
+		 }
+		 else {SQ->First(); return 0;}
+	  }
+	  else                  return 0;
+	}
+	catch (...)
+	{
+
+		if(showmessage) ShowMessage("Allgemeines Problem mit SQL: "); // + AnsiString(e.what()));
+		return 1;
+	}
+}
+
+/*
+TClientDataSet *CDS_Test;
+	TMSDataSource *DS;
+	TMSQuery *QC1;
+
+	if(QC1==NULL)  {QC1=new TMSQuery(NULL);  DS->DataSet=QC1;}
+	*/
+
+//---------------------------------------------------------------------------
+
+void __fastcall TFrame4XML::NgDBOnDrawHeader(TObject *Sender, int Index, TRect &HeaderRect)
+
+{
+	TColumnHeader* header;
+	for (int i = 0; i < NgDB->Columns->Count; ++i) {
+		header = NgDB->Columns->Item[i]->Header;
+		header->Color = clBlue;
+		header->Font->Style << fsBold;
+		header->Caption = "Nix";
+
+	//NgDB->Columns->Item[Index]->Font->Style = TFontStyles() << fsBold;	//Field->SetFieldProps() Font->Style = TFontStyles() << fsBold;// Title->Font->Style = TFontStyles() << fsBold;
+	}
+
+
+
+//NgDB->Canvas->Font->Style = TFontStyles() << fsBold;	//Field->SetFieldProps() Font->Style = TFontStyles() << fsBold;// Title->Font->Style = TFontStyles() << fsBold;
+
+			   // ->Item[i]->Font->Style = TFontStyles() << fsBold;
+	//}
+	;
+}
+//---------------------------------------------------------------------------
+
+//Zur Zeit nichts gezeichnet
+void __fastcall TFrame4XML::NgDBOnCellClick(TObject *Sender, int ACol, int ARow)
+{
+	//TField* field = NULL;
+	AnsiString ansi = "Ix";
+	int row = NgDB->SelectedRow; //SelectedRow () >GetColumnByFieldName(); GetColumnByFieldName; //) >Columns[ACol]->Field;
+	int Spalte = -1;
+	//AnsiString ansi = NgDB->Columns->Item[row]->FieldName; //Font->Style = TFontStyles() << fsBold;
+	for (int i = 0; i < NgDB->Columns->Count ; ++i)
+	{
+		++Spalte;
+		TColumnHeader* header = NgDB->Columns->Item[i]->Header;
+		AnsiString wstr = header->Caption;
+		if(wstr == L"Ix"){
+				//NgDB->SetCellValue(i, ARow, "IX Neuer Wert");  // Wäre hier 1 nun gelöscht
+			Col = Spalte; Row = ARow; Col4Red = Spalte;
+			break;
+		}
+
+	 }
+
+
+	QC1->Connection = MSCon;
+	DS->DataSet = QC1;
+	NgDB1->DataSource = DS;
+
+	String cellValue = NgDB->GetCellValue(Spalte,ARow);
+
+	String sql = "UPDATE [Nordwind].[dbo].[rrNordwind] SET Land = '" + cellValue + "' WHERE ID = 5";
+	SendSQLLine(sql,QC1,1);
+
+	//AnsiString wstr = header->Caption;
+	NgDB->Repaint();
+}
+//---------------------------------------------------------------------------
+
+//(4) Kein Konflikt mit Coloring
+void __fastcall TFrame4XML::NgDBOnCellFormating(TObject *Sender, int ACol, int ARow,
+		  WideString Value, TColor &TextColor, TFontStyles &FontStyle, TCellState CellState)
+
+{
+	if (ARow >= 0) { // (5)Im Objekt-Explorer alles bold machen daan bleibt header bolt übrig
+		FontStyle = TFontStyles();
+	}
+
+	if( (Value == L"500 V")||(Value == L"500  V") ) //(1)
+	{
+		//!!! Wichtig nicht Color nehmen sonst Frame gefärbt.
+		TextColor = clRed;
+		FontStyle << fsBold;
+	}
+	else
+	{
+		TextColor = clGreen;
+		Font->Style >> fsBold;
+	}
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFrame4XML::NgDBOnDrawCellBackGround(TObject *Sender, int ACol, int ARow,
+		  TRect &CellRect, TCellState CellState, bool &DefaultDrawing)
+{
+return;
+	if (ARow == 1)// && (ACol == 3))
+	{
+		//Color = clYellow; //so der Frame
+			//NgDB->Color = clYellow; // so Rest des Grid
+				//if(CellState.Contains(csSelected)) //== csSelected)
+					//NgDB->Columns->Item[ACol]->Color = clYellow;    //So Spalte eins aber es flickert
+
+			//NgDB->Canvas->Brush->Color = clRed;
+		//NgDB->Canvas->FillRect(CellRect);
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFrame4XML::NgDBOnCustomDraw(TObject *Sender, int ACol, int ARow,
+		  TRect &CellRect, TCellState CellState)
+{
+return;
+	if (ARow == 1)//  && (ACol == 3))
+	{
+		//Color = clSkyBlue;
+		NgDB->Columns->Item[ACol]->Color = clSkyBlue; //clYellow;
+			//NgDB->Canvas->Brush->Color = clRed;
+		//NgDB->Canvas->FillRect(CellRect);
+	}
+}
+//---------------------------------------------------------------------------
+
+//(2)
+void __fastcall TFrame4XML::NgDBOnselectCell(TObject *Sender, int ACol, int ARow)
+
+{
+return; //(2)
+	if (ARow == NgDB->SelectedRow)  //Problem nur eine Zelle zun zeichnen
+		NgDB->Columns->Item[ACol]->Color = clYellow;
+	//NgDB->Columns->
+   //;
+}
+//---------------------------------------------------------------------------
+
+//(3)So eine ganze Zeile
+void __fastcall TFrame4XML::NgDBOnCellColoring(TObject *Sender, int ACol, int ARow,
+		  TColor &CellColor, TColor &GridColor, TCellState CellState)
+{
+//if ((ARow == 1) && (ACol == 3))
+	{ // Überprüfe, ob es sich um die erste Zeile (Überschriftenzeile) handelt
+
+		if(ARow == NgDB->SelectedRow)
+			CellColor = clSkyBlue;
+		//;
+		//FontStyle = TFontStyles();
+		//TextColor = clSkyBlue;
+	}
+
+}
+
+
+
+
+
+
+//Für rechte aber wir testen nur mit dem linken
+
+void __fastcall TFrame4XML::NgDB1CellBackGround(TObject *Sender, int ACol, int ARow,
+          TRect &CellRect, TCellState CellState, bool &DefaultDrawing)
+{
+    ;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFrame4XML::NgDB1OnCellFormating(TObject *Sender, int ACol, int ARow,
+          WideString Value, TColor &TextColor, TFontStyles &FontStyle, TCellState CellState)
+
+{
+
+	if ((Col > -1) && (Row > -1) && (ARow == Row) && (ACol == Col)) { // Überprüfe, ob es sich um die erste Zeile (Überschriftenzeile) handelt
+		//FontStyle = TFontStyles();
+		;
+		//TextColor = clSkyBlue;
+	}
+	//if(ARow == -1)
+	//	FontStyle << fsBold;
+	//if(CellState.Contains(cpsTitle)
+	//	FontStyle << fsBold;
+}
+//---------------------------------------------------------------------------
+
+
+
+
+/*
+Bemerkung (1)
+	Ginge auch
+	TField* Field;
+	Field = NgDB->Columns->Item[ACol]->Field;
+	WideString ansi = Field->AsWideString;
+	if( (ansi == L"500 V")||(ansi == L"500  V") )
+
+Bemerkung (2)
+So ganze Spalte vom Select-Bereich
+	void __fastcall TFrame4XML::NgDBOnselectCell(TObject *Sender, int ACol, int ARow)
+
+{
+//return;
+	if (ARow == NgDB->SelectedRow)  //Problem nur eine Zelle zun zeichnen
+		NgDB->Columns->Item[ACol]->Color = clYellow;
+	//NgDB->Columns->
+   //;
+}
+
+Bemerkung(5)
+Im Objekt-Explorer alles bold machen daan bleibt header bolt übrig
+
+*/
+//---------------
 TField* Field;
 Field = NextDBGrid1->Columns->Items[ACol]->Field;
 if (Field->AsInteger == 4)
