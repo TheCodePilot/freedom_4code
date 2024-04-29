@@ -1,0 +1,233 @@
+TField* Field;
+Field = NextDBGrid1->Columns->Items[ACol]->Field;
+if (Field->AsInteger == 4)
+    CellColor = clRed;
+
+____
+
+NextGrid1.RefreshRow(NextGrid1.SelectedRow);
+die Zeile muss neu gezeichnet werden, da das OnFormatText-Ereignis kein Ereignis auslöst. 
+
+___
+
+Field := NextDBGrid.Columns[NextDBGrid1.SelectedColumn].Field;
+
+___
+
+How edit data of nextdbgrid cells by click on it ? 
+Set coEditing flag in Options property of column to True or double click on next icon:
+But please note that DataSet must be not Read-only.
+
+___
+
+void __fastcall TForm1::NextDBGrid1CellClick(TColumn *Column)
+{
+    // Aktualisieren Sie die Zeile, die die angeklickte Zelle enthält
+    NextDBGrid1->RefreshRow(NextDBGrid1->SelectedRow);
+}
+
+___
+
+void __fastcall TForm1::FormResize(TObject *Sender)
+{
+    int totalWidth = 0;
+
+    // Summieren Sie die Breiten aller Spalten außer der letzten
+    for (int i = 0; i < NextDBGrid1->Columns->Count - 1; i++)
+        totalWidth += NextDBGrid1->Columns->Items[i]->Width;
+
+    // Setzen Sie die Breite der letzten Spalte so, dass sie den verfügbaren Platz ausfüllt
+    TColumn* lastColumn = NextDBGrid1->Columns->Items[NextDBGrid1->Columns->Count - 1];
+    lastColumn->Width = NextDBGrid1->ClientRect.Width - totalWidth;
+}
+
+//------------------------
+
+void __fastcall TForm1::NxDBGRecapCellFormating(TObject *Sender, int ACol, int ARow, WideString &Value, TColor &TextColor, TFontStyles &FontStyle, TCellState CellState)
+{
+    if (CellState.Contains(csSelected))
+        FontStyle << fsBold;
+}
+
+void __fastcall TForm1::NxDBGRecapCellColoring(TObject *Sender, int ACol, int ARow, TColor &CellColor, TColor &GridColor, TCellState CellState)
+{
+    if (CellState.Contains(csEmpty))
+        return;
+
+    if (NxDBGRecap->CellValue[13][ARow] != Unassigned) //Rendu
+        CellColor = (TColor)0x238E23;
+    else
+    {
+        if (NxDBGRecap->CellValue[10][ARow] != Unassigned)
+            if (StrToDate(NxDBGRecap->CellValue[10][ARow]) < Date()) //En retard
+                CellColor = (TColor)0xD98719;
+
+        if (NxDBGRecap->CellValue[12][ARow] != Unassigned)  //Interupt
+            if (CellColor == (TColor)0xD98719)
+                CellColor = clRed;
+            else
+                CellColor = (TColor)0xA62A2A;
+    }
+
+    // Erzwingen Sie eine Neuzuzeichnung des Grids
+    NxDBGRecap->Invalidate();
+}
+
+Gute Frage! Die Invalidate-Methode markiert das gesamte Steuerelement als “ungültig” und veranlasst Windows, ein WM_PAINT-Ereignis zu senden, um das Steuerelement neu zu zeichnen. Wenn Sie Invalidate innerhalb einer Ereignisbehandlungsroutine wie OnDrawColumnCell aufrufen, die selbst durch das WM_PAINT-Ereignis ausgelöst wird, könnten Sie tatsächlich eine Endlosschleife erzeugen.
+Eine bessere Lösung könnte sein, die Invalidate-Methode außerhalb der OnDrawColumnCell-Ereignisbehandlungsroutine aufzurufen. Zum Beispiel könnten Sie eine separate Methode erstellen, die die Zellfarben ändert und dann Invalidate aufruft, und diese Methode aufrufen, wenn Sie wissen, dass sich die Daten geändert haben und das Grid aktualisiert werden muss.
+Bitte beachten Sie, dass die genaue Lösung von den spezifischen Anforderungen Ihrer Anwendung abhängt. Ich hoffe, das hilft! Wenn Sie weitere Fragen haben, lassen Sie es mich bitte wissen. Ich bin hier, um zu helfen.
+Ja, das ist korrekt. Die CellColoring-Ereignisbehandlungsroutine wird nicht durch das WM_PAINT-Ereignis ausgelöst, sondern wird aufgerufen, wenn die Zelle gezeichnet wird. Daher sollte es sicher sein, die Invalidate-Methode innerhalb der CellColoring-Ereignisbehandlungsroutine aufzurufen. Dies wird das Grid dazu veranlassen, sich selbst neu zu zeichnen, einschließlich des erneuten Aufrufs von CellColoring für jede Zelle, aber es sollte keine Endlosschleife erzeugen, da Invalidate nicht dazu führt, dass CellColoring direkt aufgerufen wird. Es markiert lediglich das Grid als “ungültig”, so dass es beim nächsten Zeichnen des Fensters neu gezeichnet wird. 
+
+
+//---------------------------
+
+Quelle:
+Edit Events - Topics (bergsoft.net) 
+
+und auch gut: 
+Optimizing NextGrid6 - Topics (bergsoft.net) 
+
+// OnBeforeEdit event handler
+void __fastcall TForm1::NextGrid61BeforeEdit(TObject *Sender, int ACol, int ARow, bool &Accept, WideString &Text)
+{
+    // Set default text inside edit in case if cell is empty
+    if (Text == L"") Text = L"Default";
+
+    // Prevent editing first 2 rows
+    if (ARow < 2) Accept = false;
+}
+
+// OnGetInplaceEdit event handler
+void __fastcall TForm1::NextGrid61GetInplaceEdit(TObject *Sender, int ACol, int ARow, _di_INxInplaceEdit &InplaceEdit)
+{
+    if (ACol == 1)
+    {
+        // Set InplaceEdit var arg.
+        InplaceEdit = new TListBoxEdit(this);
+    }
+}
+
+// OnInplaceEditInsert event handler
+void __fastcall TForm1::NextGrid61InplaceEditInsert(TObject *Sender, int ACol, int ARow, TComponent* Component)
+{
+    if (ACol == 1)
+    {
+        TListBoxEdit *listBoxEdit = dynamic_cast<TListBoxEdit*>(Component);
+        if (listBoxEdit != nullptr)
+        {
+            listBoxEdit->Items->Add("George");
+            listBoxEdit->Items->Add("Lucia");
+            listBoxEdit->Items->Add("Michael");
+            listBoxEdit->Items->Add("Ann");
+            listBoxEdit->Items->Add("Ben");
+        }
+    }
+}
+
+// OnInplaceEditBounds event handler
+void __fastcall TForm1::NextGrid61InplaceEditBounds(TObject *Sender, int ACol, int ARow, TComponent* Component, TRect &EditRect)
+{
+    if ((ACol == 1) && (NextGrid61->Columns->Items[ACol]->Width < 60))
+    {
+        EditRect.Right += 20;
+    }
+}
+
+// OnAcceptEdit event handler
+void __fastcall TForm1::NextGrid61AcceptEdit(TObject *Sender, int ACol, int ARow, WideString &Text, bool &Accept, bool &CanLeave)
+{
+    // Do not allow empty text to be transferred.
+    if (Text.Trim() == L"")
+    {
+        Accept = false; // Value is not accepted
+        Text = L"default"; // Inject default value into edit
+        CanLeave = false; // Prevent leaving editing state
+        MessageBeep(MB_ICONWARNING); // Alert user with sound
+    }
+}
+
+
+//-----------------------------------------
+
+void Tdsmainform::NextGrid1CellFormating(TObject* Sender, int ACol, int ARow, TColor& TextColor, TFontStyles& FontStyle, TCellState CellState)
+{
+    if (NextGrid1->Cells[4][ARow] == "Yes")
+    {
+        TextColor = clGreen;
+        NextGrid1->Cells[ACol][ARow].Color = clYellow;
+    }
+    else
+    {
+        TextColor = clRed;
+        NextGrid1->Cells[ACol][ARow].Color = clBlack;
+    }
+}
+
+//---------- besser trennen
+
+void __fastcall Tdsmainform::NextGrid1CellColoring(TObject *Sender, int ACol, int ARow, TGridDrawState State, TColor &Color)
+{
+    if (NextGrid1->Cells[4][ARow] == "Yes")
+    {
+        Color = clYellow;
+    }
+    else
+    {
+        Color = clBlack;
+    }
+}
+
+//-------
+
+void __fastcall Tdsmainform::NextGrid1CellFormating(TObject *Sender, int ACol, int ARow, TFontStyles &FontStyle, TColor &FontColor, Grids::TGridDrawState State, bool &DefaultDrawing)
+{
+    if (NextGrid1->Cells[4][ARow] == "Yes")
+    {
+        FontColor = clGreen;
+    }
+    else
+    {
+        FontColor = clRed;
+    }
+}
+
+-----------
+
+procedure TForm1.NextDBGrid1CellColoring(Sender: TObject; ACol, ARow: Integer; var CellColor, GridColor: TColor; CellState: TCellState); begin if (ARow < NextDBGrid1.RowCount) then begin if (not (csSelected in CellState)) and (ARow mod 2 = 0) then CellColor := RGB(245, 245, 245); end; end;" Was ist mit dem not (csEmpty in CellState) nutzen ?. Bitte in C++ den Code
+Copilot
+das webwird verwendet
+Sicher, Sie können csEmpty in CellState verwenden, um zu überprüfen, ob eine Zelle leer ist. Hier ist, wie Sie den gegebenen Delphi-Code in C++ für C++ Builder übersetzen könnten:
+
+void __fastcall TForm1::NextDBGrid1CellColoring(TObject *Sender, int ACol, int ARow, TColor &CellColor, TColor &GridColor, TGridDrawState CellState)
+{
+    if (ARow < NextDBGrid1->RowCount)
+    {
+        if (!(CellState.Contains(gdSelected)) && !(CellState.Contains(gdEmpty)) && ARow % 2 == 0)
+            CellColor = RGB(245, 245, 245);
+    }
+}
+
+___
+
+
+void __fastcall TForm1::NextDBGrid1DrawColumnCell(TObject *Sender, const TRect &Rect, int DataCol, TColumn *Column, TGridDrawState State)
+{
+    // Überprüfen Sie, ob dies die Zeile ist, die Sie einfärben möchten
+    if (ARow == DieZeileDieSieEinfärbenMöchten)
+    {
+        // Setzen Sie die Pinsel- und Schriftfarbe des Canvas
+        NextDBGrid1->Canvas->Brush->Color = DieFarbeDieSieVerwendenMöchten;
+        NextDBGrid1->Canvas->Font->Color = clWhite;
+
+        // Füllen Sie das Rechteck der Zelle mit der Pinsel- und Schriftfarbe
+        NextDBGrid1->Canvas->FillRect(Rect);
+
+        // Zeichnen Sie den Text der Zelle
+        NextDBGrid1->Canvas->TextOut(Rect.Left, Rect.Top, Column->Field->AsString);
+    }
+}
+
+___
+
+Ja, das ist korrekt. Im Kontext von TNextDBGrid und ähnlichen Steuerelementen in C++ Builder und Delphi bezieht sich das Canvas auf die Zeichenfläche des Steuerelements, auf der Sie zeichnen können. Wenn Sie in der OnDrawColumnCell-Ereignisbehandlungsroutine arbeiten, bezieht sich das Canvas auf die Zeichenfläche der aktuellen Zelle.
+Wenn Sie jedoch die gleiche Farbe und den gleichen Stil für alle Zellen in einer Zeile verwenden, wird der Effekt so aussehen, als ob Sie auf die gesamte Zeile gezeichnet hätten. Das liegt daran, dass die OnDrawColumnCell-Ereignisbehandlungsroutine für jede Zelle in der Zeile aufgerufen wird, und wenn Sie für jede Zelle die gleiche Formatierung anwenden, wird die gesamte Zeile einheitlich formatiert erscheinen. Ich hoffe, das hilft! Wenn Sie weitere Fragen haben, lassen Sie es mich bitte wissen. Ich bin hier, um zu helfen.
