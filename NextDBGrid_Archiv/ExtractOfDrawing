@@ -1,3 +1,21 @@
+Bei der ersten Ini pro wechsel Card_Item record auf zack setzen...
+Menge +1 zum Beipiel
+!!!geht nur wenn so bleibt die anderen da sind
+
+
+//Problem String in float-Darstellung
+
+
+
+//Wo am besten Schreiberlaubnis
+
+
+
+//Kontrolle ob sinnvolle Werte
+
+
+
+
 //---------------------------------------------------------------------------
 
 #include <vcl.h>
