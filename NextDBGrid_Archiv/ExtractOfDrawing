@@ -1,3 +1,29 @@
+#include <string>
+#include <sstream>
+#include <iomanip>
+
+std::string multiplyAndConvertBack(std::string str) {
+    // Konvertieren Sie den String in einen float
+    float value = std::stof(str);
+
+    // Multiplizieren Sie den Wert mit 1000
+    value *= 1000;
+
+    // Konvertieren Sie den Wert zurück in einen String
+    std::ostringstream streamObj;
+    // Set Fixed -Point Notation
+    streamObj << std::fixed;
+    // Set precision to 3 digits
+    streamObj << std::setprecision(3);
+    //Add double to stream
+    streamObj << value;
+    // Get string from output string stream
+    std::string strObj = streamObj.str();
+
+    return strObj;
+}
+
+
 //---------------------------------------------------------------------------
 
 #include <vcl.h>
