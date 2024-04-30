@@ -1,5 +1,59 @@
 
 #include <iostream>
+#include <iomanip> // Für std::setprecision
+
+int main() {
+    // Float-Wert
+    float floatValue = 123.456;
+
+    // Mit 1000 multiplizieren
+    floatValue *= 1000;
+
+    // Formatieren und in String umwandeln
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << floatValue; // Auf 2 Dezimalstellen begrenzen
+
+    std::string resultString = ss.str();
+
+    std::cout << "String nach Multiplikation mit 1000: " << resultString << std::endl;
+
+    return 0;
+}
+
+//_______________________________________
+//Erweitert
+//_______________________________________
+
+#include <iostream>
+#include <iomanip> // Für std::setprecision, std::fixed und std::scientific
+
+int main() {
+    // Float-Wert
+    float floatValue = 123.456;
+
+    // Mit 1000 multiplizieren
+    floatValue *= 1000;
+
+    // Formatieren und in String umwandeln
+    std::stringstream ss_fixed;
+    ss_fixed << std::fixed << std::setprecision(2) << floatValue; // Festes Format, 2 Dezimalstellen
+    std::string resultString_fixed = ss_fixed.str();
+
+    std::stringstream ss_scientific;
+    ss_scientific << std::scientific << std::setprecision(3) << floatValue; // Wissenschaftliches Format, 3 Dezimalstellen
+    std::string resultString_scientific = ss_scientific.str();
+
+    std::cout << "String nach Multiplikation mit 1000 (festes Format): " << resultString_fixed << std::endl;
+    std::cout << "String nach Multiplikation mit 1000 (wissenschaftliches Format): " << resultString_scientific << std::endl;
+
+    return 0;
+}
+
+//_______________________________________
+//String to float und zurück V CP
+//_______________________________________
+
+#include <iostream>
 #include <string>
 
 int main() {
@@ -21,8 +75,9 @@ int main() {
     return 0;
 }
 
-
-//-------------------
+//_______________________________________
+//String to float und zurück V CP
+//_______________________________________
 
 #include <string>
 #include <sstream>
