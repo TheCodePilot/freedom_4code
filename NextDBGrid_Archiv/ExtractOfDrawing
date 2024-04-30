@@ -1,3 +1,29 @@
+
+#include <iostream>
+#include <string>
+
+int main() {
+    // String in Float-Darstellung
+    std::string floatString = "123.456";
+
+    // String in Float-Wert konvertieren
+    float floatValue = std::stof(floatString);
+
+    // Mit 1000 multiplizieren
+    floatValue *= 1000;
+
+    // Float-Wert wieder in String umwandeln
+    std::string resultString = std::to_string(floatValue);
+
+    std::cout << "Ursprünglicher String: " << floatString << std::endl;
+    std::cout << "String nach Multiplikation mit 1000: " << resultString << std::endl;
+
+    return 0;
+}
+
+
+//-------------------
+
 #include <string>
 #include <sstream>
 #include <iomanip>
