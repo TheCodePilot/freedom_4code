@@ -1,3 +1,43 @@
+object Form5: TForm5
+  Left = 0
+  Top = 0
+  Caption = 'Form5'
+  ClientHeight = 299
+  ClientWidth = 635
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object NextDBGrid1: TNextDBGrid
+    Left = 80
+    Top = 72
+    Width = 250
+    Height = 150
+    Touch.InteractiveGestures = [igPan, igPressAndTap]
+    Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
+    Caption = ''
+    TabOrder = 0
+    TabStop = True
+    object NxDBCheckBoxColumn1: TNxDBCheckBoxColumn
+      Header.Font.Charset = DEFAULT_CHARSET
+      Header.Font.Color = clWindowText
+      Header.Font.Height = -11
+      Header.Font.Name = 'Tahoma'
+      Header.Font.Style = []
+      Position = 0
+      SortType = stBoolean
+    end
+  end
+end
+
+
+
+
 object Frame4XML: TFrame4XML
   Left = 0
   Top = 0
