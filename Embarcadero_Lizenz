@@ -1,3 +1,68 @@
+
+Für Funktion xml hinein shreiben und Datensatz vervollständigen
+
+DB-Reihenfolge
+SQL-Befehl vorgegeben
+	1. Parameterliste vor Value
+	2. Values
+
+//für find wäre eine Menge nötig
+stringValues = L""
+
+for Schleife Spalten vom pairs.first
+	find pairs.first in der Mengevon Spaltenüberschrift
+	___
+	weitere for GridHeader = 0;..
+	
+		dann: nehme Wert str += itoa()
+		sonst: str += L",0"
+		
+		
+_______________________________________________
+
+Bei dazu kein Problem
+
+
+-----------------------------------------------
+Später
+-----------------------------------------------
+
+Testausgabe wenn spaltenheader == "gesucht"
+			dann ShowMessage("Index nun vor dem löschen: ") 
+
+was wenn gelöscht		
+Testausgabe wenn spaltenheader == "gesucht"
+			dann ShowMessage("Index nun nach dem löschen: ") 
+			
+			
+			
+Nun bei uns ist sie ja nur gelöscht gekennzeichnet. Bedeutet trotzdem bei pro löschen Member pair posAfterdelete
+
+first: aktuellste gelöschte Zeile. second: Offset seit letzter Verschiebung nein bleibt gottlob immer -1 
+
+Beispiel
+
+Es seine 6 Zeilen [0] bis [5]
+ 			
+[3] gelöscht:
+pair(3, -1)
+ab 3 also 		
+wenn Zeile größer aktuellste gelöschte Zeile, also fisrt hier 3
+dann pos nun pos von vorher im vector + (-1) 
+alle nun bis letzte Zeile
+
+---
+erneut diesmal zeile 2 also [1]
+
+[1] gelöscht:
+pair(1, -1)
+ab 1 also 		
+wenn Zeile größer aktuellste gelöschte Zeile, also fisrt hier 1
+dann pos nun pos von vorher im vector + (-1) 
+alle nun bis letzte Zeile
+
+//------------------------------------
+
 Lizenzdetails:
 
 
