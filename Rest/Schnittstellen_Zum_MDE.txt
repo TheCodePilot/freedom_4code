@@ -1,0 +1,28 @@
+static void Create_XMLFrame(){
+		TFrame4XML* Frame4XML = NULL;
+		Application->CreateForm(__classid(TFrame4XML),&Frame4XML);
+	}
+	
+	
+	Und Aufruf
+	Create_XMLFrame();
+	
+	
+//------------------------------------
+
+BereitZumSQL_Quest();
+CreateAndShowForm();
+
+~~~~cbnSQL_Query
+
+
+
+//--------------------------------------
+
+void __fastcall Transfer2DB_C1();
+	void __fastcall Transfer2DB_MA();
+	void __fastcall AddOtherRowsDB_C1();
+	void __fastcall AddOtherRowsDB_MA();
+	void __fastcall InitCDS(int clientNumber);
+
+				~~~~void __fastcall SendFormate2Grid();

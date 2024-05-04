@@ -1,0 +1,193 @@
+object FormXML: TFormXML
+  Left = 0
+  Top = 0
+  ClientHeight = 612
+  ClientWidth = 1205
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnShow = XMLShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel
+    Left = 24
+    Top = 8
+    Width = 123
+    Height = 13
+    Alignment = taCenter
+    Caption = 'Ereignisse mit Zeitstempel'
+  end
+  object Label2: TLabel
+    Left = 896
+    Top = 8
+    Width = 176
+    Height = 13
+    Alignment = taCenter
+    Caption = 'Keine Messreihe sondern Kommentar'
+  end
+  object Label3: TLabel
+    Left = 24
+    Top = 173
+    Width = 189
+    Height = 13
+    Alignment = taCenter
+    Caption = 'Messungen der angew'#228'hlten Messreihe'
+  end
+  object Label4: TLabel
+    Left = 609
+    Top = 152
+    Width = 109
+    Height = 13
+    Alignment = taCenter
+    Caption = 'L'#246'schen von eintr'#228'gen'
+    Color = clBtnFace
+    ParentColor = False
+  end
+  object DBGrid4XMLin: TDBGrid
+    Left = 24
+    Top = 24
+    Width = 553
+    Height = 120
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnCellClick = DBGrid4XMLinOnCellClick
+    OnDrawColumnCell = DBGrid4XMLinDrawColumnCell
+  end
+  object DBGrid4XMLCard_Item: TDBGrid
+    Left = 24
+    Top = 192
+    Width = 553
+    Height = 249
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnCellClick = DBGrid4XMLCard_ItemOnCellKlick
+    OnDrawColumnCell = DBGrid4XMLCard_ItemOndrawColumnCell
+    OnMouseDown = DBGrid4XMLCard_ItemMouseDown
+    OnMouseUp = DBGrid4XMLCard_ItemMouseUp
+  end
+  object Memo1: TMemo
+    Left = 609
+    Top = 24
+    Width = 568
+    Height = 120
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 2
+  end
+  object DBGridUserChoice: TDBGrid
+    Left = 609
+    Top = 192
+    Width = 568
+    Height = 249
+    DragCursor = crHandPoint
+    TabOrder = 3
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnCellClick = DBGridUserChoiceOnCellClick
+    OnDrawColumnCell = DBGridUserChoiceOnDraw
+    OnMouseEnter = DBGridUserChoiceMouseEnter
+  end
+  object cbnLoescheAlles: TButton
+    Left = 896
+    Top = 168
+    Width = 281
+    Height = 25
+    Caption = 'Bitte Alles l'#246'schen'
+    TabOrder = 4
+    OnClick = cbnLoescheAllesOnClick
+  end
+  object cbnLoescheSpalte: TButton
+    Left = 609
+    Top = 168
+    Width = 281
+    Height = 25
+    Caption = 'Bitte rote Spalten l'#246'schen'
+    TabOrder = 5
+    OnClick = cbnLoescheSpalteOnClick
+  end
+  object ComboBoxDBGridUserChoice: TComboBox
+    Left = 896
+    Top = 450
+    Width = 281
+    Height = 21
+    TabOrder = 6
+    Text = 'ComboBoxDBGridUserChoice'
+    OnClick = cbOnClick
+  end
+  object cbnUebertrage: TButton
+    Left = 609
+    Top = 447
+    Width = 281
+    Height = 25
+    Caption = 'Bitte '#220'bertragen'
+    TabOrder = 7
+    OnClick = cbnUebertrageOnClick
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 848
+    Top = 560
+  end
+  object DataSource1: TDataSource
+    Left = 424
+    Top = 576
+  end
+  object ClientDataSet2: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 688
+    Top = 568
+  end
+  object DataSource2: TDataSource
+    Left = 536
+    Top = 576
+  end
+  object ClientDataSet3: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 1024
+    Top = 560
+  end
+  object DataSource3: TDataSource
+    Left = 1136
+    Top = 528
+  end
+  object DataSetProvider1: TDataSetProvider
+    Left = 256
+    Top = 544
+  end
+  object ClientDataSet4: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 352
+    Top = 504
+  end
+  object ClientDataSet5: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 456
+    Top = 512
+  end
+  object ClientDataSet6: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 568
+    Top = 520
+  end
+end

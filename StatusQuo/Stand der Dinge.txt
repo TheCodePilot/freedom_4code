@@ -1,0 +1,175 @@
+Alles sollte per Edit geht.
+
+XML oder auch normale Zeile
+unterschied nur das bei xml rest aufgefüllt wird
+
+leere Felder. Wenn was da hineinschreiben
+eventuell einfach per loop
+dann sollte das reichen.
+
+Bei OnEditExit
+sollte dies geht
+
+Dann noch zur Datenbank selbst
+eventuell Farbe merken.
+Nur diesen aktuellen in die Datenbank schreiben aber nicht aktualisieren
+
+FRage: Kann das gelbe irritieren
+
+DEr Übergang von xml zu normale daten aus der Datenbank
+Wenn eingepflegt ist es schwarz
+
+Wann wird denn von xml als nicht mehr gegebenen Status angenommen
+
+Eventuell kompletten test mit eigenm Programm
+beim Thema: Attachment
+
+Thema ist dann Update !
+
+!!!Vorsicht hier werden die rechte Umgangen bitte noch mit ReadOnly abpassen
+void __fastcall TFrame4XML::PracticalHeaderName()
+{
+	TField* Field;
+	UnicodeString unistr;
+	for (int i = 0; i < NgDB->Columns->Count ; ++i)
+	{
+		//Hier wenn der Name des feldes lautet:  markedAsDestroy oder ID nicht sichtbar machen
+		Field = NgDB->Columns->Item[i]->Field;
+		//Feldname wie im DataSet !!!
+		unistr = Field->FieldName;
+		if(unistr == U"Vx")
+			NgDB->Columns->Item[i]->Visible = false;
+		TColumnHeader* header = NgDB->Columns->Item[i]->Header;
+		AnsiString wstr = header->Caption;
+		{
+			header->Caption = "Nix " + IntToStr(i);
+		}
+
+		NgDB->Columns->Item[i]->Options << coEditing;
+		NgDB->Columns->Item[i]->Options << coCanClick;
+		NgDB->Columns->Item[i]->Options << coCanInput;
+		//Damit geht es
+	//NgDB->Columns->Item[i]->Editing; // ->Options << coEditing;
+		NgDB->Columns->Item[i]->Enabled = true;
+
+		//coCanClick, coCanInput,
+	}
+}
+
+Vorsicht nochmal das mit den ColTable1 prüfen !!!
+
+
+
+Achtung die Daten von 
+ColTableX nur wenn ich selekt
+
+Bei Editz ist dies anders weil es sein kann das auch editiert wird wenn noch nicht Selektiert wird
+Aktueller ist hier ganz klar das von Edit die Porsitionen
+
+
+Auch das Memo angeben. Wenn in der Tab3elle Soalte KOmmentar hinweis: Bitte das Große Memo Felöd nutzen.
+
+Thema: Gewünschte Spalten Auto aufbau
+
+aTTACHMENT-mANAGER
+Auch hinein debuggen.
+
+
+Für Maus-Nachrichten nochmal ein mini-Programm
+
+Die Funktionalität von OnEndEditing kann auch für den allgemeinen Datentransfer genutzt werden
+FRage ist wie schnell so etwas geht sonst erst rüber zur Datenbank wenn der User sagt alle Daten des Datensatzes geschrieben
+
+Save-Funktion 
+Wenn der User ausversehen schliesst muß vorher gespeichert sein !!!
+
+Frage PID
+
+und der Protokollierung noch klären
+
+Wichtig wenn ja erstml nur eine Auswahl dann kann es ja nur als ein neure Datensatz generiert werden
+Wenn also fertig mit Editieren dann wird automatisch ein neure Datensatz erzeugt.
+
+Holt sich die xml
+Der Useer klickt darein. 
+wenn nichts schreibt
+was soll dann passieren
+Ich denke es sollte alles was nicht gewählt wurde automatoisch aufgefüllt werden.
+Genau und wenn die Zeile fertig ist rechts das Schreibesymbol drücken.
+
+Achtung bei falschen Werten !!!
+
+
+
+[PROT_ID]
+      ,[Utest]
+      ,[Uist]
+      ,[Frequenz]
+      ,[tan]
+			,[TS]
+      ,[Test_Art]
+			,[markedASdestroyed]
+      ,[V0]
+      ,[Vx]
+      ,[Ix]
+      ,[f]
+      ,[CompMeas1]
+      ,[CompMeas2]
+      ,[Cp]
+      ,[DF]
+      ,[PF]
+      ,[Pt]
+      ,[P10KV]
+      ,[Qt]
+      ,[St]
+      ,[Zabs]
+      ,[Zphase]
+      ,[Rp]
+      ,[Rs]
+      ,[Q]
+			,[TempU]
+			,[TempDfg]
+			,[Feuchte]
+			,[Kommentar]
+
+
+
+
+
+
+Timestamp
+
+Du brauchst FieldDEf
+
+[ID]
+      ,[PROT_ID]
+      ,[Utest]
+      ,[Uist]
+      ,[Frequenz]
+      ,[tan]
+      ,[TS]
+      ,[Test_Art]
+      ,[markedASdestroyed]
+      ,[Ix]
+      ,[CompMeas1]
+      ,[CompMeas2]
+      ,[Cp]
+      ,[PF]
+      ,[Pt]
+      ,[P10KV]
+      ,[Qt]
+      ,[St]
+      ,[Zabs]
+      ,[Zphase]
+      ,[Rp]
+      ,[Rs]
+      ,[Q]
+      ,[TempU]
+      ,[TempDfg]
+      ,[Feuchte]
+      ,[Kommentar]
+
+So wie in CreateRekord überall so ändern
+
+
+

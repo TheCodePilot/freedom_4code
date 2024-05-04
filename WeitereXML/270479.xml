@@ -1,0 +1,3053 @@
+<Object xmlns="xmlns.omicron.at/2004/TCL" xmlns:TB="http://www.omicron.at/xmlns/2007/TestBase" clsid="{36AA80F4-45B7-11D4-8220-00104B6552C4}">
+	<_v vt="19">1</_v>
+	<nTreeVersion vt="3">2</nTreeVersion>
+	<bstrVersion vt="8">Device:CPC 100: 4.90      </bstrVersion>
+	<Filename vt="8">\7003499\270479.xml</Filename>
+	<Device vt="8">FL727J (V1)</Device>
+	<DateTime vt="7">04/23/2024 09:29:23</DateTime>
+	<Cards vt="8204" length="8">
+		<Cards_Item vt="13" clsid="{B4C91144-FB8C-11D4-A3AC-00500465DF98}">
+			<_v vt="19">0</_v>
+			<_v_ vt="19">1</_v_>
+			<nType vt="3">18</nType>
+			<bstrName vt="8">Trafo Daten</bstrName>
+			<Date vt="7">07/17/2007 16:40:05</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">0</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">0</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<bstrComment vt="8">Trafo Daten
+-----------------------------
+Kunde:  
+Anlage:
+Trafo:  
+
+Tester: 
+Spg Ebene: 
+------------------------------
+T Öl: 
+T Umg.: 
+Rel.Feuchte: 
+Wetter:	</bstrComment>
+</Cards_Item>
+		<Cards_Item vt="13" clsid="{B4C91144-FB8C-11D4-A3AC-00500465DF98}">
+			<_v vt="19">0</_v>
+			<_v_ vt="19">1</_v_>
+			<nType vt="3">18</nType>
+			<bstrName vt="8">Durchführung</bstrName>
+			<Date vt="7">07/17/2007 16:39:39</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">0</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">0</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<bstrComment vt="8">Durchführung	
+------------------------------
+Herst:  HSP
+Modell: SETFt 1425-420-2000 E0 NF spez.
+WerkNr:	270479
+Phase:  
+Jahr:2019
+
+C1: 628
+TanD(C1):0,33% 
+C2:659 
+TanD(C2)0.8% </bstrComment>
+</Cards_Item>
+		<Cards_Item vt="13" clsid="{B4C91144-FB8C-11D4-A3AC-00500465DF98}">
+			<_v vt="19">0</_v>
+			<_v_ vt="19">1</_v_>
+			<nType vt="3">18</nType>
+			<bstrName vt="8">Connections C1</bstrName>
+			<Date vt="7">07/17/2007 16:40:03</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">0</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">0</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<bstrComment vt="8">Connections C1:
+Bushing 	CP TD1
+------------------------------
+HV		HV Output
+Meas. Tap 	IN A (red)
+
+Short circuit: HV A+B+C (+N), N must be isolated from ground
+
+Ground: LV A+B+C (+N) </bstrComment>
+</Cards_Item>
+		<Cards_Item vt="13" clsid="{27B39070-7A34-4D92-9FEB-299F574CC28F}">
+			<_v vt="19">1</_v>
+			<_v_ vt="19">0</_v_>
+			<_v__ vt="19">0</_v__>
+			<_v___ vt="19">1</_v___>
+			<nType vt="3">21</nType>
+			<bstrName vt="8">C1 (V)</bstrName>
+			<Date vt="7">04/23/2024 08:18:39</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">2</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">1</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<ePLL vt="3">0</ePLL>
+			<Output vt="13" clsid="{EC41839C-35FF-4865-9740-27042BB699EA}">
+				<_v vt="19">0</_v>
+				<idxSelectedItem vt="3">1</idxSelectedItem>
+				<bstrName vt="8">:CPTD1</bstrName>
+</Output>
+			<Booster vt="0"></Booster>
+			<bCurrentClamp vt="3">0</bCurrentClamp>
+			<Clamp vt="0"></Clamp>
+			<CT vt="0"></CT>
+			<VT vt="0"></VT>
+			<Results vt="8204" length="6">
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">2000.86940573842</dVx>
+					<dIx vt="5">3.92846335279162E-04</dIx>
+					<dZxRe vt="5">16941.6449385134</dZxRe>
+					<dZxIm vt="5">-5093234.07386751</dZxIm>
+					<dZxCompRe vt="5">16941.6449385134</dZxCompRe>
+					<dZxCompIm vt="5">-5093234.07386751</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2001</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000392846</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624959</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3326</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:15:59</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624959</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3326</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3326</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0026</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0653</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.786</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.786</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5093262.2503</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8094</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1531216150.7745</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">16941.6449</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">300.634</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">3999.4940240394</dVx>
+					<dIx vt="5">7.85242891840898E-04</dIx>
+					<dZxRe vt="5">16934.2615496061</dZxRe>
+					<dZxIm vt="5">-5093292.74767836</dZxIm>
+					<dZxCompRe vt="5">16934.2615496061</dZxCompRe>
+					<dZxCompIm vt="5">-5093292.74767836</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">4000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">3999</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000785243</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624952</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3325</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:16:29</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624952</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3325</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3325</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0104</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0653</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">3.1406</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">3.1406</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5093320.8993</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8095</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1531919045.113</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">16934.2615</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">300.7685</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">5997.4056974555</dVx>
+					<dIx vt="5">1.17752343470184E-03</dIx>
+					<dZxRe vt="5">16908.6666245888</dZxRe>
+					<dZxIm vt="5">-5093208.74916734</dZxIm>
+					<dZxCompRe vt="5">16908.6666245888</dZxCompRe>
+					<dZxCompIm vt="5">-5093208.74916734</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">6000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">5997</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.001177523</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624962</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.332</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:17:00</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624962</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.332</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.332</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0234</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0652</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">7.062</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">7.0621</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5093236.8162</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8098</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1534187280.4966</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">16908.6666</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">301.2188</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">8001.40150619494</dVx>
+					<dIx vt="5">1.5710005384998E-03</dIx>
+					<dZxRe vt="5">16922.3800742953</dZxRe>
+					<dZxIm vt="5">-5093160.16173171</dZxIm>
+					<dZxCompRe vt="5">16922.3800742953</dZxCompRe>
+					<dZxCompIm vt="5">-5093160.16173171</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">8000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">8001</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.001571001</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624968</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3323</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:17:32</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624968</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3323</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3323</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0418</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0652</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">12.5701</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">12.5702</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5093188.2745</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8096</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1532914796.034</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">16922.3801</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">300.9719</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">10002.9213107802</dVx>
+					<dIx vt="5">1.96397825505688E-03</dIx>
+					<dZxRe vt="5">16942.5621053993</dZxRe>
+					<dZxIm vt="5">-5093165.34451757</dZxIm>
+					<dZxCompRe vt="5">16942.5621053993</dZxCompRe>
+					<dZxCompIm vt="5">-5093165.34451757</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">10000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">10003</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.001963978</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624968</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3327</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:18:04</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624968</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3327</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3327</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0654</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0653</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">19.6454</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">19.6455</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5093193.5244</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8094</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1531091939.6741</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">16942.5621</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">300.6136</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">11996.9175437007</dVx>
+					<dIx vt="5">2.35547864805718E-03</dIx>
+					<dZxRe vt="5">16944.2524588907</dZxRe>
+					<dZxIm vt="5">-5093169.14742397</dZxIm>
+					<dZxCompRe vt="5">16944.2524588907</dZxCompRe>
+					<dZxCompIm vt="5">-5093169.14742397</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">12000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">11997</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.002355479</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624967</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3327</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:18:36</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624967</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3327</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3327</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.094</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0653</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">28.2583</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">28.2585</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5093197.3329</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8094</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1530941487.9706</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">16944.2525</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">300.5839</dValue>
+</Q>
+</Results_Item>
+</Results>
+			<VTest vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">V</bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">12000</dValue>
+</VTest>
+			<Frequency vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">Hz</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">50</dValue>
+</Frequency>
+			<bAuto vt="3">1</bAuto>
+			<VList vt="13" clsid="{DFD6FAC4-86F5-4771-A001-6B8ABB732595}">
+				<_v vt="19">0</_v>
+				<nSelection vt="3">0</nSelection>
+				<Values vt="8204" length="6">
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2000</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">4000</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">6000</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">8000</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">10000</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">12000</dValue>
+</Values_Item>
+</Values>
+</VList>
+			<FList vt="13" clsid="{DFD6FAC4-86F5-4771-A001-6B8ABB732595}">
+				<_v vt="19">0</_v>
+				<nSelection vt="3">0</nSelection>
+				<Values vt="8204" length="1">
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</Values_Item>
+</Values>
+</FList>
+			<eMode vt="3">4</eMode>
+			<eBandwidth vt="3">2</eBandwidth>
+			<Averaging vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">5</dValue>
+</Averaging>
+			<eCompoundMeas vt="3">1</eCompoundMeas>
+			<bAutoAssess vt="3">1</bAutoAssess>
+			<Cref vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">p</bstrMulti>
+				<bstrUnit vt="8">F</bstrUnit>
+				<nPrecision vt="3">14</nPrecision>
+				<dValue vt="5">633.9</dValue>
+				<Name vt="8">C1</Name>
+				<TB:boq vt="8">C1</TB:boq>
+				<ePrefix vt="3">10</ePrefix>
+</Cref>
+			<DFref vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">‰</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">6</nPrecision>
+				<dValue vt="5">0.0044</dValue>
+				<Name vt="8">C1_PFDF</Name>
+				<TB:boq vt="8">C1_PFDF</TB:boq>
+				<ePrefix vt="3">19</ePrefix>
+</DFref>
+			<DeltaC vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">6</nPrecision>
+				<dValue vt="5">-1.#IND</dValue>
+				<Name vt="8">C1_Tol</Name>
+				<TB:boq vt="8">C1_Tol</TB:boq>
+				<ePrefix vt="3">18</ePrefix>
+</DeltaC>
+			<DeltaDF vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">-1.#IND</dValue>
+				<Name vt="8">C1_PFDF_Factor</Name>
+				<TB:boq vt="8">C1_PFDF_Factor</TB:boq>
+</DeltaDF>
+			<bExtCT vt="3">0</bExtCT>
+			<CTratio vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">3.1</dValue>
+</CTratio>
+			<bCompensations vt="3">0</bCompensations>
+			<K vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">1</dValue>
+</K>
+			<Toil vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">°C</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">20</dValue>
+</Toil>
+			<Tamb vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">°C</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">20</dValue>
+</Tamb>
+			<RelHum vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">%</bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">15</dValue>
+</RelHum>
+			<bShieldCheck vt="3">1</bShieldCheck>
+			<bAutoSuspend vt="3">0</bAutoSuspend>
+			<bRecording vt="3">0</bRecording>
+			<RecInterval vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">s</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">1</dValue>
+				<ePrefix vt="3">21</ePrefix>
+</RecInterval>
+			<RecDuration vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">min</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">60</dValue>
+				<ePrefix vt="3">22</ePrefix>
+</RecDuration>
+			<bstrCPTDSerial vt="8">LE635T</bstrCPTDSerial>
+			<nCPTDCalID vt="3">1572864</nCPTDCalID>
+			<bstrCPTDCalInfo vt="8">Omicron electronics; Factory Calibration                        </bstrCPTDCalInfo>
+			<dateCPTDCal vt="7">05/28/2022 12:15:20</dateCPTDCal>
+			<bstrComment vt="8">
+      </bstrComment>
+			<bSWReg vt="3">1</bSWReg>
+			<bUseNoiseSuppression vt="3">1</bUseNoiseSuppression>
+</Cards_Item>
+		<Cards_Item vt="13" clsid="{27B39070-7A34-4D92-9FEB-299F574CC28F}">
+			<_v vt="19">1</_v>
+			<_v_ vt="19">0</_v_>
+			<_v__ vt="19">0</_v__>
+			<_v___ vt="19">1</_v___>
+			<nType vt="3">21</nType>
+			<bstrName vt="8">C1 (f)</bstrName>
+			<Date vt="7">04/23/2024 08:21:11</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">2</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">1</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<ePLL vt="3">0</ePLL>
+			<Output vt="13" clsid="{EC41839C-35FF-4865-9740-27042BB699EA}">
+				<_v vt="19">0</_v>
+				<idxSelectedItem vt="3">1</idxSelectedItem>
+				<bstrName vt="8">:CPTD1</bstrName>
+</Output>
+			<Booster vt="0"></Booster>
+			<bCurrentClamp vt="3">0</bCurrentClamp>
+			<Clamp vt="0"></Clamp>
+			<CT vt="0"></CT>
+			<VT vt="0"></VT>
+			<Results vt="8204" length="7">
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">2012.62241060349</dVx>
+					<dIx vt="5">1.18804476895426E-04</dIx>
+					<dZxRe vt="5">47535.4672251959</dZxRe>
+					<dZxIm vt="5">-16940560.977096</dZxIm>
+					<dZxCompRe vt="5">47535.4672251959</dZxCompRe>
+					<dZxCompIm vt="5">-16940560.977096</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2013</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000118804</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">15</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000626322</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.2806</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">0</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:19:55</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000626322</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.2806</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.2806</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0007</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0166</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.2391</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.2391</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">16940627.6696</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8392</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">6037278743.465</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">47535.4672</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">356.3773</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">1999.5741489007</dVx>
+					<dIx vt="5">2.35780655256377E-04</dIx>
+					<dZxRe vt="5">25971.0253131066</dZxRe>
+					<dZxIm vt="5">-8480614.20621416</dZxIm>
+					<dZxCompRe vt="5">25971.0253131066</dZxCompRe>
+					<dZxCompIm vt="5">-8480614.20621416</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2000</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000235781</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">30</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000625558</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3062</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">0</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:20:07</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000625558</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3062</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3062</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0014</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0361</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4715</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4715</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">8480653.9729</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.8245</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">G</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">2769297358.9495</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">25971.0253</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">326.5414</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">1999.45103286137</dVx>
+					<dIx vt="5">6.27486133210689E-04</dIx>
+					<dZxRe vt="5">11503.7616828177</dZxRe>
+					<dZxIm vt="5">-3186425.82200902</dZxIm>
+					<dZxCompRe vt="5">11503.7616828177</dZxCompRe>
+					<dZxCompIm vt="5">-3186425.82200902</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">1999</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000627486</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">80</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624339</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.361</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">0</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:20:20</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000624339</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.361</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.361</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0045</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.1133</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.2546</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.2546</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">3186446.5876</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.7931</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">882619280.1668</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">11503.7617</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">276.9899</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">1999.59973983136</dVx>
+					<dIx vt="5">1.01863238274769E-03</dIx>
+					<dZxRe vt="5">7822.02981386003</dZxRe>
+					<dZxIm vt="5">-1963008.38145873</dZxIm>
+					<dZxCompRe vt="5">7822.02981386003</dZxCompRe>
+					<dZxCompIm vt="5">-1963008.38145873</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2000</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.001018632</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">130</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.00000000062366</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3985</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">0</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:20:33</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.00000000062366</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3985</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3985</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0081</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.203</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">2.0368</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">2.0369</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1963023.9657</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.7717</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">492642342.4006</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">7822.0298</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">250.9589</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">1999.91404056547</dVx>
+					<dIx vt="5">1.79987727891602E-03</dIx>
+					<dZxRe vt="5">4996.45263709603</dZxRe>
+					<dZxIm vt="5">-1111127.95205267</dZxIm>
+					<dZxCompRe vt="5">4996.45263709603</dZxCompRe>
+					<dZxCompIm vt="5">-1111127.95205267</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2000</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.001799877</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">230</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000622758</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4497</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">0</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:20:45</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000622758</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4497</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4497</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0162</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4047</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">3.5996</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">3.5996</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1111139.1859</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.7424</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">247101369.7208</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">4996.4526</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">222.3834</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">2000.28034880472</dVx>
+					<dIx vt="5">2.5802659332576E-03</dIx>
+					<dZxRe vt="5">3780.84587047494</dZxRe>
+					<dZxIm vt="5">-775213.446117899</dZxIm>
+					<dZxCompRe vt="5">3780.84587047494</dZxCompRe>
+					<dZxCompIm vt="5">-775213.446117899</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2000</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.002580266</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">330</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000622121</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4877</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">0</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:20:58</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000622121</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4877</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.4877</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0252</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.6291</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5.1612</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">5.1613</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">775222.666</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.7206</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">158951251.2347</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">3780.8459</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">205.037</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">1998.30517215974</dVx>
+					<dIx vt="5">3.12267876009838E-03</dIx>
+					<dZxRe vt="5">3260.73150691841</dZxRe>
+					<dZxIm vt="5">-639924.824777437</dZxIm>
+					<dZxCompRe vt="5">3260.73150691841</dZxCompRe>
+					<dZxCompIm vt="5">-639924.824777437</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">1998</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.003122679</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">400</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000621756</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.5095</dValue>
+</CompMeas2>
+					<eAssessment vt="3">2</eAssessment>
+					<bIsInterpolated vt="3">0</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:21:10</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000621756</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.5095</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.5095</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0318</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.7962</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">6.24</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">6.2401</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">639933.1322</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.7081</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">125589737.4155</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">3260.7315</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">196.2519</dValue>
+</Q>
+</Results_Item>
+</Results>
+			<VTest vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">V</bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">2000</dValue>
+</VTest>
+			<Frequency vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">Hz</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">400</dValue>
+</Frequency>
+			<bAuto vt="3">1</bAuto>
+			<VList vt="13" clsid="{DFD6FAC4-86F5-4771-A001-6B8ABB732595}">
+				<_v vt="19">0</_v>
+				<nSelection vt="3">0</nSelection>
+				<Values vt="8204" length="1">
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2000</dValue>
+</Values_Item>
+</Values>
+</VList>
+			<FList vt="13" clsid="{DFD6FAC4-86F5-4771-A001-6B8ABB732595}">
+				<_v vt="19">0</_v>
+				<nSelection vt="3">6</nSelection>
+				<Values vt="8204" length="7">
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">15</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">30</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">80</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">130</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">230</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">330</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">400</dValue>
+</Values_Item>
+</Values>
+</FList>
+			<eMode vt="3">4</eMode>
+			<eBandwidth vt="3">0</eBandwidth>
+			<Averaging vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">10</dValue>
+</Averaging>
+			<eCompoundMeas vt="3">1</eCompoundMeas>
+			<bAutoAssess vt="3">1</bAutoAssess>
+			<Cref vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">p</bstrMulti>
+				<bstrUnit vt="8">F</bstrUnit>
+				<nPrecision vt="3">14</nPrecision>
+				<dValue vt="5">633.9</dValue>
+				<Name vt="8">C1</Name>
+				<TB:boq vt="8">C1</TB:boq>
+				<ePrefix vt="3">10</ePrefix>
+</Cref>
+			<DFref vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">‰</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">6</nPrecision>
+				<dValue vt="5">0.0044</dValue>
+				<Name vt="8">C1_PFDF</Name>
+				<TB:boq vt="8">C1_PFDF</TB:boq>
+				<ePrefix vt="3">19</ePrefix>
+</DFref>
+			<DeltaC vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">6</nPrecision>
+				<dValue vt="5">-1.#IND</dValue>
+				<Name vt="8">C1_Tol</Name>
+				<TB:boq vt="8">C1_Tol</TB:boq>
+				<ePrefix vt="3">18</ePrefix>
+</DeltaC>
+			<DeltaDF vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">-1.#IND</dValue>
+				<Name vt="8">C1_PFDF_Factor</Name>
+				<TB:boq vt="8">C1_PFDF_Factor</TB:boq>
+</DeltaDF>
+			<bExtCT vt="3">0</bExtCT>
+			<CTratio vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">3.1</dValue>
+</CTratio>
+			<bCompensations vt="3">0</bCompensations>
+			<K vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">1</dValue>
+</K>
+			<Toil vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">°C</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">20</dValue>
+</Toil>
+			<Tamb vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">°C</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">20</dValue>
+</Tamb>
+			<RelHum vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">%</bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">15</dValue>
+</RelHum>
+			<bShieldCheck vt="3">1</bShieldCheck>
+			<bAutoSuspend vt="3">0</bAutoSuspend>
+			<bRecording vt="3">0</bRecording>
+			<RecInterval vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">s</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">1</dValue>
+				<ePrefix vt="3">21</ePrefix>
+</RecInterval>
+			<RecDuration vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">min</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">60</dValue>
+				<ePrefix vt="3">22</ePrefix>
+</RecDuration>
+			<bstrCPTDSerial vt="8">LE635T</bstrCPTDSerial>
+			<nCPTDCalID vt="3">1572864</nCPTDCalID>
+			<bstrCPTDCalInfo vt="8">Omicron electronics; Factory Calibration                        </bstrCPTDCalInfo>
+			<dateCPTDCal vt="7">05/28/2022 12:15:20</dateCPTDCal>
+			<bstrComment vt="8">
+      </bstrComment>
+			<bSWReg vt="3">1</bSWReg>
+			<bUseNoiseSuppression vt="3">1</bUseNoiseSuppression>
+</Cards_Item>
+		<Cards_Item vt="13" clsid="{B4C91144-FB8C-11D4-A3AC-00500465DF98}">
+			<_v vt="19">0</_v>
+			<_v_ vt="19">1</_v_>
+			<nType vt="3">18</nType>
+			<bstrName vt="8">Connections C2</bstrName>
+			<Date vt="7">07/17/2007 16:40:03</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">0</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">0</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<bstrComment vt="8">Connections C2:
+Bushing 	CP TD1
+------------------------------
+HV		IN A (red)
+Meas. Tap 	HV Output
+
+Pay attention to the max. rated test voltage on the meas. tap</bstrComment>
+</Cards_Item>
+		<Cards_Item vt="13" clsid="{27B39070-7A34-4D92-9FEB-299F574CC28F}">
+			<_v vt="19">1</_v>
+			<_v_ vt="19">0</_v_>
+			<_v__ vt="19">0</_v__>
+			<_v___ vt="19">1</_v___>
+			<nType vt="3">21</nType>
+			<bstrName vt="8">C2</bstrName>
+			<Date vt="7">04/23/2024 08:23:34</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">0</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">1</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<ePLL vt="3">0</ePLL>
+			<Output vt="13" clsid="{EC41839C-35FF-4865-9740-27042BB699EA}">
+				<_v vt="19">0</_v>
+				<idxSelectedItem vt="3">1</idxSelectedItem>
+				<bstrName vt="8">:CPTD1</bstrName>
+</Output>
+			<Booster vt="0"></Booster>
+			<bCurrentClamp vt="3">0</bCurrentClamp>
+			<Clamp vt="0"></Clamp>
+			<CT vt="0"></CT>
+			<VT vt="0"></VT>
+			<Results vt="8204" length="2">
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">500.071483604367</dVx>
+					<dIx vt="5">1.05975126864086E-04</dIx>
+					<dZxRe vt="5">76195.0442910665</dZxRe>
+					<dZxIm vt="5">-4718147.53986553</dZxIm>
+					<dZxCompRe vt="5">76195.0442910665</dZxCompRe>
+					<dZxCompIm vt="5">-4718147.53986553</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">500</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">500</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000105975</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000674474</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.6149</dValue>
+</CompMeas2>
+					<eAssessment vt="3">0</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:23:03</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000674474</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.6149</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.6147</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0009</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3422</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.053</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.053</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">4718762.7502</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.0748</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">292233203.6143</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">76195.0443</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">61.922</dValue>
+</Q>
+</Results_Item>
+				<Results_Item vt="13" clsid="{F90F2E1A-07B2-470E-BAD3-F935E3252B3A}">
+					<_v vt="19">0</_v>
+					<nOverload vt="3">0</nOverload>
+					<dVx vt="5">1999.4725553708</dVx>
+					<dIx vt="5">4.23729258906527E-04</dIx>
+					<dZxRe vt="5">76167.3897592808</dZxRe>
+					<dZxIm vt="5">-4718135.48144626</dZxIm>
+					<dZxCompRe vt="5">76167.3897592808</dZxCompRe>
+					<dZxCompIm vt="5">-4718135.48144626</dZxCompIm>
+					<V0 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">2000</dValue>
+</V0>
+					<Vx vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">1999</dValue>
+</Vx>
+					<Ix vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">µ</bstrMulti>
+						<bstrUnit vt="8">A</bstrUnit>
+						<nPrecision vt="3">9</nPrecision>
+						<dValue vt="5">0.000423729</dValue>
+</Ix>
+					<f vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</f>
+					<CompMeas1 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000674476</dValue>
+</CompMeas1>
+					<CompMeas2 vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.6144</dValue>
+</CompMeas2>
+					<eAssessment vt="3">0</eAssessment>
+					<bIsInterpolated vt="3">1</bIsInterpolated>
+					<bWithReducedAccuracy vt="3">0</bWithReducedAccuracy>
+					<hrFidelity vt="3">0</hrFidelity>
+					<bReducedVoltage vt="3">0</bReducedVoltage>
+					<Date vt="7">04/23/2024 08:23:33</Date>
+					<Cp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">p</bstrMulti>
+						<bstrUnit vt="8">F</bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">0.000000000674476</dValue>
+</Cp>
+					<Ls vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8"></bstrUnit>
+						<nPrecision vt="3">15</nPrecision>
+						<dValue vt="5">-1.#IND</dValue>
+</Ls>
+					<DF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.6144</dValue>
+</DF>
+					<PF vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">%</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">1.6141</dValue>
+</PF>
+					<Pt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.0137</dValue>
+</Pt>
+					<P10kV vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">W</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.3421</dValue>
+</P10kV>
+					<Qt vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">m</bstrMulti>
+						<bstrUnit vt="8">VAr</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.8471</dValue>
+</Qt>
+					<St vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">VA</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">0.8472</dValue>
+</St>
+					<Zabs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">4718750.2469</dValue>
+</Zabs>
+					<Zphase vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">°</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">-89.0751</dValue>
+</Zphase>
+					<Rp vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">M</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">292337757.1808</dValue>
+</Rp>
+					<Rs vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">k</bstrMulti>
+						<bstrUnit vt="8">Ω</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">76167.3898</dValue>
+</Rs>
+					<Q vt="13" clsid="{249B6839-48CB-11D4-8220-00104B6552C4}">
+						<_v vt="19">1</_v>
+						<bstrMulti vt="8">E</bstrMulti>
+						<bstrUnit vt="8">:1</bstrUnit>
+						<nPrecision vt="3">4</nPrecision>
+						<dValue vt="5">61.9443</dValue>
+</Q>
+</Results_Item>
+</Results>
+			<VTest vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">V</bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">2000</dValue>
+</VTest>
+			<Frequency vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">Hz</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">50</dValue>
+</Frequency>
+			<bAuto vt="3">1</bAuto>
+			<VList vt="13" clsid="{DFD6FAC4-86F5-4771-A001-6B8ABB732595}">
+				<_v vt="19">0</_v>
+				<nSelection vt="3">1</nSelection>
+				<Values vt="8204" length="2">
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">500</dValue>
+</Values_Item>
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">V</bstrUnit>
+						<nPrecision vt="3">0</nPrecision>
+						<dValue vt="5">2000</dValue>
+</Values_Item>
+</Values>
+</VList>
+			<FList vt="13" clsid="{DFD6FAC4-86F5-4771-A001-6B8ABB732595}">
+				<_v vt="19">0</_v>
+				<nSelection vt="3">0</nSelection>
+				<Values vt="8204" length="1">
+					<Values_Item vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+						<_v vt="19">0</_v>
+						<_v_ vt="19">1</_v_>
+						<bstrMulti vt="8"></bstrMulti>
+						<bstrUnit vt="8">Hz</bstrUnit>
+						<nPrecision vt="3">2</nPrecision>
+						<dValue vt="5">50</dValue>
+</Values_Item>
+</Values>
+</FList>
+			<eMode vt="3">4</eMode>
+			<eBandwidth vt="3">2</eBandwidth>
+			<Averaging vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">5</dValue>
+</Averaging>
+			<eCompoundMeas vt="3">1</eCompoundMeas>
+			<bAutoAssess vt="3">1</bAutoAssess>
+			<Cref vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">14</nPrecision>
+				<dValue vt="5">-1.#IND</dValue>
+				<Name vt="8">C2</Name>
+				<TB:boq vt="8">C2</TB:boq>
+				<ePrefix vt="3">10</ePrefix>
+</Cref>
+			<DFref vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">6</nPrecision>
+				<dValue vt="5">-1.#IND</dValue>
+				<Name vt="8">C2_PFDF</Name>
+				<TB:boq vt="8">C2_PFDF</TB:boq>
+				<ePrefix vt="3">19</ePrefix>
+</DFref>
+			<DeltaC vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">%</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">6</nPrecision>
+				<dValue vt="5">0.05</dValue>
+				<ePrefix vt="3">18</ePrefix>
+</DeltaC>
+			<DeltaDF vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">2</dValue>
+</DeltaDF>
+			<bExtCT vt="3">0</bExtCT>
+			<CTratio vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">3.1</dValue>
+</CTratio>
+			<bCompensations vt="3">0</bCompensations>
+			<K vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">1</dValue>
+</K>
+			<Toil vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">°C</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">20</dValue>
+</Toil>
+			<Tamb vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">°C</bstrUnit>
+				<nPrecision vt="3">2</nPrecision>
+				<dValue vt="5">20</dValue>
+</Tamb>
+			<RelHum vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8"></bstrMulti>
+				<bstrUnit vt="8">%</bstrUnit>
+				<nPrecision vt="3">1</nPrecision>
+				<dValue vt="5">15</dValue>
+</RelHum>
+			<bShieldCheck vt="3">1</bShieldCheck>
+			<bAutoSuspend vt="3">0</bAutoSuspend>
+			<bRecording vt="3">0</bRecording>
+			<RecInterval vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">s</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">1</dValue>
+				<ePrefix vt="3">21</ePrefix>
+</RecInterval>
+			<RecDuration vt="13" clsid="{93356142-1A3E-47E4-90B2-C4F61AAD8D72}">
+				<_v vt="19">0</_v>
+				<_v_ vt="19">1</_v_>
+				<bstrMulti vt="8">min</bstrMulti>
+				<bstrUnit vt="8"></bstrUnit>
+				<nPrecision vt="3">0</nPrecision>
+				<dValue vt="5">60</dValue>
+				<ePrefix vt="3">22</ePrefix>
+</RecDuration>
+			<bstrCPTDSerial vt="8">LE635T</bstrCPTDSerial>
+			<nCPTDCalID vt="3">1572864</nCPTDCalID>
+			<bstrCPTDCalInfo vt="8">Omicron electronics; Factory Calibration                        </bstrCPTDCalInfo>
+			<dateCPTDCal vt="7">05/28/2022 12:15:20</dateCPTDCal>
+			<bstrComment vt="8">
+      </bstrComment>
+			<bSWReg vt="3">1</bSWReg>
+			<bUseNoiseSuppression vt="3">1</bUseNoiseSuppression>
+</Cards_Item>
+		<Cards_Item vt="13" clsid="{B4C91144-FB8C-11D4-A3AC-00500465DF98}">
+			<_v vt="19">0</_v>
+			<_v_ vt="19">1</_v_>
+			<nType vt="3">18</nType>
+			<bstrName vt="8">Version</bstrName>
+			<Date vt="7">07/17/2007 16:39:04</Date>
+			<nOverload vt="3">0</nOverload>
+			<nAssessment vt="3">0</nAssessment>
+			<eLoadInfo vt="3">0</eLoadInfo>
+			<bstrCardComment vt="8">
+      </bstrCardComment>
+			<bHasResults vt="3">0</bHasResults>
+			<bDangerousOutputMode vt="3">0</bDangerousOutputMode>
+			<bstrComment vt="8">Template:	Single-Bushing C-DF
+Version:	1.41</bstrComment>
+</Cards_Item>
+</Cards>
+	<nAssessment vt="3">2</nAssessment>
+	<bstrComment vt="8">
+  </bstrComment>
+</Object> 

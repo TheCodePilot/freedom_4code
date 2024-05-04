@@ -1,0 +1,119 @@
+//---------------------------------------------------------------------------
+
+#ifndef Neu_XML_TDBGridH
+#define Neu_XML_TDBGridH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Data.DB.hpp>
+#include <Vcl.DBGrids.hpp>
+#include <Vcl.Grids.hpp>
+#include <Datasnap.DBClient.hpp>
+#include <Vcl.Dialogs.hpp>
+#include <Vcl.ExtDlgs.hpp>
+//---------------------------------------------------------------------------
+#include "rr_system.h"
+#include <Datasnap.Provider.hpp>
+//Von X10K
+	//class RRClasses::XMLBasic;
+//#include "Frame_X10K.h"
+class TFrameX10K;
+class TFormXML : public TForm
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TDBGrid *DBGrid4XMLin;
+	TClientDataSet *ClientDataSet1;
+	TDBGrid *DBGrid4XMLCard_Item;
+	TDataSource *DataSource1;
+	TClientDataSet *ClientDataSet2;
+	TDataSource *DataSource2;
+	TMemo *Memo1;
+	TClientDataSet *ClientDataSet3;
+	TDataSource *DataSource3;
+	TDBGrid *DBGridUserChoice;
+	TButton *cbnLoescheAlles;
+	TButton *cbnLoescheSpalte;
+	TComboBox *ComboBoxDBGridUserChoice;
+	TButton *cbnUebertrage;
+	TDataSetProvider *DataSetProvider1;
+	TLabel *Label1;
+	TLabel *Label2;
+	TLabel *Label3;
+	TLabel *Label4;
+	void __fastcall DBGrid4XMLinOnCellClick(TColumn *Column);
+	void __fastcall DBGrid4XMLinDrawColumnCell(TObject *Sender, const TRect &Rect, int DataCol,
+          TColumn *Column, TGridDrawState State);
+	void __fastcall DBGrid4XMLCard_ItemOnCellKlick(TColumn *Column);
+	void __fastcall DBGridUserChoiceMouseEnter(TObject *Sender);
+	void __fastcall DBGrid4XMLCard_ItemMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+	void __fastcall DBGrid4XMLCard_ItemMouseUp(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y);
+	void __fastcall DBGridUserChoiceOnCellClick(TColumn *Column);
+	void __fastcall DBGrid4XMLCard_ItemOndrawColumnCell(TObject *Sender, const TRect &Rect,
+          int DataCol, TColumn *Column, TGridDrawState State);
+	void __fastcall cbnLoescheSpalteOnClick(TObject *Sender);
+	void __fastcall DBGridUserChoiceOnDraw(TObject *Sender, const TRect &Rect, int DataCol,
+          TColumn *Column, TGridDrawState State);
+	void __fastcall cbnLoescheAllesOnClick(TObject *Sender);
+	void __fastcall cbOnClick(TObject *Sender);
+	void __fastcall cbnUebertrageOnClick(TObject *Sender);
+	void __fastcall XMLShow(TObject *Sender);
+	void __fastcall IchBin();
+	//void __fastcall GetFrameX10K(); //TFrameX10K* pTFrameX10K);
+
+
+
+
+
+
+private:	// Benutzer-Deklarationen
+	void __fastcall FillTDBGridFromXML(RRClasses::XMLBasic* xmlProcess);
+	void __fastcall NewColumnName();
+	void __fastcall UpdateDBGridUserChoice();
+	void __fastcall XML2Grid(RRClasses::XMLBasic* xmlProcess);
+	void __fastcall Uebertrage();
+	void __fastcall BuildRestOfFieldDefs();
+	bool __fastcall AllreadyChosed();
+	void __fastcall IniCard_Item();
+	int  __fastcall SomeFieldsExist();
+	void __fastcall G3ToGrid2Synchron(std::wstring wstr);
+
+	std::unique_ptr<RRClasses::XMLBasic> xmlProcess;
+    RRClasses::XMLData* xmlData;
+	std::unique_ptr<TOpenTextFileDialog> OpenTextFileDialog;
+	//steuert DBGridUserChoiceMouseEnter
+	bool fromDBGrid4XMLCard_Item;
+	bool cbnLöscheSpalten;
+	bool ersteSpalte;
+
+	int currentRowCard_Item;
+	int fieldCounterToDelete;
+	AnsiString clickMeasureCard_Item;
+	AnsiString clickValueCard_Item;
+
+
+
+    //Achtung hier ist das zweite also .second der WString sorry historisch gewachsen wenn Zeit ändere ich dies
+	std::vector<std::pair<int, std::wstring> > selectedRowsDBGrid4XMLCard_Item; // RecNo, Spalten - Name
+	std::vector<std::pair<int, int> > selectedColumnsUserDBGrid4Draw; //Nummer der Spalte [aktuell angeklickt], Ereignis = 1 : für eventuelles Löschen angeklickt
+	std::vector<std::pair<std::wstring, int> > fieldDefsColumnsUserDBGridAsStr;
+
+public:		// Benutzer-Deklarationen
+//void __fastcall TEST(TComponent* Owner)(){;}
+	__fastcall TFormXML(TComponent* Owner);
+	void __fastcall TFormXML_(TComponent* Owner);
+	TFrameX10K* pFX10K; //RRR42
+
+
+
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TFormXML *FormXML ;
+//---------------------------------------------------------------------------
+#endif
+
+
+//Unter die Lupe nehmen : NewColumnName()

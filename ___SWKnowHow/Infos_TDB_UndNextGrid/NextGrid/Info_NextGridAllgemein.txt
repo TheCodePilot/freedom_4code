@@ -1,0 +1,22 @@
+Die Arbeit mit NextDBGrid im Entwurfszeitmodus ist fast identisch mit der Arbeit mit NextGrid. Der einzige Unterschied besteht in den neuen Eigenschaften, nachdem Sie auf ein Raster oder eine Spalte geklickt haben.
+
+Wenn DataSet ( TTable , TADOTable , TQuery ...) aktiv ist, werden in der Spalte Daten automatisch angezeigt.
+
+Die DataAwareOptions- Eigenschaft besteht aus einer Reihe von Flags, die angeben, wie sich das Raster mit db-bezogenen Optionen verhält:
+
+doAddColumns	Wenn die DataSource- Eigenschaft festgelegt ist und DataSet für jedes Feld eine neue Spalte hinzugefügt wird, wenn dieses Flag festgelegt ist.
+doAddIncrementColumn	TNxDbIncrementColumn automatisch hinzufügen . Dies kann sehr nützlich sein, wenn bei der DataSet- Aktivierung Spalten hinzugefügt werden.
+doAutoAssignFieldName	Dieses Flag ist nützlich, wenn DataSet nicht aktiv ist, wir aber in der Entwurfszeit Spalten konfigurieren müssen. Nachdem DataSet aktiv geworden ist, „greift“ jede Spalte das erste nächste Feld und so weiter.
+doBufferRecords	Wenn dieses Flag nicht gesetzt ist, werden nur auf dem Bildschirm sichtbare Datensätze heruntergeladen (ähnlich wie bei Delphis DBGrid). Bei der Einstellung „True“ werden alle Datensätze in den internen Puffer heruntergeladen, was zum Laden einige Zeit in Anspruch nehmen und mehr Speicher verbrauchen kann. Aber auch das Raster verhält sich eher wie ein Standard-Nicht-Datenbank-Raster.
+doClearColumnsOnDeactivate	Alle Spalten in DataSet löschen wird nur deaktiviert, wenn doAutoDelete in DataAwareOptions von Column festgelegt ist.
+doRetreiveRecords	Scrollen Sie im DataSet zum letzten Datensatz, um alle Datensätze herunterzuladen.
+doSetColumnWidth	Wenn Spalten automatisch zu DataSet hinzugefügt werden, aktivieren Sie die Spaltenbreite so , dass sie mit Field.DisplayWidth übereinstimmt .
+
+Spalten konfigurieren
+
+
+Eine der wichtigsten Eigenschaften jeder Spalte ist die Name- Eigenschaft. Nachdem die Spalte hinzugefügt wurde, wird diese Eigenschaft automatisch auf einen Namen festgelegt, sie kann jedoch in etwas wie colMyColumn geändert werden . Später im Code kann über den Spaltennamen auf die Spalte zugegriffen werden.
+
+Einige Spalten können bearbeitet werden (z. B. Text-, Zahlen-...Spalten). Um die Bearbeitung der Spalte zu ermöglichen, setzen Sie das Flag „coEditing“ in der Optionseigenschaft auf „True“.
+
+Nachdem dieses Flag gesetzt wurde, erscheint das nächste Symbol neben dem Spaltennamen:
