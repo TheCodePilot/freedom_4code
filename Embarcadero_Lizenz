@@ -1,3 +1,6 @@
+Interessant:
+https://blogs.embarcadero.com/my-code-used-to-work-but-crashes-easily-solving-incorrect-code-with-bcc64x/
+//---------------------
 In C++ mit dem VCL-Framework in Delphi können Sie das TNextDBGrid verwenden und eine Spalte mit einem Spincontrol für das Editieren erstellen. Hier ist ein Beispielcode, wie Sie das erreichen können:
 
 cpp
