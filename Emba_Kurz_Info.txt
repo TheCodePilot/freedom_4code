@@ -11,3 +11,6 @@ Customer Support Center - Embarcadero
 At Embarcadero Technologies, we aim to provide timely responses and resolutions for your software development inquiries and issues. Contact us for support.
 [5.3. 11:46] Kaluza, Alexander
 C:\Users\Public\Documents\Embarcadero\Studio\21.0
+
+Aus Email
+https://docwiki.embarcadero.com/RADStudio/Athens/de/Installationshinweise?utm_source=Eloqua&utm_medium=email&utm_content=Notification-240404-RAD-12-1
