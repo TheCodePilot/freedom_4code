@@ -1,33 +1,4 @@
-#include <string>
 
-std::wstring extractBefore(const std::wstring& input, wchar_t delimiter) {
-    // Suchen nach dem Trennzeichen
-    size_t delimiterPos = input.find(delimiter);
-    
-    // Überprüfen, ob das Trennzeichen gefunden wurde
-    if (delimiterPos != std::wstring::npos) {
-        // Extrahieren der Zeichen vor dem Trennzeichen
-        return input.substr(0, delimiterPos);
-    } else {
-        // Wenn das Trennzeichen nicht gefunden wurde, gib die gesamte Eingabe zurück
-        return input;
-    }
-}
-
-int main() {
-    // Beispielaufruf der Funktion
-    std::wstring input = L"BisHier @blabla";
-    std::wstring result = extractBefore(input, L'@');
-    
-    // Ausgabe des Ergebnisses
-    // Hier sollte "BisHier " ausgegeben werden
-    // Sie können das Ergebnis entsprechend weiterverwenden
-    return 0;
-}
-
-//Für den Datentyp decimal(5,3) oder allgemein für Dezimalzahlen bietet sich üblicherweise die Verwendung von AsFloat oder AsBCD an
-
-//---------------------------------Ende------------------------------
 #import <msxml6.dll>
 
 int main()
