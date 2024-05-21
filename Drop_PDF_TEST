@@ -1,5 +1,84 @@
 //---------------------------------------------------------------------------
 
+#ifndef Frame_AttachmentManagerH
+#define Frame_AttachmentManagerH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Imaging.pngimage.hpp>
+#include <Vcl.Imaging.jpeg.hpp>
+#include <Vcl.Dialogs.hpp>
+#include "Gradient.hpp"
+#include "PJDropFiles.hpp"
+#include <Vcl.Buttons.hpp>
+#include <Vcl.Graphics.hpp>
+//---------------------------------------------------------------------------
+class TFrameAttachmentManager : public TFrame
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TListBox *LIattachm;
+	TLabel *Label1;
+	TFileOpenDialog *FODialog;
+	TGradient *Gradient;
+	TImage *Image2;
+	TPJDropFiles *DropFiles;
+	TTimer *TIdelay;
+	TLabel *Label2;
+	TSpeedButton *BNdelete;
+	TPanel *PNpdf;
+	TSpeedButton *BNlink;
+	TPanel *PNbottom;
+	TPanel *PNphoto;
+	TTimer *TimerPhoto;
+	TImage *IMphoto;
+	void __fastcall LIattachmClick(TObject *Sender);
+	void __fastcall Image2MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
+	void __fastcall DropFilesDropFiles(TObject *Sender);
+	void __fastcall GradientMouseMove(TObject *Sender, TShiftState Shift, int X, int Y);
+	void __fastcall TIdelayTimer(TObject *Sender);
+	void __fastcall BNdeleteClick(TObject *Sender);
+	void __fastcall PNphotoClick(TObject *Sender);
+	void __fastcall TimerPhotoTimer(TObject *Sender);
+
+private:	// Benutzer-Deklarationen
+public:		// Benutzer-Deklarationen
+
+	bool   Busy;
+
+	int    AutoScaleXmax;
+	int    AutoScaleYmax;
+
+	String DboName;      // Name des DBO welchem die FileAttachments zugeordnet werden
+	String DboKeyName;   // Name des Keys innerhalb dieses DBO
+	String StoredKeyVal; // optional, Wert kann auch im Funktionsaufruf s.u. übergeben werden
+
+	TStringList *IDList;
+	TStringList *SourcePathsList;
+	TStringList *DocsPathsList;   // Filenamen im SQL-System
+	TStringList *OpenedFilesList; // Liste der Files, welche an USER/Desktop zur Ansicht/Bearbeitung übertragen wurden
+
+	void __fastcall AfterResize       (void);
+	bool __fastcall AddItem           (String Path, TJPEGImage *JPG_Photo, String DboKeyVal, bool LinkOnly);
+	bool __fastcall LoadList          (String DboKeyVal, bool Delayed);
+	void __fastcall ShowImage         (int Index);
+	void __fastcall DeleteOpenedFiles (void);
+	bool __fastcall ConvertImageToGlyph(TObject *Sender, TImage *IM, int Width, int Height, TStream *STarget, String TFileName);
+
+	__fastcall TFrameAttachmentManager(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TFrameAttachmentManager *FrameAttachmentManager;
+//---------------------------------------------------------------------------
+#endif
+
+//---------------------------------
+//--------------------------------
+
+//---------------------------------------------------------------------------
+
 #include <vcl.h>
 #pragma hdrstop
 
