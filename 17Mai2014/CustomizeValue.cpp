@@ -1,6 +1,35 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+
+// Funktion zur Konvertierung von std::wstring in int
+int wstringToInt(const std::wstring& str) {
+    std::wstringstream wss(str);
+    int result;
+    wss >> result;
+    if (wss.fail()) {
+        std::wcerr << L"Konvertierungsfehler bei int: " << str << std::endl;
+        return 0; // oder eine andere geeignete Fehlerbehandlung
+    }
+    return result;
+}
+
+// Funktion zur Konvertierung von std::wstring in double
+double wstringToDouble(const std::wstring& str) {
+    std::wstringstream wss(str);
+    double result;
+    wss >> result;
+    if (wss.fail()) {
+        std::wcerr << L"Konvertierungsfehler bei double: " << str << std::endl;
+        return 0.0; // oder eine andere geeignete Fehlerbehandlung
+    }
+    return result;
+}
+
+//---------------
+#include <iostream>
+#include <string>
+#include <sstream>
 #include <iomanip>
 #include <cmath>
 
