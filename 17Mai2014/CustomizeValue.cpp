@@ -1,3 +1,30 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+    std::wstring teststring = L"11|22|33|44|%55|66|77|%88|99|00|%...";  // Ihre lange Zeichenkette hier
+
+    std::vector<std::wstring> indexBereiche;
+    std::size_t start = 0;
+    std::size_t end = teststring.find(L'%');
+
+    while (end != std::wstring::npos) {
+        indexBereiche.push_back(teststring.substr(start, end - start));
+        start = end + 1;
+        end = teststring.find(L'%', start);
+    }
+    indexBereiche.push_back(teststring.substr(start));
+
+    // Ausgabe der gefundenen Bereiche
+    for (size_t i = 0; i < indexBereiche.size(); ++i) {
+        std::wcout << L"Bereich " << (i + 1) << L": " << indexBereiche[i] << std::endl;
+    }
+
+    return 0;
+}
+
+----------------------------------------
 
 #include <iostream>
 #include <string>
