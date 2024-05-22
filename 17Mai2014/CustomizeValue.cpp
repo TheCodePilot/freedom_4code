@@ -1,3 +1,33 @@
+
+#include <iostream>
+#include <string>
+
+int main() {
+    std::wstring teststring = L"11|22|33|44|%55|66|77|";
+    
+    // Find the position of the delimiter '%'
+    std::size_t delimiterPos = teststring.find(L'%');
+    
+    if (delimiterPos != std::wstring::npos) {
+        // Extract the first and second parts of the string
+        std::wstring firstPart = teststring.substr(0, delimiterPos);
+        std::wstring secondPart = teststring.substr(delimiterPos + 1);
+
+        // Output the results
+        std::wcout << L"First part: " << firstPart << std::endl;
+        std::wcout << L"Second part: " << secondPart << std::endl;
+    } else {
+        std::wcout << L"Delimiter not found in the string." << std::endl;
+    }
+
+    return 0;
+}
+
+
+
+
+//---------------
+
 #include <iostream>
 #include <string>
 #include <sstream>
