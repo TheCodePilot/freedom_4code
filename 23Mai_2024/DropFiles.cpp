@@ -294,6 +294,447 @@ OnDropFiles-Ereignis: Handelt korrekt die gezogenen Dateien mit nur einem Parame
 Drag & Drop: Implementiert eine Drag & Drop-Funktionalität für bekannte Dateipfade.
 Viel Erfolg bei Deinem Miniprojekt! Falls Du weitere Fragen hast, stehe ich Dir gerne zur Verfügung.    
 
+//>>>>>>>---------------------------
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+//---------------------------------
+#include "Utility.h"
+//---------------------------------
+
+#include "Frame_AttachmentManager.h"
+#include "Unit00_Main.h"
+#include "Unit00_Setup.h"
+#include "Unit1_DataBaseLayer.h"
+#include "Unit2_Info.h"
+#include "Unit71_Camera2.h"
+#include "Unit81_Monitor.h"
+#include "DebenuPDFLibraryDLL0916.h"
+#include "Unit90_Drucken.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+
+#include "_ExternalVars.h"
+
+TFrameAttachmentManager *FrameAttachmentManager;
+//====================================================================================================================================
+__fastcall TFrameAttachmentManager::TFrameAttachmentManager(TComponent* Owner) : TFrame(Owner)
+//====================================================================================================================================
+{
+	Color           =COL_H_MAIN;
+	LIattachm->Color=SetLuminance(COL_H_MAIN,130);
+	DboName         ="";
+	DboKeyName      ="";
+	StoredKeyVal    ="";
+	SourcePathsList =new TStringList();
+	DocsPathsList   =new TStringList();
+	OpenedFilesList =new TStringList();
+	IDList          =new TStringList();
+
+	AutoScaleXmax   =0;
+	AutoScaleYmax   =0;
+
+	Busy            =false;
+
+//	Image2->Picture->Bitmap->LoadFromResourceName((int)HInstance, "ATTACHMENTS");
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::AfterResize(void)
+//====================================================================================================================================
+{
+int nr,maxnr;
+
+	Image2->Width =Width -8;
+	PNpdf ->Width =Width -8;
+
+	maxnr=Height/LIattachm->ItemHeight;
+	nr=LIattachm->Count; if(nr>maxnr/2) nr=maxnr/2;
+	LIattachm->Height=LIattachm->ItemHeight*nr+1;
+
+	if(nr>0) Image2->Height=Height-LIattachm->Height-8;
+	else     Image2->Height=Height-8;
+
+	PNpdf ->Top =Image2->Top;
+	PNpdf ->Left =Image2->Left;
+	PNpdf ->Width =Image2->Width;
+	PNpdf ->Height =Image2->Height;
+
+	Label1->Left=(Width -Label1->Width)/2;
+	Label1->Top =(Height-Label1->Height)/2;
+	Label2->Left=(Width -Label2->Width)/2;
+	Label2->Top =(Height-Label2->Height)/2;
+
+	BNdelete->Left=Width-23;
+	BNdelete->Top =0;
+
+	BNlink->Left=Width-23;
+	BNlink->Top=LIattachm->Top-BNlink->Height-1;
+
+	if(TABMODUS) {PNbottom->Height=Height/4; PNphoto->Width=PNphoto->Height;}
+	else         {PNbottom->Height=44;       PNphoto->Width=0;}
+
+	LIattachm->Color=SetLuminance(Gradient->ColorEnd,90);
+	LIattachm->Font->Color=clYellow;
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::ShowImage(int Index)    // Index<0 setzt ggfs. bisheriges Image auf unsichtbar
+//====================================================================================================================================
+{
+int     w,h,dpi;
+double  pw,ph,pl;
+bool    landscape;
+String  path,suffix;
+TColor  col;
+
+	  if(Index<0 || Index>=DocsPathsList->Count)
+	  {
+		Label1->Visible=true;
+		Image2->Visible=false;
+		PNpdf-> Visible=false;
+		return;
+	  }
+
+	  col=Gradient->ColorBegin;
+	  Gradient->ColorBegin=clLime;
+	  Label2->Visible=true;
+	  KPIdle(100);
+
+	  path=DocsPathsList->Strings[Index]; suffix=ExtractFileExt(LIattachm->Items->Strings[Index]);
+
+	  if(SuffixIsOneOf(".BMP,.JPG,.JPEG,.PNG,.TIF","C:\\Dummy"+suffix))
+	  {
+		RenameFile(path,path+suffix);
+		Image2->Picture->LoadFromFile(path+suffix);
+		PNpdf->Visible=false; Image2->Visible=true;
+		Label1->Visible=false;
+		RenameFile(path+suffix,path);
+	  }
+	  else
+	  if(SuffixIsOneOf(".PDF","C:\\Dummy"+suffix))
+	  {
+		if(Form90->Start_PDFModul())
+		{
+		   Image2->Visible=false; PNpdf->Visible=true;
+		   PDF->NewDocument();
+		   if(PDF->LoadFromFile(WideString(path).c_bstr(),L"")==1)
+		   {
+			 pw=PDF->PageWidth(); ph=PDF->PageHeight();
+			 landscape=(pw>ph);
+			 if(landscape) dpi=int(40.0*PNpdf->Width *pw/400000.0);
+			 else          dpi=int(40.0*PNpdf->Height*ph/400000.0);
+
+			 PDF->RenderPageToDC(dpi,1,GetDC(PNpdf->Handle));       // Seite 1 anzeigen, dpi=60 gilt nur für Canvas-Größe 495 x 700 (A4-Ratio)
+
+			 h=PNpdf->Height;   // den auf PNpdf abgebildeten Thumb jetzt noch auf Image2 kopieren, da PNpdf vom System neu gezeichnet (gelöscht) wird
+			 w=h*pw/ph;
+
+			 Image2->Picture->Bitmap->SetSize(w,h);          //
+
+			 BitBlt(Image2->Picture->Bitmap->Canvas->Handle,0,0,w,h,GetDC(PNpdf->Handle),0,0,SRCCOPY);
+			 PNpdf->Visible=false; Image2->Visible=true;
+		   }
+		   else {Image2->Visible=false; PNpdf->Visible=false; }
+		}
+	  }
+	  else {Image2->Visible=false; PNpdf->Visible=false; }
+
+	  Label2->Visible=false;
+	  Gradient->ColorBegin=col;
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::DeleteOpenedFiles(void)
+//====================================================================================================================================
+{
+   for(int i=0; i<OpenedFilesList->Count; i++) DeleteFile(OpenedFilesList->Strings[i]);
+   OpenedFilesList->Clear();
+}
+//====================================================================================================================================
+bool __fastcall TFrameAttachmentManager::LoadList(String DboKeyVal, bool Delayed) // DboKeyVal = ID des übergeordneten Datensatzes
+//====================================================================================================================================
+{                                          // mit dem Aufruf wird der StoredKeyVal = ID für alle weiteren Aktionen innerhalb des selben
+String     filename, txt;                  // Datensatzes gesetzt
+AnsiString sql="";                         // DboName muss vorab einmalig explizit von der übergeordneten Form gesetzt werden.
+bool       success=true;
+TMSQuery  *QQ;
+
+   if(DboKeyVal.Length()) StoredKeyVal=DboKeyVal;
+   if(StoredKeyVal.Length()==0 || DboName.Length()==0 || DboKeyName.Length()==0) return false;
+
+   ShowImage(-1);
+
+   if(Delayed)
+   {
+	  Label1->Visible=false;
+	  TIdelay->Enabled=false; TIdelay->Enabled=true; return true;
+   }
+
+   if(Busy) return false;
+   Busy=true;
+
+   DeleteOpenedFiles();
+   IDList->Clear();
+   LIattachm->Items->Clear();
+   SourcePathsList->Clear();
+   DocsPathsList->Clear();
+
+   //---------------------------------------------------------------------------------------------------------
+   QQ=new TMSQuery(NULL);
+
+   sql="DBONAME='"+AnsiString(DboName)+"' AND DBOKEYVAL="+StoredKeyVal+" AND (ISDELETED = 'False' or ISDELETED IS NULL)";
+   if(Form1->SendSQLLine("SELECT * FROM dbo.AttachedFiles WHERE "+sql+" ORDER BY ID", QQ)) ;
+   while(!QQ->Eof)
+   {
+	  IDList->Add(IntToStr(QQ->FieldByName("ID")->AsInteger));
+
+	  txt=QQ->FieldByName("ORIGINALPATH")->AsString;
+	  SourcePathsList->Add(txt);
+	  LIattachm->Items->Add(ExtractFileName(txt));
+
+	  txt=DIR_DOCS+QQ->FieldByName("DBONAME")->AsString+"\\"+QQ->FieldByName("DOCSFILENAME")->AsString;
+	  DocsPathsList->Add(txt);
+
+	  QQ->Next();
+   }
+   delete QQ;
+   //---------------------------------------------------------------------------------------------------------
+   AfterResize();
+
+   int cnt=LIattachm->Count;
+   if(cnt>0)
+   {
+	 BNdelete->Enabled=true;
+	 ShowImage(cnt-1);
+   }
+   else BNdelete->Enabled=false;
+   LIattachm->ItemIndex=cnt-1;
+
+   Busy=false;
+   return success;
+}
+//====================================================================================================================================
+bool __fastcall TFrameAttachmentManager::AddItem(String Path, TJPEGImage *JPG_Photo, String DboKeyVal, bool LinkOnly)
+//====================================================================================================================================
+{                                                                    // DboKeyVal wird 1:1 übergeben, er muss ggfs. ' ' enthalten
+String filename, sourcepath,targetpath, targetfilename,suffix;
+AnsiString sql;
+bool success=true;
+
+   if(DboKeyVal.Length()) StoredKeyVal=DboKeyVal;
+
+   if(Path.Length()==0 && JPG_Photo==NULL)           return false;
+   if(StoredKeyVal.Length()==0)                      return false;
+   if(DboName.Length()==0 || DboKeyName.Length()==0) return false;
+
+   sourcepath="";
+
+   if(Path.Length()>0)
+   {
+	 sourcepath=Path;
+	 if(Form0->OpenForm(this,"Form81",sourcepath)) Form81->CheckForImageDownScale(sourcepath, AutoScaleXmax, AutoScaleYmax);
+   }
+
+   targetpath=DIR_DOCS+DboName; if(DirectoryExists(targetpath)==false) success=ForceDirectories(targetpath); // Ziel-Verzeichnis anlegen
+   targetfilename=Now().FormatString("yyyy-mm-dd-hh-nn-ss-zzz"); targetpath+="\\"+targetfilename;            // Ziel-Datei-Pfad vorbereiten
+
+   if(sourcepath!="") success=CopyFile(sourcepath.w_str(),targetpath.w_str(),false);
+   else if(JPG_Photo)
+   {
+	  try {JPG_Photo->SaveToFile(targetpath); success=true;} catch (...) {success=false;}
+	  sourcepath="\\\\TAB-FOTO\\TAB-Foto "+targetfilename+".jpg"; // ist für die spätere Generierung eines Filenamens erforderlich
+   }
+
+   if(!success) FormInfo->ShowMessage("Dokument konnte nicht gespeichtert werden",2,7,"");
+
+   if(success)
+   {
+	 TMSQuery *QQ=new TMSQuery(NULL);
+
+	 suffix=ExtractFileExt(sourcepath);
+
+	 sql ="INSERT INTO dbo.AttachedFiles (ORIGINALPATH, MDEUSER, DBONAME, DBOKEYNAME, DBOKEYVAL, DOCSFILENAME, DOCSSUFFIX) VALUES (";
+	 sql+="'"+AnsiString(sourcepath)    +"', ";
+	 sql+="'"+PID.USER4                 +"', ";
+	 sql+="'"+AnsiString(DboName)       +"', ";
+	 sql+="'"+AnsiString(DboKeyName)    +"', ";
+	 sql+=    AnsiString(StoredKeyVal)  +", " ;
+	 sql+="'"+AnsiString(targetfilename)+"', ";
+	 sql+="'"+AnsiString(suffix)        +"') ";
+
+	 if(!Form1->SendSQLLine(sql, QQ)) {FormInfo->ShowMessage("Dokument konnte nicht registriert werden",2,7,""); success=false;}
+	 else                             {filename=ExtractFileName(Path); LIattachm->Items->Add(filename);}
+
+	 delete QQ;
+   }
+
+   LoadList(StoredKeyVal, false);
+
+   return success;
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::LIattachmClick(TObject *Sender)
+//====================================================================================================================================
+{
+int idx;
+String temppath;
+String suffix;
+
+   idx=LIattachm->ItemIndex; if(idx<0) return;
+
+
+   temppath=DIR_MDELIVEDATA_LOCAL+"\\Temp\\"+LIattachm->Items->Strings[idx];
+   if(CopyFile(DocsPathsList->Strings[idx].w_str(), temppath.w_str(),false))  OpenedFilesList->Add(temppath);
+   else                                                                      {FormInfo->ShowMessage("",4,7004,""); return;}
+
+   if(FileExists(temppath))
+   {
+	 suffix=ExtractFileExt(temppath).UpperCase();
+	 if(String(".JPG .JPEG .PNG .TIF .GIF .BMP ").Pos(suffix)==0) ShellExecute(Handle,L"open",temppath.w_str(), NULL, NULL, SW_SHOWNORMAL);
+	 else
+	 {
+	   ShowImage(LIattachm->ItemIndex);
+	   if(Form0->OpenForm(Sender,"Form81","")) Form81->ShowDocument(temppath);
+	 }
+   }
+   else FormInfo->ShowMessage("",4,7004,"");
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::Image2MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+//====================================================================================================================================
+{
+  if(Button==mbRight)
+  {
+	if(StoredKeyVal.Length()==0) return;
+
+	if(FODialog->Execute())
+	if(FODialog->FileName.Length())
+	{
+	   for(int i=0; i<FODialog->Files->Count; i++) AddItem(FODialog->Files->Strings[i],NULL, StoredKeyVal, false);
+	}
+  }
+  else
+  {
+	if(LIattachm->Items->Count)
+	{
+	  if(LIattachm->ItemIndex<0) LIattachm->ItemIndex=0;
+	  LIattachmClick(Sender);
+	}
+  }
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::GradientMouseMove(TObject *Sender, TShiftState Shift, int X, int Y)
+//====================================================================================================================================
+{
+TColor col;
+static bool busy;
+
+	if(busy) return;
+
+	busy=true;
+	col=Gradient->ColorBegin;
+	Gradient->ColorBegin=clYellow;
+	KPIdle(400);
+	Gradient->ColorBegin=col;
+	busy=false;
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::TIdelayTimer(TObject *Sender)
+//====================================================================================================================================
+{
+   TIdelay->Enabled=false;
+   LoadList("",false);
+}
+//====================================================================================================================================
+void __fastcall TFrameAttachmentManager::BNdeleteClick(TObject *Sender)
+//====================================================================================================================================
+{
+   if(LIattachm->ItemIndex<0) return;
+
+   Form1->UpdateDboItem("AttachedFiles","ISDELETED='True'", "ID="+IDList->Strings[LIattachm->ItemIndex]);
+   LoadList(StoredKeyVal, false);
+}
+//===================================================================================================================================================
+bool __fastcall TFrameAttachmentManager::ConvertImageToGlyph(TObject *Sender, TImage *IM, int Width, int Height, TStream *STarget, String TFileName)
+//===================================================================================================================================================
+{
+   if(IM==NULL || Width==0 || Height==0 || (STarget==NULL && TFileName=="")) return false;
+
+   Graphics::TBitmap *bmp=new Graphics::TBitmap();
+   bmp->SetSize(Width,Height);
+
+   //----------------------------------------------------------------
+   int w=IM->Width;
+   int h=IM->Height;
+
+   if(w>h && Width>Height) bmp->Canvas->StretchDraw(TRect(0,0,Width,Height),IM->Picture->Graphic); else // Orientierung passt: Skalieren
+   if(w<h && Width<Height) bmp->Canvas->StretchDraw(TRect(0,0,Width,Height),IM->Picture->Graphic); else // Orientierung passt: Skalieren
+						   bmp->Canvas->Draw(0,0,IM->Picture->Graphic);                                 // sonst Ausschnitt
+   //----------------------------------------------------------------
+
+   TJPEGImage *jpg=new TJPEGImage();
+   jpg->Assign(bmp);
+   jpg->CompressionQuality=80;
+
+   if(!TFileName.IsEmpty() && TFileName.UpperCase().Pos(".JP")) jpg->SaveToFile(TFileName);
+   if(STarget!=NULL) 											jpg->SaveToStream(STarget);
+
+   delete jpg;
+   bmp->FreeImage();
+   delete bmp;
+
+}
+//===================================================================================================================================================
+void __fastcall TFrameAttachmentManager::DropFilesDropFiles(TObject *Sender)
+//===================================================================================================================================================
+{
+String path;
+
+   path=DropFiles->FileName; if(path=="") return;
+
+   int x=DropFiles->DropPoint.X;
+   int y=DropFiles->DropPoint.Y;
+
+   if(x>BNlink->Left && y>BNlink->Top && y<(BNlink->Top+BNlink->Height)) // es soll nur ein Link zur gewählten Datei abgelegt werden
+   {                                                                     // ist noch nicht umgesetzt
+	 Label1->Caption=String(IntToStr(x)+" "+IntToStr(y));
+	 AddItem(path,NULL,"",true);
+   }
+
+   AddItem(path,NULL,"",false);
+}
+//===================================================================================================================================================
+void __fastcall TFrameAttachmentManager::PNphotoClick(TObject *Sender)
+//===================================================================================================================================================
+{
+   if(Form71!=NULL && Form71->Visible) return; // ein anderes Modul fotografiert gerade ....
+
+   Form0->OpenForm(Sender, "Form71","",0);
+   TimerPhoto->Enabled=true;
+
+   if(Form71==NULL) return;
+
+   Form71->JPG_ReadyToPick=false;
+}
+//===================================================================================================================================================
+void __fastcall TFrameAttachmentManager::TimerPhotoTimer(TObject *Sender)  // Wartet auf fertiges Foto aus Form71
+//===================================================================================================================================================
+{
+   if(Form71==NULL)      return;
+   if(!Form71->Visible) {TimerPhoto->Enabled=false; return;} // nach Schließen der Foto-Form diese Timer-Verbindung beenden
+
+   if(Form71->JPG_ReadyToPick)
+   {
+	 Form71->JPG_ReadyToPick=false;
+	 AddItem("",Form71->JPG_Photo,"",false);
+   }
+}
+//===================================================================================================================================================
+
+
+
+
 
 
 
