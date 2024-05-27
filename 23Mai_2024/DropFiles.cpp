@@ -163,10 +163,136 @@ Stelle sicher, dass Dein Projekt so konfiguriert ist, dass es die Windows-API-Fu
 
 Mit diesem Code kannst Du eine Datei per Drag & Drop aus Deiner Anwendung herausziehen und in eine andere Anwendung einfügen, z.B. eine PDF-Datei in einen PDF-Viewer.
 
-Vielen Dank. Ich werde das morgen versuchen in einem Miniprojekt zu testen ob ich damit zurecht komme. Bis bald :)
-ChatGPT
-Gern geschehen! Ich freue mich, dass ich helfen konnte. Viel Erfolg bei Deinem Miniprojekt! Wenn Du weitere Fragen hast oder auf Probleme stößt, stehe ich Dir gerne zur Verfügung. Bis bald und viel Erfolg beim Testen! :)
+//-----------------------------
+//
+//-----------------------------
 
+Code-Beispiel zur Behandlung des OnDropFiles-Ereignisses:
+OnDropFiles-Ereignisbehandlung:
+cpp
+Code kopieren
+void __fastcall TForm1::PJDropFiles1DropFiles(TObject *Sender)
+{
+    TPJDropFiles *dropFiles = dynamic_cast<TPJDropFiles*>(Sender);
+    if (dropFiles != nullptr)
+    {
+        // Erhalte die Liste der gezogenen Dateien
+        int fileCount = dropFiles->FileCount;
+        String message = "Dropped files:\n";
+        for (int i = 0; i < fileCount; i++)
+        {
+            message += dropFiles->Files[i] + "\n";
+        }
+
+        // Zeige die Dateipfade in einer Nachricht an
+        ShowMessage(message);
+    }
+}
+Schritt-für-Schritt-Anleitung:
+Komponente hinzufügen: Stelle sicher, dass Du die TPJDropFiles-Komponente zu Deinem Formular hinzugefügt hast.
+
+Ereignishandler erstellen: Doppelklicke auf die TPJDropFiles-Komponente im Formular, um den Ereignishandler für OnDropFiles zu erstellen.
+
+Code hinzufügen: Füge den oben gezeigten Code in die entsprechende Ereignishandler-Methode (PJDropFiles1DropFiles) ein.
+
+Erklärung:
+TPJDropFiles-Zugriff: Die TPJDropFiles-Komponente wird durch das Sender-Objekt übergeben, das in den Ereignishandler als TPJDropFiles umgewandelt wird.
+FileCount und Files: Die FileCount-Eigenschaft gibt die Anzahl der gezogenen Dateien an, und die Files-Eigenschaft enthält die Dateipfade.
+Drag & Drop einer bekannten Datei:
+Hier ist der Code, um eine Datei aus einem bekannten Pfad per Drag & Drop zu erstellen, wie zuvor beschrieben:
+
+Drag & Drop Initialisierung:
+cpp
+Code kopieren
+#include <vcl.h>
+#include <windows.h>
+#pragma hdrstop
+#include "Unit1.h"
+// ---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+
+// ---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner) : TForm(Owner)
+{
+}
+
+// Funktion, um eine Datei per Drag & Drop zu ziehen
+void __fastcall TForm1::StartDragDrop(String filePath)
+{
+    // Konvertiere den Pfad in ein WideString
+    WideString wideFilePath = filePath;
+
+    // Berechne die Größe der DROPFILES-Struktur und des Dateipfads
+    int size = sizeof(DROPFILES) + (wideFilePath.Length() + 1) * sizeof(wchar_t);
+
+    // Erstelle einen globalen Speicherblock für die DROPFILES-Struktur
+    HGLOBAL hGlobal = GlobalAlloc(GHND | GMEM_SHARE, size);
+    if (hGlobal)
+    {
+        // Sperre den globalen Speicherblock und erhalte einen Zeiger darauf
+        DROPFILES* pDropFiles = (DROPFILES*)GlobalLock(hGlobal);
+        if (pDropFiles)
+        {
+            // Initialisiere die DROPFILES-Struktur
+            pDropFiles->pFiles = sizeof(DROPFILES);
+            pDropFiles->pt.x = 0;
+            pDropFiles->pt.y = 0;
+            pDropFiles->fNC = TRUE;
+            pDropFiles->fWide = TRUE; // Verwende WideString
+
+            // Kopiere den Dateipfad in den Speicherblock nach der DROPFILES-Struktur
+            memcpy((BYTE*)pDropFiles + sizeof(DROPFILES), wideFilePath.c_bstr(), (wideFilePath.Length() + 1) * sizeof(wchar_t));
+
+            // Schließe den globalen Speicherblock
+            GlobalUnlock(hGlobal);
+
+            // Starte die Drag & Drop-Operation
+            IDataObject* pDataObject;
+            IDropSource* pDropSource;
+            HRESULT hr;
+
+            // Erstelle ein IDataObject
+            hr = CoCreateInstance(CLSID_DataObject, NULL, CLSCTX_INPROC_SERVER, IID_IDataObject, (void**)&pDataObject);
+            if (SUCCEEDED(hr))
+            {
+                // Erstelle ein IDropSource
+                hr = CoCreateInstance(CLSID_DropSource, NULL, CLSCTX_INPROC_SERVER, IID_IDropSource, (void**)&pDropSource);
+                if (SUCCEEDED(hr))
+                {
+                    // Füge den globalen Speicherblock zu IDataObject hinzu
+                    FORMATETC fmtetc = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+                    STGMEDIUM stgmed = { TYMED_HGLOBAL, { hGlobal }, NULL };
+                    pDataObject->SetData(&fmtetc, &stgmed, TRUE);
+
+                    // Starte die Drag & Drop-Operation
+                    DWORD dwEffect;
+                    hr = DoDragDrop(pDataObject, pDropSource, DROPEFFECT_COPY | DROPEFFECT_MOVE, &dwEffect);
+
+                    // Freigeben von IDropSource
+                    pDropSource->Release();
+                }
+                // Freigeben von IDataObject
+                pDataObject->Release();
+            }
+            // Freigeben des globalen Speicherblocks
+            GlobalFree(hGlobal);
+        }
+    }
+}
+
+// Ereignishandler für den Button
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+    // Hier den Pfad der Datei angeben, die gezogen werden soll
+    String filePath = "C:\\Pfad\\zur\\Datei.pdf";
+    StartDragDrop(filePath);
+}
+Zusammenfassung:
+OnDropFiles-Ereignis: Handelt korrekt die gezogenen Dateien mit nur einem Parameter Sender.
+Drag & Drop: Implementiert eine Drag & Drop-Funktionalität für bekannte Dateipfade.
+Viel Erfolg bei Deinem Miniprojekt! Falls Du weitere Fragen hast, stehe ich Dir gerne zur Verfügung.    
 
 
 
