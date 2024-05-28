@@ -1,3 +1,27 @@
+void __fastcall TMainForm::DrawFrame(TWinControl *Control, COLORREF color)
+{
+    HDC hdc = GetDC(Control->Handle);
+    if (hdc)
+    {
+        RECT rect;
+        GetWindowRect(Control->Handle, &rect);
+        OffsetRect(&rect, -rect.left, -rect.top);
+        HBRUSH brush = CreateSolidBrush(color);
+        HPEN pen = CreatePen(PS_SOLID, 3, color); // 3 ist die Breite des Rahmens
+        HGDIOBJ oldPen = SelectObject(hdc, pen);
+        HGDIOBJ oldBrush = SelectObject(hdc, GetStockObject(NULL_BRUSH));
+        Rectangle(hdc, rect.left, rect.top, rect.right, rect.bottom);
+        SelectObject(hdc, oldBrush);
+        SelectObject(hdc, oldPen);
+        DeleteObject(brush);
+        DeleteObject(pen);
+        ReleaseDC(Control->Handle, hdc);
+    }
+}
+
+//---------------------
+
+
 Danke. Thema ohne UniGui Customize Windows also TFrames und TForms im C++ Builder . Habe ich eine Schnittstelle dazu oder wie kann ich zum Beispiel das Icon oder sonstiges vom Fenster ändern. Kann ich die Windowshints ändern sowie in Qt und etwas überzeichnen (Hintergrund, Titelleiste usw...) ?  
 ChatGPT
 Ja, im C++ Builder kannst du Fenster und Frames (TForms und TFrames) umfassend anpassen. Du hast die Möglichkeit, Icons, Hints und andere Fensterattribute zu ändern sowie benutzerdefinierte Zeichnungen auf dem Fenster vorzunehmen, einschließlich der Titelleiste und des Hintergrunds.
