@@ -1,3 +1,7 @@
+Nur von meinem Privat da nicht Sicher dies down zu loaden
+http://www.osnanet.de/hermann.poggemoeller/dloads/c++/C++%20mit%20dem%20Borland%20C++%20Builder%20%5BSpringer,%20Richard%20Kaiser%5D.pdf
+
+
 https://steema.com/docs/teechart/activex/tutorials/tutorial15.htm#Examples
 
 https://www.codeproject.com/Messages/4081976/Understanding-wndproc-callbacks-and-threads-win-cp.aspx
