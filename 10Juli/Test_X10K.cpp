@@ -244,3 +244,51 @@ DB: OK
 Explorer: OK	
 
 
+//Die Lösung:
+
+Ja, die vorgeschlagenen Ansätze funktionieren auch mit C++03. Hier sind die entsprechenden Versionen:
+
+Verwendung von std::stod() (C++03-kompatibel): Die std::stod()-Funktion ist in C++03 nicht verfügbar. Stattdessen kannst du die strtod()-Funktion aus der C-Bibliothek verwenden:
+#include <iostream>
+#include <cstdlib>
+
+int main() {
+    std::wstring wuniValue = L"123,456";
+    wchar_t* endptr;
+    double result = std::wcstod(wuniValue.c_str(), &endptr);
+    if (endptr == wuniValue.c_str()) {
+        std::wcerr << L"Fehler bei der Konvertierung." << std::endl;
+    } else {
+        std::wcout << L"Konvertiert zu double: " << result << std::endl;
+    }
+    return 0;
+}
+Beachte, dass std::wcstod() ebenfalls eine Ausnahme wirft, wenn die Konvertierung fehlschlägt.
+Verwendung von wcstod() (für breite Zeichen, C++03): Wenn du speziell mit breiten Zeichen arbeiten möchtest, kannst du wcstod() verwenden, wie im obigen Beispiel gezeigt.
+Dein ursprünglicher Ansatz (C++03): Deine ursprüngliche Funktion WstringToDouble sollte auch in C++03 funktionieren, solange die Kommazahlen im Format "123.456" (Punkt als Dezimaltrennzeichen) vorliegen. Wenn du jedoch Kommas als Dezimaltrennzeichen verwendest, musst du diese vor der Konvertierung durch Punkte ersetzen.
+Ich hoffe, das hilft dir weiter! Falls du weitere Fragen hast, stehe ich gerne zur Verfügung. 😊
+
+Sie
+Gesendet von sie:
+Geht Deine Funktion auch mit " std::wstring wuniValue = L"123.456";  " ?
+Copilot
+das web
+wird verwendet
+Gesendet von Copilot:
+Ja, meine Funktion sollte auch mit "std::wstring wuniValue = L"123.456";" funktionieren. In diesem Fall wird die Zeichenkette bereits im richtigen Format vorliegen (mit einem Punkt als Dezimaltrennzeichen). Du kannst die ursprüngliche Funktion WstringToDouble verwenden oder alternativ die wcstod()-Funktion wie folgt:
+
+#include <iostream>
+#include <cwchar>
+
+int main() {
+    std::wstring wuniValue = L"123.456";
+    wchar_t* endptr;
+    double result = wcstod(wuniValue.c_str(), &endptr);
+    if (endptr == wuniValue.c_str()) {
+        std::wcerr << L"Fehler bei der Konvertierung." << std::endl;
+    } else {
+        std::wcout << L"Konvertiert zu double: " << result << std::endl;
+    }
+    return 0;
+}	
+
