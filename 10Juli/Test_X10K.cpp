@@ -245,6 +245,48 @@ Explorer: OK
 
 
 //Die Lösung:
+//--------------------------------------------------------------------
+//grob
+//--------------------------------------------------------------------
+Guten Abend! Vielen Dank für den Code-Abschnitt. Um eine std::wstring in einen double im C++ Builder zu konvertieren, gibt es verschiedene Ansätze. Hier sind einige Möglichkeiten:
+
+Verwendung von std::stod() (empfohlen): Die C+±Standardbibliothek bietet die Funktion std::stod(), die eine std::wstring in einen double konvertiert. Du kannst sie wie folgt verwenden:
+#include <iostream>
+#include <string>
+
+int main() {
+    std::wstring wuniValue = L"123,456";
+    try {
+        double result = std::stod(wuniValue);
+        std::wcout << L"Konvertiert zu double: " << result << std::endl;
+    } catch (const std::invalid_argument& e) {
+        std::wcerr << L"Fehler bei der Konvertierung: " << e.what() << std::endl;
+    }
+    return 0;
+}
+Beachte, dass std::stod() eine Ausnahme (std::invalid_argument) wirft, wenn die Konvertierung fehlschlägt.
+Verwendung von wcstod() (für breite Zeichen): Wenn du speziell mit breiten Zeichen arbeiten möchtest, kannst du wcstod() verwenden:
+#include <iostream>
+#include <cwchar>
+
+int main() {
+    std::wstring wuniValue = L"123,456";
+    wchar_t* endptr;
+    double result = wcstod(wuniValue.c_str(), &endptr);
+    if (endptr == wuniValue.c_str()) {
+        std::wcerr << L"Fehler bei der Konvertierung." << std::endl;
+    } else {
+        std::wcout << L"Konvertiert zu double: " << result << std::endl;
+    }
+    return 0;
+}
+Hier wird endptr verwendet, um zu überprüfen, ob die gesamte Zeichenkette erfolgreich konvertiert wurde.
+Dein ursprünglicher Ansatz: Deine ursprüngliche Funktion WstringToDouble sollte ebenfalls funktionieren, solange die Kommazahlen im Format "123.456" (Punkt als Dezimaltrennzeichen) vorliegen. Wenn du jedoch Kommas als Dezimaltrennzeichen verwendest, musst du diese vor der Konvertierung durch Punkte ersetzen.
+Ich hoffe, das hilft dir weiter! Falls du weitere Fragen hast, stehe ich gerne zur Verfügung. 😊
+
+//--------------------------------------------------------------------
+//Ende grob
+//--------------------------------------------------------------------
 
 Ja, die vorgeschlagenen Ansätze funktionieren auch mit C++03. Hier sind die entsprechenden Versionen:
 
