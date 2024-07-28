@@ -146,6 +146,358 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 }
 Durch die Implementierung dieser Schritte stellen Sie sicher, dass das Dataset ordnungsgemäß geschlossen wird, wenn das Formular zerstört wird, was die Wahrscheinlichkeit verringert, dass die Fehlermeldung "Cannot perform this operation on a closed dataset" auftritt.
 
+//============================
+//============================
+//============================
+"if (MyDataSet->Active) {
+        MyDataSet->Close();
+    }" Könnte ich dies denn nicht generell beim OnDestroy vom TForm machen ?
+ChatGPT
+Ja, das können Sie auf jeden Fall tun. Das OnDestroy-Ereignis des Formulars wird ausgelöst, wenn das Formular zerstört wird, und es ist ein geeigneter Ort, um das Dataset zu schließen, um sicherzustellen, dass es ordnungsgemäß freigegeben wird, bevor das Formular zerstört wird.
+
+Hier ist ein Beispiel, wie Sie das Dataset im OnDestroy-Ereignis schließen können:
+
+Schritt 1: Definieren Sie das OnDestroy-Ereignis
+Öffnen Sie die Formulardatei und definieren Sie das OnDestroy-Ereignis.
+
+Schritt 2: Implementieren Sie das OnDestroy-Ereignis
+Implementieren Sie die Methode, um das Dataset zu schließen.
+
+Hier ist der vollständige Code:
+
+cpp
+Code kopieren
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit1.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+//---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+}
+
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormDestroy(TObject *Sender)
+{
+    if (MyDataSet->Active) {
+        MyDataSet->Close();
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::SomeOperation()
+{
+    if (MyDataSet->Active) {
+        // Führen Sie die gewünschte Operation durch
+        MyDataSet->Edit();
+        // Weitere Operationen
+        MyDataSet->Post();
+    } else {
+        // Dataset ist geschlossen, führen Sie keine Operation durch
+        ShowMessage("Das Dataset ist geschlossen. Operation kann nicht durchgeführt werden.");
+    }
+}
+Schritt 3: Zuweisen des OnDestroy-Ereignisses
+Stellen Sie sicher, dass das OnDestroy-Ereignis im Formular zugewiesen ist. Dies können Sie entweder im Formular-Designer oder im Konstruktor des Formulars tun.
+
+Zuweisung im Formular-Designer
+Öffnen Sie das Formular im Designer.
+Wählen Sie das Formular aus, um seine Eigenschaften anzuzeigen.
+Gehen Sie zur Registerkarte "Events".
+Doppelklicken Sie auf das Feld neben OnDestroy, um den Event-Handler zu erstellen und zuzuweisen.
+Zuweisung im Konstruktor
+Alternativ können Sie den Event-Handler im Konstruktor des Formulars zuweisen:
+
+cpp
+Code kopieren
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    this->OnDestroy = FormDestroy;
+}
+Durch die Implementierung dieser Schritte stellen Sie sicher, dass das Dataset ordnungsgemäß geschlossen wird, wenn das Formular zerstört wird, was die Wahrscheinlichkeit verringert, dass die Fehlermeldung "Cannot perform this operation on a closed dataset" auftritt.
+
+Kann ich auch bei einem Fall ein TFrame ruft ein TForm auf und dann OnDestroy vom TForm aufrufen. Mein Problem ich habe bei einem TFrame nicht so viele Ereignisse beim schliessen. Wie gehe ich dann vor wenn das TFrame über ein übergeordnetes TForm "zerstört" wird  ? 
+ChatGPT
+Wenn ein TFrame von einem übergeordneten TForm zerstört wird, können Sie sicherstellen, dass das Dataset im OnDestroy-Ereignis des TForm geschlossen wird. Das TFrame selbst hat keine OnDestroy-Ereignisse, aber Sie können das OnDestroy-Ereignis des übergeordneten TForm verwenden, um das Dataset im TFrame zu schließen.
+
+Hier ist eine Möglichkeit, dies zu erreichen:
+
+Deklarieren Sie das Dataset im TFrame:
+Stellen Sie sicher, dass das Dataset als Mitglied des TFrame-Objekts deklariert ist.
+
+Erstellen Sie eine Methode zum Schließen des Datasets im TFrame:
+Implementieren Sie eine Methode im TFrame, die das Dataset schließt.
+
+Rufen Sie diese Methode im OnDestroy-Ereignis des TForm auf:
+Stellen Sie sicher, dass das OnDestroy-Ereignis des übergeordneten TForm die Methode zum Schließen des Datasets im TFrame aufruft.
+
+Hier ist ein Beispiel, wie dies umgesetzt werden kann:
+
+Schritt 1: Deklarieren Sie das Dataset im TFrame
+cpp
+Code kopieren
+// Unit2.h (TFrame)
+class TFrame1 : public TFrame
+{
+__published:    // IDE-managed Components
+    TDataSource *DataSource1;
+    TADOTable *ADOTable1;
+private:    // User declarations
+public:        // User declarations
+    __fastcall TFrame1(TComponent* Owner);
+    void CloseDataset(); // Methode zum Schließen des Datasets
+};
+Schritt 2: Implementieren Sie die Methode zum Schließen des Datasets im TFrame
+cpp
+Code kopieren
+// Unit2.cpp (TFrame)
+__fastcall TFrame1::TFrame1(TComponent* Owner)
+    : TFrame(Owner)
+{
+}
+
+void TFrame1::CloseDataset()
+{
+    if (ADOTable1->Active) {
+        ADOTable1->Close();
+    }
+}
+Schritt 3: Rufen Sie die Methode im OnDestroy-Ereignis des TForm auf
+cpp
+Code kopieren
+// Unit1.h (TForm)
+class TForm1 : public TForm
+{
+__published:    // IDE-managed Components
+    TFrame1 *Frame1;
+private:    // User declarations
+public:        // User declarations
+    __fastcall TForm1(TComponent* Owner);
+    void __fastcall FormDestroy(TObject *Sender);
+};
+cpp
+Code kopieren
+// Unit1.cpp (TForm)
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    this->OnDestroy = FormDestroy;
+}
+
+void __fastcall TForm1::FormDestroy(TObject *Sender)
+{
+    if (Frame1 != nullptr) {
+        Frame1->CloseDataset();
+    }
+}
+Erklärung
+Deklarieren des Datasets: In Unit2.h (dem TFrame-Header) wird das Dataset ADOTable1 als Mitglied des TFrame deklariert.
+Schließen des Datasets: In Unit2.cpp (dem TFrame-Implementation) wird die Methode CloseDataset implementiert, um das Dataset zu schließen.
+Aufrufen der Methode: In Unit1.cpp (dem TForm-Implementation) wird das OnDestroy-Ereignis des Formulars definiert. Diese Methode ruft CloseDataset des TFrame auf, um sicherzustellen, dass das Dataset geschlossen wird, bevor das TForm zerstört wird.
+Durch diese Methode stellen Sie sicher, dass das Dataset im TFrame ordnungsgemäß geschlossen wird, wenn das übergeordnete TForm zerstört wird, und verhindern so die Fehlermeldung "Cannot perform this operation on a closed dataset".
+
+"TADOTable *ADOTable1;" ginge dies auch mit einem normalen TClientDataSet ?
+ChatGPT
+Ja, Sie können diese Methode auch mit einem normalen TClientDataSet anwenden. Der Ansatz bleibt der gleiche: Sie müssen sicherstellen, dass das TClientDataSet geschlossen wird, bevor das TFrame oder das übergeordnete TForm zerstört wird.
+
+Hier ist ein Beispiel, wie dies mit einem TClientDataSet umgesetzt werden kann:
+
+Schritt 1: Deklarieren Sie das TClientDataSet im TFrame
+cpp
+Code kopieren
+// Unit2.h (TFrame)
+class TFrame1 : public TFrame
+{
+__published:    // IDE-managed Components
+    TDataSource *DataSource1;
+    TClientDataSet *ClientDataSet1; // Deklaration des TClientDataSet
+private:    // User declarations
+public:        // User declarations
+    __fastcall TFrame1(TComponent* Owner);
+    void CloseDataset(); // Methode zum Schließen des Datasets
+};
+Schritt 2: Implementieren Sie die Methode zum Schließen des TClientDataSet im TFrame
+cpp
+Code kopieren
+// Unit2.cpp (TFrame)
+__fastcall TFrame1::TFrame1(TComponent* Owner)
+    : TFrame(Owner)
+{
+}
+
+void TFrame1::CloseDataset()
+{
+    if (ClientDataSet1->Active) {
+        ClientDataSet1->Close();
+    }
+}
+Schritt 3: Rufen Sie die Methode im OnDestroy-Ereignis des TForm auf
+cpp
+Code kopieren
+// Unit1.h (TForm)
+class TForm1 : public TForm
+{
+__published:    // IDE-managed Components
+    TFrame1 *Frame1;
+private:    // User declarations
+public:        // User declarations
+    __fastcall TForm1(TComponent* Owner);
+    void __fastcall FormDestroy(TObject *Sender);
+};
+cpp
+Code kopieren
+// Unit1.cpp (TForm)
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    this->OnDestroy = FormDestroy;
+}
+
+void __fastcall TForm1::FormDestroy(TObject *Sender)
+{
+    if (Frame1 != nullptr) {
+        Frame1->CloseDataset();
+    }
+}
+Erklärung
+Deklarieren des TClientDataSet: In Unit2.h (dem TFrame-Header) wird das TClientDataSet (ClientDataSet1) als Mitglied des TFrame deklariert.
+Schließen des TClientDataSet: In Unit2.cpp (dem TFrame-Implementation) wird die Methode CloseDataset implementiert, um das TClientDataSet zu schließen.
+Aufrufen der Methode: In Unit1.cpp (dem TForm-Implementation) wird das OnDestroy-Ereignis des Formulars definiert. Diese Methode ruft CloseDataset des TFrame auf, um sicherzustellen, dass das TClientDataSet geschlossen wird, bevor das TForm zerstört wird.
+Durch diese Methode stellen Sie sicher, dass das TClientDataSet im TFrame ordnungsgemäß geschlossen wird, wenn das übergeordnete TForm zerstört wird, und verhindern so die Fehlermeldung "Cannot perform this operation on a closed dataset".
+
+Ich würde gerne den Quellcode vom übergeordneten TForm welches also beim Schließen TFrame mit zerstört nicht verändern . So das das untergeordnete TForm welches das Child vom TFrame ist irgendwie zum OnDestroy-Aufruf gezwungen wird. 
+ChatGPT
+Verstanden. Wenn Sie den Quellcode des übergeordneten TForm, das das TFrame enthält, nicht ändern können, müssen Sie eine Methode finden, um das Schließen des TFrame zu handhaben, ohne das übergeordnete Formular zu ändern. Eine Möglichkeit, dies zu tun, besteht darin, einen Mechanismus in das TFrame selbst einzubauen, der sicherstellt, dass das TClientDataSet geschlossen wird, wenn das TFrame zerstört wird.
+
+Ansatz: Verwenden Sie das OnDestroy-Ereignis im TFrame
+Da TFrame keine eigene OnDestroy-Ereigniseigenschaft hat, können Sie das Zerstörungsverfahren des TFrame überschreiben, indem Sie die Zerstörungsroutine der Basisklasse erweitern. Dies können Sie durch eine eigene Methode tun, die beim Zerstören des Frames aufgerufen wird.
+
+Hier ist ein Beispiel, wie dies umgesetzt werden kann:
+
+Schritt 1: Erstellen einer eigenen Zerstörungsmethode im TFrame
+In der Header-Datei des TFrame deklarieren Sie eine eigene Methode, die das Dataset schließt.
+
+cpp
+Code kopieren
+// Unit2.h (TFrame)
+class TFrame1 : public TFrame
+{
+__published:    // IDE-managed Components
+    TDataSource *DataSource1;
+    TClientDataSet *ClientDataSet1; // Deklaration des TClientDataSet
+private:    // User declarations
+protected:
+    void __fastcall Destroy(); // Überschreiben der Zerstörungsmethode
+public:        // User declarations
+    __fastcall TFrame1(TComponent* Owner);
+    void CloseDataset(); // Methode zum Schließen des Datasets
+};
+Schritt 2: Implementieren der eigenen Zerstörungsmethode im TFrame
+In der Implementierungsdatei des TFrame überschreiben Sie die Zerstörungsmethode.
+
+cpp
+Code kopieren
+// Unit2.cpp (TFrame)
+__fastcall TFrame1::TFrame1(TComponent* Owner)
+    : TFrame(Owner)
+{
+}
+
+void __fastcall TFrame1::Destroy()
+{
+    // Schließen Sie das Dataset, bevor der Frame zerstört wird
+    CloseDataset();
+
+    // Rufen Sie die Zerstörungsmethode der Basisklasse auf
+    TFrame::Destroy();
+}
+
+void TFrame1::CloseDataset()
+{
+    if (ClientDataSet1->Active) {
+        ClientDataSet1->Close();
+    }
+}
+Erklärung
+Deklarieren der Zerstörungsmethode: In Unit2.h (dem TFrame-Header) deklarieren Sie eine Methode Destroy(), die das TFrame-Zerstörungsverfahren überschreibt.
+Implementieren der Zerstörungsmethode: In Unit2.cpp (dem TFrame-Implementation) überschreiben Sie die Methode Destroy(), um das ClientDataSet zu schließen, bevor der TFrame-Destruktor der Basisklasse aufgerufen wird.
+Schließen des ClientDataSet: Die Methode CloseDataset() überprüft, ob das ClientDataSet aktiv ist, und schließt es, falls dies der Fall ist.
+Durch diesen Ansatz stellen Sie sicher, dass das ClientDataSet im TFrame geschlossen wird, wenn das TFrame zerstört wird, ohne den Quellcode des übergeordneten TForm ändern zu müssen.
+
+"protected:
+    void __fastcall Destroy(); // Überschreiben der Zerstörungsmethode" wird das wirklich der C++ Builder Version Sydney mit dem BCC23 so akzeptieren? Gibt es Destroy() zum Überschreiben ?
+ChatGPT
+In C++Builder gibt es tatsächlich keine direkte Möglichkeit, die Destroy-Methode von TFrame oder einer anderen VCL-Komponente zu überschreiben, da die VCL-Komponenten in Delphi geschrieben sind und bestimmte Methoden nicht virtual sind oder nicht für das Überschreiben vorgesehen sind. Stattdessen können Sie die BeforeDestruction-Methode verwenden, die kurz vor der tatsächlichen Zerstörung des Objekts aufgerufen wird.
+
+Hier ist der angepasste Ansatz mit BeforeDestruction:
+
+Schritt 1: Deklarieren der BeforeDestruction-Methode im TFrame
+In der Header-Datei des TFrame deklarieren Sie die Methode BeforeDestruction.
+
+cpp
+Code kopieren
+// Unit2.h (TFrame)
+class TFrame1 : public TFrame
+{
+__published:    // IDE-managed Components
+    TDataSource *DataSource1;
+    TClientDataSet *ClientDataSet1; // Deklaration des TClientDataSet
+private:    // User declarations
+protected:
+    void __fastcall BeforeDestruction(); // Überschreiben der BeforeDestruction-Methode
+public:        // User declarations
+    __fastcall TFrame1(TComponent* Owner);
+    void CloseDataset(); // Methode zum Schließen des Datasets
+};
+Schritt 2: Implementieren der BeforeDestruction-Methode im TFrame
+In der Implementierungsdatei des TFrame überschreiben Sie die Methode BeforeDestruction.
+
+cpp
+Code kopieren
+// Unit2.cpp (TFrame)
+__fastcall TFrame1::TFrame1(TComponent* Owner)
+    : TFrame(Owner)
+{
+}
+
+void __fastcall TFrame1::BeforeDestruction()
+{
+    // Schließen Sie das Dataset, bevor der Frame zerstört wird
+    CloseDataset();
+
+    // Rufen Sie die BeforeDestruction-Methode der Basisklasse auf
+    TFrame::BeforeDestruction();
+}
+
+void TFrame1::CloseDataset()
+{
+    if (ClientDataSet1->Active) {
+        ClientDataSet1->Close();
+    }
+}
+Erklärung
+Deklarieren der BeforeDestruction-Methode: In Unit2.h (dem TFrame-Header) deklarieren Sie die Methode BeforeDestruction(), die die Basismethode überschreibt.
+Implementieren der BeforeDestruction-Methode: In Unit2.cpp (dem TFrame-Implementation) überschreiben Sie die Methode BeforeDestruction(), um das ClientDataSet zu schließen, bevor die Methode der Basisklasse aufgerufen wird.
+Schließen des ClientDataSet: Die Methode CloseDataset() überprüft, ob das ClientDataSet aktiv ist, und schließt es, falls dies der Fall ist.
+Durch diesen Ansatz stellen Sie sicher, dass das ClientDataSet im TFrame geschlossen wird, wenn das TFrame zerstört wird, ohne den Quellcode des übergeordneten TForm ändern zu müssen. BeforeDestruction ist eine Methode, die in der VCL verfügbar ist und für solche Fälle verwendet werden kann, um Aufräumarbeiten durchzuführen, bevor das Objekt endgültig zerstört wird.
+
+Das wäre gut. Vielen dank ich werde das morgen probieren. Ich wünsche Dir eine gute Nacht :)🌛🌃🌉
+ChatGPT
+Gern geschehen! Ich freue mich, dass ich helfen konnte. Viel Erfolg beim Ausprobieren des Codes morgen. Ich wünsche Ihnen ebenfalls eine gute Nacht! 🌛🌃🌉
+
+
+
+
+
+
+
+
 
 
 
