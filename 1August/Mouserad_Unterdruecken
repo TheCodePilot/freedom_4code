@@ -1,0 +1,72 @@
+Im C++ Builder Sydney 10.4.2 können Sie das Handle einer TComboBox verwenden, um Ereignisse, die das Mausrad betreffen, zu sperren. Dazu müssen Sie das Windows-Nachrichtensystem verwenden, um Mausrad-Ereignisse (WM_MOUSEWHEEL) abzufangen und zu unterdrücken.
+
+Hier ist ein Beispiel, wie Sie dies umsetzen können:
+
+Deklarieren Sie eine neue Nachricht für WM_MOUSEWHEEL in Ihrer TComboBox-Unterklasse:
+cpp
+Code kopieren
+class TMyComboBox : public TComboBox
+{
+private:
+    void __fastcall WndProc(TMessage &Message);
+public:
+    __fastcall TMyComboBox(TComponent* Owner);
+};
+Implementieren Sie den Konstruktor und die WndProc-Methode in der Implementierungsdatei:
+cpp
+Code kopieren
+#include <vcl.h>
+#pragma hdrstop
+
+#include "MyComboBox.h"
+
+#pragma package(smart_init)
+
+__fastcall TMyComboBox::TMyComboBox(TComponent* Owner)
+    : TComboBox(Owner)
+{
+}
+
+void __fastcall TMyComboBox::WndProc(TMessage &Message)
+{
+    if (Message.Msg == WM_MOUSEWHEEL) {
+        // Unterdrücke das Mausrad-Ereignis
+        return;
+    }
+    TComboBox::WndProc(Message);
+}
+Ersetzen Sie Ihre vorhandene TComboBox durch Ihre neue TMyComboBox in Ihrem Formular:
+Ersetzen Sie die TComboBox-Deklaration im Header Ihres Formulars:
+
+cpp
+Code kopieren
+// Alte Deklaration
+// TComboBox *ComboBox1;
+
+// Neue Deklaration
+TMyComboBox *ComboBox1;
+Ersetzen Sie die Instanziierung im Formular-Designer oder im Konstruktor Ihres Formulars:
+
+cpp
+Code kopieren
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    // Alte Instanziierung
+    // ComboBox1 = new TComboBox(this);
+
+    // Neue Instanziierung
+    ComboBox1 = new TMyComboBox(this);
+    ComboBox1->Parent = this;
+}
+Erklärung
+TMyComboBox-Klasse:
+
+Diese Klasse erbt von TComboBox und überschreibt die WndProc-Methode.
+Die WndProc-Methode wird verwendet, um alle Nachrichten an das Steuerelement zu verarbeiten.
+Wenn die Nachricht WM_MOUSEWHEEL empfangen wird, wird sie unterdrückt, indem die Methode vorzeitig beendet wird.
+Ersetzen der Standard-ComboBox:
+
+Ersetzen Sie die Deklaration und Instanziierung Ihrer Standard-ComboBox durch TMyComboBox.
+Dadurch wird sichergestellt, dass alle Mausrad-Ereignisse unterdrückt werden, bevor sie die Standard-ComboBox erreichen.
+Durch diese Änderungen werden alle Mausrad-Ereignisse für Ihre TComboBox unterdrückt, was das gewünschte Verhalten erreicht.
