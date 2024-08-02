@@ -1,0 +1,253 @@
+Guten Morgen! Gerne zeige ich Ihnen, wie Sie in C++03 sowohl in einem std::string als auch in einem std::wstring eine bestimmte Teilzeichenkette ("ert") finden können. Dazu verwenden wir die find-Methode der jeweiligen Klassen. Hier sind die entsprechenden Funktionen und Beispiele:
+
+Suche in einem std::string
+Funktion zum Finden eines Teilstrings in einem std::string
+cpp
+Code kopieren
+#include <iostream>
+#include <string>
+
+bool findSubstring(const std::string& str, const std::string& substring) {
+    return str.find(substring) != std::string::npos;
+}
+Beispielaufruf
+cpp
+Code kopieren
+int main() {
+    std::string text = "Das ist ein Testtext, um 'ert' zu finden.";
+    std::string part = "ert";
+
+    if (findSubstring(text, part)) {
+        std::cout << "Teilzeichenkette '" << part << "' wurde gefunden." << std::endl;
+    } else {
+        std::cout << "Teilzeichenkette '" << part << "' wurde nicht gefunden." << std::endl;
+    }
+
+    return 0;
+}
+Suche in einem std::wstring
+Funktion zum Finden eines Teilstrings in einem std::wstring
+cpp
+Code kopieren
+#include <iostream>
+#include <string>
+
+bool findSubstring(const std::wstring& str, const std::wstring& substring) {
+    return str.find(substring) != std::wstring::npos;
+}
+Beispielaufruf
+cpp
+Code kopieren
+int main() {
+    std::wstring text = L"Das ist ein Testtext, um 'ert' zu finden.";
+    std::wstring part = L"ert";
+
+    if (findSubstring(text, part)) {
+        std::wcout << L"Teilzeichenkette '" << part << L"' wurde gefunden." << std::endl;
+    } else {
+        std::wcout << L"Teilzeichenkette '" << part << L"' wurde nicht gefunden." << std::endl;
+    }
+
+    return 0;
+}
+Erklärung
+Funktion zum Finden eines Teilstrings:
+
+Die Funktion findSubstring nimmt zwei Argumente: den Hauptstring (str) und die zu suchende Teilzeichenkette (substring).
+Sie verwendet die find-Methode der jeweiligen String-Klasse (std::string oder std::wstring).
+Die find-Methode gibt std::string::npos oder std::wstring::npos zurück, wenn die Teilzeichenkette nicht gefunden wird. Wenn die Teilzeichenkette gefunden wird, gibt sie den Index des ersten Vorkommens zurück.
+Die Funktion gibt true zurück, wenn die Teilzeichenkette gefunden wurde, und false, wenn nicht.
+Beispielaufruf:
+
+Der Beispielaufruf erstellt eine Zeichenkette und eine Teilzeichenkette.
+Dann wird die Funktion findSubstring aufgerufen, um zu überprüfen, ob die Teilzeichenkette in der Hauptzeichenkette enthalten ist.
+Die Ergebnisse werden auf der Konsole ausgegeben.
+Durch diese Vorgehensweise können Sie effizient nach Teilzeichenketten in std::string und std::wstring suchen.
+
+Vielen Dank. Was kämme dazu wenn ich jegliche Kombination von Uppercase und Lowcase beachte also auch "ERT", "ErT", und alle diese Kombi-Möglichkeiten als gleichwertig als Suchkette betrachten will?
+ChatGPT
+Um jegliche Kombinationen von Groß- und Kleinschreibung bei der Suche zu berücksichtigen, müssen Sie sowohl die Hauptzeichenkette als auch die Suchzeichenkette in eine einheitliche Groß- oder Kleinschreibung konvertieren, bevor Sie die Suche durchführen. In C++03 gibt es keine eingebaute Funktion zur direkten Umwandlung von std::string oder std::wstring in Klein- oder Großbuchstaben, aber Sie können dies mit Standardbibliotheksfunktionen wie std::transform und std::tolower (oder std::toupper) erreichen.
+
+Hier sind die angepassten Funktionen und Beispiele für std::string und std::wstring, die diese Anforderung erfüllen:
+
+Suche in einem std::string (case-insensitive)
+Funktion zum Finden eines Teilstrings in einem std::string (case-insensitive)
+cpp
+Code kopieren
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cctype>
+
+std::string toLower(const std::string& str) {
+    std::string lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    return lowerStr;
+}
+
+bool findSubstringCaseInsensitive(const std::string& str, const std::string& substring) {
+    std::string lowerStr = toLower(str);
+    std::string lowerSubstring = toLower(substring);
+    return lowerStr.find(lowerSubstring) != std::string::npos;
+}
+Beispielaufruf
+cpp
+Code kopieren
+int main() {
+    std::string text = "Das ist ein Testtext, um 'ert' zu finden.";
+    std::string part = "ERT";
+
+    if (findSubstringCaseInsensitive(text, part)) {
+        std::cout << "Teilzeichenkette '" << part << "' wurde gefunden." << std::endl;
+    } else {
+        std::cout << "Teilzeichenkette '" << part << "' wurde nicht gefunden." << std::endl;
+    }
+
+    return 0;
+}
+Suche in einem std::wstring (case-insensitive)
+Funktion zum Finden eines Teilstrings in einem std::wstring (case-insensitive)
+cpp
+Code kopieren
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cwctype>
+
+std::wstring toLower(const std::wstring& str) {
+    std::wstring lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::towlower);
+    return lowerStr;
+}
+
+bool findSubstringCaseInsensitive(const std::wstring& str, const std::wstring& substring) {
+    std::wstring lowerStr = toLower(str);
+    std::wstring lowerSubstring = toLower(substring);
+    return lowerStr.find(lowerSubstring) != std::wstring::npos;
+}
+Beispielaufruf
+cpp
+Code kopieren
+int main() {
+    std::wstring text = L"Das ist ein Testtext, um 'ert' zu finden.";
+    std::wstring part = L"ERT";
+
+    if (findSubstringCaseInsensitive(text, part)) {
+        std::wcout << L"Teilzeichenkette '" << part << L"' wurde gefunden." << std::endl;
+    } else {
+        std::wcout << L"Teilzeichenkette '" << part << L"' wurde nicht gefunden." << std::endl;
+    }
+
+    return 0;
+}
+Erklärung
+Funktion zur Konvertierung in Kleinbuchstaben:
+
+Die Funktion toLower nimmt eine std::string oder std::wstring und wandelt alle Zeichen in Kleinbuchstaben um, indem sie die Standardbibliotheksfunktion std::transform verwendet.
+Für std::string wird ::tolower verwendet, für std::wstring wird ::towlower verwendet.
+Funktion zum Finden eines Teilstrings (case-insensitive):
+
+Die Funktion findSubstringCaseInsensitive nimmt zwei Argumente: die Hauptzeichenkette (str) und die zu suchende Teilzeichenkette (substring).
+Beide Zeichenketten werden mit toLower in Kleinbuchstaben umgewandelt.
+Die Suche erfolgt in den konvertierten Zeichenketten mittels der find-Methode.
+Beispielaufrufe:
+
+Der Beispielaufruf erstellt eine Zeichenkette und eine Teilzeichenkette.
+Dann wird die Funktion findSubstringCaseInsensitive aufgerufen, um zu überprüfen, ob die Teilzeichenkette in der Hauptzeichenkette enthalten ist, unabhängig von der Groß- und Kleinschreibung.
+Die Ergebnisse werden auf der Konsole ausgegeben.
+Mit diesen Anpassungen können Sie effizient nach Teilzeichenketten in std::string und std::wstring suchen, ohne die Groß- und Kleinschreibung zu berücksichtigen.
+
+Dies gibt es schon in C++03, richtig ?
+ChatGPT
+Ja, das oben beschriebene Vorgehen ist in C++03 möglich. Es verwendet grundlegende Funktionen und Bibliotheken, die in C++03 unterstützt werden. Hier sind die Schlüsselkonzepte und Funktionen, die wir verwenden:
+
+std::string und std::wstring: Beide sind in C++03 verfügbar.
+std::transform: Diese Funktion ist Teil der <algorithm>-Bibliothek und auch in C++03 verfügbar.
+std::tolower und std::towlower: Diese Funktionen sind Teil der <cctype>- bzw. <cwctype>-Bibliothek und in C++03 verfügbar.
+Hier ist der vollständige Code für std::string und std::wstring:
+
+Suche in einem std::string (case-insensitive)
+Funktion zum Finden eines Teilstrings in einem std::string (case-insensitive)
+cpp
+Code kopieren
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cctype>
+
+std::string toLower(const std::string& str) {
+    std::string lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    return lowerStr;
+}
+
+bool findSubstringCaseInsensitive(const std::string& str, const std::string& substring) {
+    std::string lowerStr = toLower(str);
+    std::string lowerSubstring = toLower(substring);
+    return lowerStr.find(lowerSubstring) != std::string::npos;
+}
+Beispielaufruf
+cpp
+Code kopieren
+int main() {
+    std::string text = "Das ist ein Testtext, um 'ert' zu finden.";
+    std::string part = "ERT";
+
+    if (findSubstringCaseInsensitive(text, part)) {
+        std::cout << "Teilzeichenkette '" << part << "' wurde gefunden." << std::endl;
+    } else {
+        std::cout << "Teilzeichenkette '" << part << "' wurde nicht gefunden." << std::endl;
+    }
+
+    return 0;
+}
+Suche in einem std::wstring (case-insensitive)
+Funktion zum Finden eines Teilstrings in einem std::wstring (case-insensitive)
+cpp
+Code kopieren
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cwctype>
+
+std::wstring toLower(const std::wstring& str) {
+    std::wstring lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::towlower);
+    return lowerStr;
+}
+
+bool findSubstringCaseInsensitive(const std::wstring& str, const std::wstring& substring) {
+    std::wstring lowerStr = toLower(str);
+    std::wstring lowerSubstring = toLower(substring);
+    return lowerStr.find(lowerSubstring) != std::wstring::npos;
+}
+Beispielaufruf
+cpp
+Code kopieren
+int main() {
+    std::wstring text = L"Das ist ein Testtext, um 'ert' zu finden.";
+    std::wstring part = L"ERT";
+
+    if (findSubstringCaseInsensitive(text, part)) {
+        std::wcout << L"Teilzeichenkette '" << part << L"' wurde gefunden." << std::endl;
+    } else {
+        std::wcout << L"Teilzeichenkette '" << part << L"' wurde nicht gefunden." << std::endl;
+    }
+
+    return 0;
+}
+Erklärung der wichtigsten Punkte:
+toLower-Funktion:
+
+Diese Funktion konvertiert alle Zeichen einer Zeichenkette in Kleinbuchstaben.
+Sie verwendet std::transform, um die Konvertierung für jedes Zeichen der Zeichenkette durchzuführen.
+findSubstringCaseInsensitive-Funktion:
+
+Diese Funktion konvertiert sowohl die Hauptzeichenkette als auch die zu suchende Zeichenkette in Kleinbuchstaben.
+Sie verwendet die find-Methode, um die Teilzeichenkette in der konvertierten Hauptzeichenkette zu suchen.
+Beispielaufruf:
+
+Der main-Funktion wird ein Beispieltext und eine zu suchende Teilzeichenkette übergeben.
+Die findSubstringCaseInsensitive-Funktion wird aufgerufen, um die Suche durchzuführen.
+Das Ergebnis wird auf der Konsole ausgegeben.
+Diese Implementierungen sind vollständig kompatibel mit C++03 und verwenden nur Funktionen und Bibliotheken, die in dieser Version verfügbar sind.
