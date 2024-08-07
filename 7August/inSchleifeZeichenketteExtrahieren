@@ -1,0 +1,37 @@
+#include <vcl.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+#pragma hdrstop
+
+#pragma argsused
+
+std::vector<std::string> extractNumbers(const std::string& str) {
+    std::vector<std::string> numbers;
+    std::string::size_type start = 0;
+    std::string::size_type end = 0;
+
+    while ((end = str.find("  ", start)) != std::string::npos) {
+        numbers.push_back(str.substr(start, end - start));
+        start = end + 2;  // Überspringen der zwei Leerzeichen
+    }
+
+    // Falls am Ende noch eine Zahl steht, die nicht von zwei Leerzeichen gefolgt wird
+    if (start < str.size()) {
+        numbers.push_back(str.substr(start));
+    }
+
+    return numbers;
+}
+
+int main() {
+    std::string input = "123456  789123  111333  ";
+    std::vector<std::string> numbers = extractNumbers(input);
+
+    for (size_t i = 0; i < numbers.size(); ++i) {
+        std::cout << "Nummer " << i + 1 << ": " << numbers[i] << std::endl;
+    }
+
+    return 0;
+}
