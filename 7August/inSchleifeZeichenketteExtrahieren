@@ -35,3 +35,55 @@ int main() {
 
     return 0;
 }
+
+
+//=======================================================================
+
+Guten Morgen! Um zu verhindern, dass das TDBNextGrid nach der Eingabe automatisch in das erste linke obere Feld der Tabelle springt, müssen Sie sicherstellen, dass der Fokus nach der Eingabe erhalten bleibt oder auf eine spezifische Zelle gesetzt wird.
+
+Eine Möglichkeit, dies zu erreichen, besteht darin, das Ereignis OnCellEditExit oder ähnliche Ereignisse zu verwenden, um das Springen zu verhindern. Hier ist ein Beispiel, wie Sie dies im C++ Builder umsetzen können:
+
+Beispielcode
+Angenommen, Sie haben ein Formular mit einem TDBNextGrid-Steuerelement namens DBNextGrid1.
+
+Hinzufügen der Ereignisbehandlungsroutine für OnCellEditExit:
+
+Fügen Sie im Header Ihres Formulars die Deklaration der Ereignisbehandlungsroutine hinzu:
+
+cpp
+Code kopieren
+void __fastcall DBNextGrid1CellEditExit(TObject *Sender, int Col, int Row);
+Implementierung der Ereignisbehandlungsroutine im cpp-File:
+
+cpp
+Code kopieren
+void __fastcall TForm1::DBNextGrid1CellEditExit(TObject *Sender, int Col, int Row)
+{
+    // Stellen Sie sicher, dass der Fokus in der aktuellen Zelle bleibt
+    DBNextGrid1->SetFocus();
+    DBNextGrid1->Row = Row;
+    DBNextGrid1->Col = Col;
+}
+Verknüpfen des Ereignisses mit dem Grid:
+
+Verknüpfen Sie die Ereignisbehandlungsroutine im Konstruktor Ihres Formulars oder in der IDE:
+
+cpp
+Code kopieren
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    DBNextGrid1->OnCellEditExit = DBNextGrid1CellEditExit;
+}
+Erklärung
+Ereignisbehandlungsroutine für OnCellEditExit:
+
+Diese Routine wird aufgerufen, wenn der Benutzer die Bearbeitung einer Zelle beendet.
+Die Methode DBNextGrid1->SetFocus() stellt sicher, dass der Fokus im Grid bleibt.
+Die Eigenschaften DBNextGrid1->Row und DBNextGrid1->Col werden auf die aktuellen Zeilen- und Spaltenwerte gesetzt, um den Fokus in der aktuellen Zelle zu halten.
+Verknüpfung des Ereignisses:
+
+Die Ereignisbehandlungsroutine wird mit dem OnCellEditExit-Ereignis des Grids verknüpft, sodass sie aufgerufen wird, wenn die Bearbeitung einer Zelle beendet wird.
+Mit diesen Anpassungen sollte das TDBNextGrid nach der Eingabe nicht mehr automatisch in das erste linke obere Feld springen, sondern in der aktuellen Zelle bleiben.
+
+//===========================
