@@ -87,3 +87,38 @@ Die Ereignisbehandlungsroutine wird mit dem OnCellEditExit-Ereignis des Grids ve
 Mit diesen Anpassungen sollte das TDBNextGrid nach der Eingabe nicht mehr automatisch in das erste linke obere Feld springen, sondern in der aktuellen Zelle bleiben.
 
 //===========================
+
+object TABwnr: TNextDBGrid
+      Touch.InteractiveGestures = [igPan, igPressAndTap]
+      Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
+      Align = alClient
+      BorderStyle = bsNone
+      HeaderStyle = hsFlatBorders
+InputEnterMode = imAllways
+      Options = [goArrowKeyExitEditing, goEscClearEdit, goGrid, goHeader, goSecondClickEdit, goInplaceEditEvents]
+      TabOrder = 0
+      TabStop = True
+?OnKeyUp = TABwnrKeyUp
+?DataAwareOptions = [doAddColumns, doAutoAssignFieldName]
+      DataSource = DSRC
+	  
+object table1: TNextDBGrid
+    Touch.InteractiveGestures = [igPan, igPressAndTap]
+    Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
+AutoScroll = True
+    BorderStyle = bsNone
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    GridLinesColor = clSilver
+    HeaderStyle = hsOutlook
+Options = [goGrid, goHeader]
+    ParentFont = False
+TabOrder = 1
+    TabStop = True
+    
+  end	  
+
+//===========================================
