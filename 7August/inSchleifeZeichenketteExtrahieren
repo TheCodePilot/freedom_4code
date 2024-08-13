@@ -328,4 +328,39 @@ Diese Codebeispiele sollten in die entsprechenden Ereignis-Handler des Datensets
 
 
 
+
+
+
+
+
+
+TBookmark Bookmark;
+
+void __fastcall TForm1::DataSetStateChange(TObject *Sender)
+{
+    TDataSet *DataSet = static_cast<TDataSet*>(Sender);
+
+    if (DataSet->State == dsEdit || DataSet->State == dsInsert)
+    {
+        // Wenn in den Bearbeitungsmodus gewechselt wird, speichere das Bookmark
+        Bookmark = DataSet->GetBookmark();
+    }
+    else if (DataSet->State == dsBrowse)
+    {
+        // Wenn der Bearbeitungsmodus verlassen wird (z.B. nach Posten), stelle das Bookmark wieder her
+        if (DataSet->BookmarkValid(Bookmark))
+        {
+            DataSet->GotoBookmark(Bookmark);
+            DataSet->FreeBookmark(Bookmark);
+        }
+
+        // Optional: Wieder in den Bearbeitungsmodus wechseln
+        DBGrid1->EditorMode = true;
+    }
+}
+
+
+
+
+
 //===========================================
