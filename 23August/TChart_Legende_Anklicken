@@ -157,9 +157,20 @@ void __fastcall TForm1::XY1ClickLegend(TCustomChart *Sender, TLegendClickArgs &A
 =================================================================
 
 void __fastcall TFrameF003::XY1OnClickLegend(TCustomChart *Sender, TMouseButton Button,
-		  TShiftState Shift, int X, int Y)
+                                              TShiftState Shift, int X, int Y)
 {
-	TChartSeries *clickedSeries = XY1->Series[Args.SeriesIndex];
-	clickedSeries->Color = clBlue;
-	XY1->Repaint();
+    // Bestimmen, welcher Legenden-Eintrag angeklickt wurde
+    int index = XY1->Legend->Click(X, Y);
+
+    if (index != -1) // Wenn ein gültiger Eintrag angeklickt wurde
+    {
+        TChartSeries *clickedSeries = XY1->Series[index];
+
+        // Ändern der Farbe der Serie
+        clickedSeries->Color = clBlue; // Beispiel: Ändert die Farbe auf Blau
+
+        // Diagramm aktualisieren
+        XY1->Repaint();
+    }
 }
+
