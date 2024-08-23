@@ -1,0 +1,113 @@
+
+Aus Designer:
+XY1.CustomAxes
+XY1.SerienGroups
+
+
+Ini:
+
+if(Curves[0]==NULL) Curves[0]=new TLineSeries(this); else ((TLineSeries*)Curves[0])->Clear();
+
+	((TLineSeries*)Curves[0])->Title="D-Max Rollen";
+	((TLineSeries*)Curves[0])->ParentChart=XY1;
+	((TLineSeries*)Curves[0])->LinePen->Width=2;
+	((TLineSeries*)Curves[0])->SeriesColor=clBlack;
+
+if(Curves[1]==NULL) Curves[1]=new TBubbleSeries(this); ...
+	
+-->Unterschiede zu beiden ?
+ANTWORT:
+
+
+==============================================
+
+ TFrameF003::UpdateXY(void)
+ ...
+  k=0; val=QQ->FieldByName("W15")->AsInteger; yval=double(val-ref);
+   if(k<maxk)          ((TLineSeries*)Curves[k])->AddXY(xval,yval);
+
+   k=1; val=QQ->FieldByName("W60")->AsInteger; yval=double(val-ref);
+   if(k<maxk && val>0) ((TBubbleSeries*)Curves[k])->AddBubble(xval,yval,1.5);
+ 
+ k=MAX_WIMA_CURVES+4; val=QQ->FieldByName("W80")->AsInteger; yval=double(val-dmaxMan);
+	   if(k<maxk) ((TBubbleSeries*)Curves[k])->AddBubble(xval,yval,1.5);
+ ...
+ ZU statisch ? es gibt kein + 5
+
+==============================================
+
+object XY1: TChart
+        AlignWithMargins = True
+        Left = 6
+        Top = 19
+        Width = 455
+        Height = 211
+        Margins.Left = 5
+        Margins.Top = 0
+        Legend.Color = 15066597
+        Legend.Font.Name = 'Verdana'
+        Legend.GlobalTransparency = 10
+        Legend.HorizMargin = -75
+        Legend.LegendStyle = lsSeries
+        Legend.PositionUnits = muPercent
+        Legend.ResizeChart = False
+        Legend.Shadow.Transparency = 0
+        Legend.Symbol.Pen.Visible = False
+        Legend.TopPos = 5
+        Legend.VertMargin = -75
+        MarginBottom = 0
+        MarginLeft = 2
+        MarginRight = 4
+        MarginTop = 0
+        Title.AutoSize = False
+        Title.Text.Strings = (
+          'TChart')
+        Title.AdjustFrame = False
+        BottomAxis.Automatic = False
+        BottomAxis.AutomaticMaximum = False
+        BottomAxis.AutomaticMinimum = False
+        BottomAxis.Axis.Width = 1
+        BottomAxis.Grid.Color = clGray
+        BottomAxis.Increment = 10.000000000000000000
+        BottomAxis.Maximum = 130.000000000000000000
+        BottomAxis.MinorGrid.Color = 12500670
+        BottomAxis.MinorGrid.Visible = True
+        BottomAxis.MinorTickCount = 9
+        BottomAxis.MinorTicks.Color = 11053224
+        BottomAxis.MinorTicks.Visible = False
+        DepthAxis.Axis.Width = 1
+        DepthAxis.Grid.Color = clGray
+        DepthAxis.MinorTicks.Visible = False
+        DepthAxis.TicksInner.Visible = False
+        DepthTopAxis.Axis.Width = 1
+        DepthTopAxis.Grid.Color = clGray
+        DepthTopAxis.MinorTicks.Visible = False
+        DepthTopAxis.TicksInner.Visible = False
+        LeftAxis.Automatic = False
+        LeftAxis.AutomaticMaximum = False
+        LeftAxis.AutomaticMinimum = False
+        LeftAxis.Axis.Width = 1
+        LeftAxis.Grid.Color = clGray
+        LeftAxis.Increment = 10.000000000000000000
+        LeftAxis.Maximum = 40.000000000000000000
+        LeftAxis.Minimum = -40.000000000000000000
+        LeftAxis.MinorTicks.Visible = False
+        LeftAxis.TicksInner.Visible = False
+        LeftAxis.Title.Caption = 'Differenz Ist-Soll-Durchmesser [1/10 mm]'
+        RightAxis.Axis.Width = 1
+        RightAxis.Grid.Color = clGray
+        RightAxis.MinorTicks.Visible = False
+        RightAxis.TicksInner.Visible = False
+        TopAxis.Axis.Width = 1
+        TopAxis.Grid.Color = clGray
+        TopAxis.MinorTicks.Visible = False
+        TopAxis.TicksInner.Visible = False
+        View3D = False
+        OnBeforeDrawAxes = XY1BeforeDrawAxes
+        Align = alBottom
+        BevelOuter = bvNone
+        UseDockManager = False
+        TabOrder = 1
+        DefaultCanvas = 'TGDIPlusCanvas'
+        ColorPaletteIndex = 0
+      end
