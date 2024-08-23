@@ -155,3 +155,11 @@ void __fastcall TForm1::XY1ClickLegend(TCustomChart *Sender, TLegendClickArgs &A
 }
 
 =================================================================
+
+void __fastcall TFrameF003::XY1OnClickLegend(TCustomChart *Sender, TMouseButton Button,
+		  TShiftState Shift, int X, int Y)
+{
+	TChartSeries *clickedSeries = XY1->Series[Args.SeriesIndex];
+	clickedSeries->Color = clBlue;
+	XY1->Repaint();
+}
