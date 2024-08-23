@@ -111,3 +111,47 @@ object XY1: TChart
         DefaultCanvas = 'TGDIPlusCanvas'
         ColorPaletteIndex = 0
       end
+
+>>===============================================
+
+2. Ereignis-Handler in der CPP-Datei implementieren
+Implementieren Sie den Ereignis-Handler XY1ClickLegend in Ihrer CPP-Datei:
+
+cpp
+Code kopieren
+#include <VclTee.TeeProcs.hpp>
+#include <VclTee.Chart.hpp>
+#include <VclTee.TeEngine.hpp>
+#include <VclTee.Series.hpp>
+
+void __fastcall TForm1::XY1ClickLegend(TCustomChart *Sender, TLegendClickArgs &Args)
+{
+    // Bestimmen Sie die angeklickte Serie
+    TChartSeries *clickedSeries = XY1->Series[Args.SeriesIndex];
+
+    // Ändern Sie die Farbe der Serie
+    clickedSeries->Color = clRed; // Beispiel: Ändert die Farbe auf Rot
+
+    // Optional: Aktualisieren Sie das Diagramm, um die Änderung anzuzeigen
+    XY1->Repaint();
+}
+Erklärung
+TLegendClickArgs &Args: Dieses Argument enthält Informationen über den angeklickten Legenden-Eintrag, wie z.B. SeriesIndex, das den Index der angeklickten Serie angibt.
+*TChartSeries clickedSeries: Mit Args.SeriesIndex können Sie die Serie abrufen, auf die in der Legende geklickt wurde.
+clickedSeries->Color: Hier ändern Sie die Farbe der Serie. Sie können clRed durch jede beliebige Farbe oder eine Zufallsfarbe ersetzen.
+3. Beispiel
+Hier ist ein vollständiges Beispiel, das die Farbe der Serie beim Klicken auf die Legende ändert:
+
+cpp
+Code kopieren
+void __fastcall TForm1::XY1ClickLegend(TCustomChart *Sender, TLegendClickArgs &Args)
+{
+    TChartSeries *clickedSeries = XY1->Series[Args.SeriesIndex];
+
+    // Beispiel: Ändert die Farbe auf eine zufällige Farbe
+    clickedSeries->Color = RGB(rand() % 256, rand() % 256, rand() % 256);
+
+    XY1->Repaint(); // Aktualisieren des Diagramms
+}
+
+=================================================================
