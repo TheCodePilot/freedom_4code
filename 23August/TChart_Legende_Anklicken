@@ -174,3 +174,57 @@ void __fastcall TFrameF003::XY1OnClickLegend(TCustomChart *Sender, TMouseButton 
     }
 }
 
+//======================================================================
+
+Um die Blase im Diagramm zu färben, ohne die Farbe in der Legendenliste zu ändern, kannst du die Farbe der Blase dynamisch zur Laufzeit ändern, während du die Standardfarbe in der Legende beibehältst. Eine Möglichkeit, dies zu erreichen, besteht darin, das OnGetSeriesMark-Ereignis oder OnBeforeDrawSeries-Ereignis zu verwenden, um die Farbe der Blasen direkt zu ändern.
+
+Hier ist ein Beispiel:
+
+Methode 1: Verwenden des OnGetSeriesMark-Ereignisses
+Das OnGetSeriesMark-Ereignis wird aufgerufen, bevor eine Markierung für eine Serie gezeichnet wird. Du kannst die Farbe der Blase ändern, ohne die Legendenfarbe zu beeinflussen.
+
+cpp
+Code kopieren
+void __fastcall TForm1::Chart1GetSeriesMark(TChartSeries *Sender, int ValueIndex, UnicodeString &MarkText)
+{
+    if (Sender->ClassType() == __classid(TBubbleSeries))
+    {
+        // Erhalte die Serie und ändere die Farbe der Blase
+        TBubbleSeries *bubbleSeries = static_cast<TBubbleSeries*>(Sender);
+        bubbleSeries->ValueColor[ValueIndex] = clRed;  // Beispiel: Setze die Blasenfarbe auf Rot
+    }
+}
+Methode 2: Verwenden des OnBeforeDrawSeries-Ereignisses
+Das OnBeforeDrawSeries-Ereignis wird aufgerufen, bevor die Serie gezeichnet wird. Du kannst hier die Blasenfarbe setzen, ohne dass sich dies auf die Farbe in der Legende auswirkt.
+
+cpp
+Code kopieren
+void __fastcall TForm1::Chart1BeforeDrawSeries(TObject *Sender)
+{
+    for (int i = 0; i < Chart1->SeriesCount(); i++)
+    {
+        TChartSeries *series = Chart1->Series[i];
+        if (series->ClassType() == __classid(TBubbleSeries))
+        {
+            TBubbleSeries *bubbleSeries = static_cast<TBubbleSeries*>(series);
+            for (int j = 0; j < bubbleSeries->Count(); j++)
+            {
+                // Setze die Farbe der Blase (z.B. abhängig vom Wert)
+                bubbleSeries->ValueColor[j] = clRed;  // Beispiel: Setze die Blasenfarbe auf Rot
+            }
+        }
+    }
+}
+Anwendung:
+Chart1GetSeriesMark: Nutze diese Methode, wenn du gezielt die Markierung der Serie manipulieren willst.
+Chart1BeforeDrawSeries: Diese Methode erlaubt dir, vor dem Zeichnen der Serien die Farben der Blasen zu ändern.
+Erklärung:
+ValueColor[ValueIndex]: Diese Eigenschaft ermöglicht es, die Farbe eines bestimmten Wertes (hier eine Blase) zu setzen.
+clRed: Beispielhafte Farbe, die du auf die Blase anwendest. Du kannst sie durch eine andere Farbe ersetzen.
+Wichtig:
+Diese Techniken ändern die Farbe der Blasen in der Darstellung, aber die Farbe der Legende bleibt unverändert.
+Wenn du die Blasenfarbe dynamisch änderst, kannst du die Anzeige so steuern, dass nur die Blasenfarbe ohne Beeinflussung der Legende geändert wird.
+Wenn du diese Ansätze verwendest, kannst du sicherstellen, dass die Farbe der Blasen im Diagramm unabhängig von der Farbe in der Legendenliste geändert wird.
+
+//===============================================
+
