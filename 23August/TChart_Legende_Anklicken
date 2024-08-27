@@ -264,3 +264,79 @@ void __fastcall TForm1::Chart1BeforeDrawSeries(TObject *Sender)
         }
     }
 }
+
+//=======================================================
+
+class TriValues
+{
+public:
+    int first;
+    int second;
+    int third;
+
+    // Standardkonstruktor
+    TriValues() : first(0), second(0), third(0) {}
+
+    // Konstruktor mit Initialisierung
+    TriValues(int f, int s, int t) : first(f), second(s), third(t) {}
+
+    // Methoden für den Zugriff
+    int getFirst() const { return first; }
+    int getSecond() const { return second; }
+    int getThird() const { return third; }
+
+    // Methoden zum Setzen der Werte
+    void setFirst(int value) { first = value; }
+    void setSecond(int value) { second = value; }
+    void setThird(int value) { third = value; }
+};
+
+// Beispielnutzung
+TriValues values(1, 2, 3);
+
+std::cout << "First: " << values.getFirst() << std::endl;
+std::cout << "Second: " << values.getSecond() << std::endl;
+std::cout << "Third: " << values.getThird() << std::endl;
+
+
+
+
+std::vector<TriValues> triValuesList;
+
+// Beispiel: Hinzufügen von TriValues-Paaren zur Liste
+triValuesList.push_back(TriValues(1, 2, 3));
+triValuesList.push_back(TriValues(4, 5, 6));
+triValuesList.push_back(TriValues(7, 8, 9));
+
+// Lauf durch die Serien
+for (int i = 0; i < Chart1->SeriesCount(); i++)
+{
+    TChartSeries *series = Chart1->Series[i];
+
+    TBubbleSeries *bubbleSeries = dynamic_cast<TBubbleSeries*>(series);
+
+    if (bubbleSeries != nullptr)
+    {
+        for (int j = 0; j < bubbleSeries->Count(); j++)
+        {
+            int index = i * bubbleSeries->Count() + j;
+
+            // Zugriff auf das entsprechende TriValues-Paar
+            TriValues triValue = triValuesList[index];
+
+            // Beispielhafter Zugriff auf die Werte
+            int firstValue = triValue.getFirst();
+            int secondValue = triValue.getSecond();
+            int thirdValue = triValue.getThird();
+
+            // Logik zur Farbgebung oder anderen Aktionen basierend auf den Werten
+            if (firstValue > 10)
+                bubbleSeries->ValueColor[j] = clRed;
+            else if (secondValue > 5)
+                bubbleSeries->ValueColor[j] = clYellow;
+            else
+                bubbleSeries->ValueColor[j] = clGreen;
+        }
+    }
+}
+
