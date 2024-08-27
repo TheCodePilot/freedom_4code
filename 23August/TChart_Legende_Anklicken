@@ -228,3 +228,39 @@ Wenn du diese Ansätze verwendest, kannst du sicherstellen, dass die Farbe der B
 
 //===============================================
 
+void __fastcall TForm1::Chart1BeforeDrawSeries(TObject *Sender)
+{
+    double sollwert = 10.0; // Beispiel für einen Sollwert
+
+    for (int i = 0; i < Chart1->SeriesCount(); i++)
+    {
+        TChartSeries *series = Chart1->Series[i];
+        if (series->ClassType() == __classid(TBubbleSeries))
+        {
+            TBubbleSeries *bubbleSeries = static_cast<TBubbleSeries*>(series);
+
+            // Originalfarbe der Serie speichern
+            TColor originalColor = bubbleSeries->SeriesColor;
+
+            // Setze die Farbe der Blasen basierend auf der Differenz zum Sollwert
+            for (int j = 0; j < bubbleSeries->Count(); j++)
+            {
+                double yWert = bubbleSeries->YValues->Value[j];
+
+                // Berechne die Differenz zum Sollwert
+                double differenz = fabs(yWert - sollwert);
+
+                // Bestimme die Farbe basierend auf der Differenz
+                if (differenz < 5)
+                    bubbleSeries->ValueColor[j] = clGreen;  // Beispiel: Differenz klein -> Grün
+                else if (differenz < 10)
+                    bubbleSeries->ValueColor[j] = clYellow; // Beispiel: Differenz mittel -> Gelb
+                else
+                    bubbleSeries->ValueColor[j] = clRed;    // Beispiel: Differenz groß -> Rot
+            }
+
+            // Setze die Farbe der Legende zurück
+            bubbleSeries->SeriesColor = originalColor;
+        }
+    }
+}
