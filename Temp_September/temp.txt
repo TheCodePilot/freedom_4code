@@ -42,3 +42,507 @@ bzw weil Tag der deutschen Einheit
 
 
 September.
+
+
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Frame_FVBI.h"
+
+#include "Utility.h"
+
+#include "Unit00_Main.h"
+#include "Unit1_DataBaseLayer.h"
+#include "math.h"
+#include "Unit3_ProdLaufkarte.h"
+#include "Unit8_AuswahlListe.h"
+#include "Unit2_Info.h"
+
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "DBAccess"
+#pragma link "MemDS"
+#pragma link "MSAccess"
+#pragma resource "*.dfm"
+
+#include "_ExternalVars.h"
+
+TFrameFVBI *FrameFVBI;
+
+//=============================================================================================================================================
+__fastcall TFrameFVBI::TFrameFVBI(TComponent* Owner) : TFrame(Owner)
+{
+ Initialized=false;
+ AllFieldsSet = false;
+}
+//=============================================================================================================================================
+void __fastcall TFrameFVBI::Activate()
+//=============================================================================================================================================
+{
+   //Sollte nie eintreten !!!
+   if(PDS.PK_NR <= 0)
+   {
+	   ShowMessage("Fehler: es wurde keine Protokoll-Nummer vergeben. Protokoll FVBI kann nicht erzeugt werden!");
+	   return;
+   }
+
+
+	Visible=true;
+	Width=557; Height=105;
+	Top=Form3->PNxwinBottom->Top-Height-5;
+	Left=5;
+
+	EDfreiluft	->Height=18;
+	EDinnen 	->Height=18;
+
+	GRD->ColorBegin  =   GetGadientColor((TColor)0x008C7275, COL_F, 30);
+	GRD->ColorEnd    =   Form3->GRDprot->ColorBegin;
+
+
+		 // ComboBox füllen
+	 if(!Initialized)
+	 {
+		//stets Keine Auswahl an Position 1
+
+		QCbx=new TMSQuery(NULL);
+		Initialized=(QCbx!=NULL);
+	   //CoBxSupl->Items->Add("Auswahl fehlt");
+
+	   if(Form1->SendSQLLine("SELECT * FROM dbo.CoBxBezeichnungen WHERE Frame='FVBI' AND ComboBox = 'CoBxSupl' AND Active = 'TRUE' ORDER BY Position asc",QCbx))
+	   {
+		while(!QCbx->Eof){
+							CoBxSupl->Items->Add(QCbx->FieldByName ("Bezeichnung")->AsAnsiString);
+							QCbx->Next();}
+	   }
+	   delete QCbx;
+	   QCbx=NULL;
+
+
+	 }
+
+	 CoBxSupl->Text == "";
+	 CoBxSupl->ItemIndex = 0;
+	 sendAbweichungsmeldung = false;
+	 indexLastSupplier = -1;
+	 strLastSupplier = "";
+	 selectedText = "";
+	 changedBySoftware = false;
+
+	 SetDefaultFields();
+	 ImportDataFromDB();
+}
+//=============================================================================================================================================
+void __fastcall TFrameFVBI::SetSupplierIfAllreadyConstellationExists()
+//=============================================================================================================================================
+{
+
+	bool bSendSQLOK4WNR = false;
+	bool bSendSQLOK4Protokoll = false;
+	bool breturner = false;
+	bool bbreaker = false;
+
+	String strWNR = "";
+	String strANR = "";
+	String strTYP = "";
+
+	std::wstring wstrtemp = L"";
+
+	//Aus dem bisherigen sollte in der PRoduktlaufkarte zun finden sein
+	if(Form3 && Form3->Wds)
+	{
+		strANR = Form3->Wds->Auf; //		Kunde des Auftrages;
+		strTYP = Form3->Wds->Typ;
+		strWNR = Form3->Wds->Wnr;
+	}
+
+	bSendSQLOK4WNR = false;
+	bSendSQLOK4Protokoll = false;
+
+	TMSQuery *QCbxtemp = new TMSQuery(NULL);
+	TMSQuery *QCbxtemp1 = new TMSQuery(NULL);
+	TMSQuery *QCbxtemp2 = new TMSQuery(NULL);
+
+	String strSQL = "SELECT* FROM dbo.WERKNR WHERE ANR = '" + strANR + "' AND TYP = '" + strTYP + "'";
+	bSendSQLOK4WNR = Form1->SendSQLLine(strSQL,QCbxtemp);
+
+	if(bSendSQLOK4WNR)
+	{
+		//Ganze Liste abfragen so lange nict EOF die SQL und noch nichts gefunden wurde
+		while(!bbreaker && !QCbxtemp->Eof)
+		{
+
+			String strWNR = QCbxtemp->FieldByName ("WNR")->AsAnsiString;
+			if(strWNR.Length() == 8)
+				strWNR = strWNR + " ";
+
+			String strSQL1 = " SELECT* FROM dbo.PROTOKOL WHERE WERKNR = '" + strWNR + "' AND X_TYP = 'FVBI' " + " AND PK_HINW != 'HUNG' ";
+			bSendSQLOK4Protokoll = Form1->SendSQLLine(strSQL1,QCbxtemp1);
+
+			if(bSendSQLOK4Protokoll)
+			{
+				String strLieferant = "";
+				strLieferant = QCbxtemp1->FieldByName ("UNIT1")->AsAnsiString;
+
+				//vgl mit aktueller wahl
+				if(strLieferant != "")
+				{
+					int findIndexOf = -1;
+					findIndexOf = CoBxSupl->Items->IndexOf(strLieferant);
+
+					if( findIndexOf > -1)
+					{
+						//zuvor erstelltes des Auftrages bestimmen hier
+						//Achtung später kann trotzdem der User versuchen es zu ändern. Dies wird aber dann moniert mit Abweichmeldung
+						changedBySoftware = true;
+						ShowMessage("SetSupplierIfAllreadyConstellationExists");
+						indexLastSupplier = findIndexOf;
+						strLastSupplier = strLieferant;
+//CoBxSupl->ItemIndex = indexLastSupplier;
+						//hier direkt da automatisiert hinein geschrieben. Im Gegensatz zu User wählt etwas in der Combo-Box aus.
+						String sqlupdate = "UPDATE [MDE].[dbo].[PROTOKOL] SET UNIT1 = '" + strLieferant + "' WHERE PK_NR = " + IntToStr(PDS.PK_NR);
+						Form1->SendSQLLine(sqlupdate,QCbxtemp2);
+						bbreaker = true;
+					}
+					else
+					{
+						ShowMessage("Problem mit dem Aufbau der ComboBox welche die Lieferanten-Auswahl ermöglicht");
+					}
+				}
+
+			}
+			else
+			{
+				ShowMessage("Problem mit SQL für das PROTOKOLL");
+			}
+
+			QCbxtemp->Next();
+
+		}//ENDE: while(!bbreaker && !QCbxtemp->Eof)
+
+	}
+	else
+	{
+		ShowMessage("Problem mit SQL für die WNR");
+	}
+
+	if(QCbxtemp)
+		delete QCbxtemp;
+	QCbxtemp=NULL;
+
+	if(QCbxtemp1)
+		delete QCbxtemp1;
+	QCbxtemp1=NULL;
+
+	if(QCbxtemp2)
+		delete QCbxtemp2;
+	QCbxtemp2=NULL;
+
+}
+//=============================================================================================================================================
+void __fastcall TFrameFVBI::ImportDataFromDB()
+//=============================================================================================================================================
+{
+	TPall		->Enabled   = PDS.UNIB1;  //Freigabefeld
+	CBtrafo		->Checked 	= PDS.UNIB4;
+	CBwand 		->Checked 	= PDS.UNIB5;
+
+	EDfreiluft	->Text		= PDS.UNIT2;
+	EDinnen		->Text		= PDS.UNIT3;
+
+	CheckFields();
+	PDS.CHANGED=false;
+}
+//=============================================================================================================================================
+bool __fastcall TFrameFVBI::ExportDataToDB()
+//=============================================================================================================================================
+{
+
+    bool        success=false;
+
+	PDS.UNIB1             	=   AllFieldsSet;
+
+	PDS.UNIB4   =   CBtrafo		->Checked;
+	PDS.UNIB5   =   CBwand 		->Checked;
+
+	PDS.UNIT1	=	CoBxSupl	->Text;
+	PDS.UNIT2	=   EDfreiluft	->Text;
+	PDS.UNIT3	=   EDinnen		->Text;
+
+	if(sendAbweichungsmeldung)
+	{
+		sendAbweichungsmeldung = false;
+		//Automatischer Versand einer Standardabweichung bei fehlerhafter Ausführung
+		if(Form0)
+			Form0->AbwMeldungFromTemplate(6,1);
+	}
+
+	//Raus genommen: Es soll die Userwwahl speicherbar sein
+	/*if(indexLastSupplier > 0)
+		CoBxSupl->ItemIndex = indexLastSupplier;
+	*/
+	return success;
+}
+//=============================================================================================================================================//=============================================================================================================================================
+bool __fastcall TFrameFVBI::CheckFields()
+//=============================================================================================================================================
+{
+	bool   Art,CoBx, trafo, wand, wand1;
+
+
+	if(CBtrafo->Checked)                {CBwand->Checked=false;  EDinnen->Enabled = false; EDinnen->Text   = "";}
+	if(CBwand->Checked)                 {CBtrafo->Checked=false; EDinnen->Enabled = true;}
+
+	Art = 	((CBtrafo->Checked) 	 || (CBwand->Checked));
+	CoBx= 	(CoBxSupl->Text!="");
+	trafo = (EDfreiluft->Text.Length()>4);
+	wand =  ((CBwand->Checked) && (EDinnen->Text.Length()>4));
+	wand1 = !(CBwand->Checked);
+
+
+	AllFieldsSet= (Art && CoBx && trafo && (wand || wand1 ));
+
+	LBincomplete->Visible	=!AllFieldsSet;
+	LBincomplete2->Visible	=!AllFieldsSet;
+
+	TPall	->Enabled = !PDS.UNIB1;
+
+	PDS.CHANGED=AllFieldsSet;
+
+}
+//=============================================================================================================================================
+void __fastcall TFrameFVBI::SetDefaultFields()
+//=============================================================================================================================================
+{
+
+	CBtrafo 	->Checked =false;
+	CBwand 		->Checked =false;
+
+	EDfreiluft	->Text   = "";
+	EDinnen    	->Text   = "";
+
+
+	//Wichtige Ergänzung
+	if(PDS.UNIT1 != "")
+		CoBxSupl->Text = PDS.UNIT1;
+	else
+		CoBxSupl->Text = "Lieferant";
+
+	/*
+
+	TMSQuery *QCbxtempWNRItSelf = new TMSQuery(NULL);
+
+	bool bSendSQLOK4Protokoll = false;
+
+	String strWNR = "";
+
+	if(Form3 && Form3->Wds)
+	{
+		strWNR = Form3->Wds->Wnr;
+	}
+
+	String strSQL1 = " SELECT* FROM dbo.PROTOKOL WHERE PK_NR = " + IntToStr(PDS.PK_NR) + " AND WERKNR = '" + strWNR + "' AND X_TYP = 'FVBI' ";
+	bSendSQLOK4Protokoll = Form1->SendSQLLine(strSQL1,QCbxtempWNRItSelf);
+
+	if(bSendSQLOK4Protokoll)
+	{
+		String strLieferant = "";
+		strLieferant = QCbxtempWNRItSelf->FieldByName ("UNIT1")->AsAnsiString;
+
+		//Wenn also schon ein sinnvoller Lieferant geschrieben wurde und somit es kein ganz leeres Protokoll ist
+		//keine Vorgabe von in der Vergangenheit erzeugten identischen Auftrags-Situationen
+		if( strLieferant != "" )
+		{
+			//schauen ob nicht ungültig markiert dieses Protokoll
+			String proofIfHUNG = "";
+			proofIfHUNG = QCbxtempWNRItSelf->FieldByName ("PK_HINW")->AsAnsiString;
+			if( proofIfHUNG != "HUNG" )
+			{
+				strLastSupplier = strLieferant;
+				FindCoBxIndex();
+				if(indexLastSupplier > -1)
+					CoBxSupl->ItemIndex = indexLastSupplier;
+			}
+		}
+		else*/
+		{
+			//schauen ob es für die Bedingungen eine bereits in der Vergangenheit erstellte Vorgabe gibt
+			SetSupplierIfAllreadyConstellationExists();
+		}
+	//}
+
+	/*
+	if(QCbxtempWNRItSelf)
+		delete QCbxtempWNRItSelf;
+	QCbxtempWNRItSelf = NULL;
+	*/
+
+}
+//=============================================================================================================================================
+void __fastcall TFrameFVBI::FindCoBxIndex()
+//=============================================================================================================================================
+{
+	int findIndexOf = -1;
+
+	if(strLastSupplier != "")
+		findIndexOf = CoBxSupl->Items->IndexOf(strLastSupplier);
+
+	if( findIndexOf > -1)
+		indexLastSupplier = findIndexOf;
+
+}
+//=============================================================================================================================================
+void __fastcall TFrameFVBI::CoBxSuplOnClick(TObject *Sender)
+//=============================================================================================================================================
+{
+	ShowMessage("CoBxSuplOnClick");
+	selectedText = CoBxSupl->Text;
+	if(strLastSupplier != "")
+	{
+		if(selectedText != strLastSupplier)
+		{
+
+			//if(FormInfo)
+			//	FormInfo->ShowMessage("Keine Berechtigung für diesen Vorgang !",1,6,"");
+			ShowMessage("Es gibt bereits den passenden Lieferanten: " + strLastSupplier + ". Sie haben versucht einen anderen Lieferanten Namens : " + selectedText + " zu wählen. Bei einem Auftrag sollen stets die gleichen Lieferanten für Schrauben gewählt werden. Ihre Auswahl wird ignoriert. Es wird beim Speichern eine Abweichmeldung erstellt.");
+			sendAbweichungsmeldung = true;
+		}
+		else
+			sendAbweichungsmeldung = false;
+	}
+}
+//=============================================================================================================================================
+
+
+void __fastcall TFrameFVBI::GRDClick(TObject *Sender)
+{
+	//RRRTest
+	//CheckFields();
+	//return;
+	//ANFANG: RRR Neu ab 18 Juli 2024
+	bool breturner = true;
+
+	if(changedBySoftware)
+	{
+		/*
+		changedBySoftware = false;
+		sendAbweichungsmeldung = false;
+		CheckFields();
+		return;
+		*/
+	}
+
+	TObject *SenderTEMP = Sender;
+
+	if ( SenderTEMP->ClassType() == __classid(TComboBox) )
+	{
+		TComboBox* combTemp = dynamic_cast<TComboBox*>(SenderTEMP);
+		if(combTemp)
+		{
+			String name = combTemp->Name;
+			if(name == "CoBxSupl")
+			{
+				breturner = false;
+			}
+		}
+	}
+
+	if(breturner)
+	{
+		breturner = false;
+		CheckFields();
+		return;
+	}
+
+
+	//RRRTEST
+	CheckFields();
+	return;
+
+	//Dieser Teil nur für die ComboBox mit dem Namen CoBxSupl
+//sendAbweichungsmeldung = false; RRR
+	bool bbreaker = false;
+
+	TMSQuery *QCbxtemp = new TMSQuery(NULL);
+	TMSQuery *QCbxtemp1 = new TMSQuery(NULL);
+
+	bool bSendSQLOK4WNR = false;
+	bool bSendSQLOK4Protokoll = false;
+
+	String strANR = "";
+	String strTYP = "";
+
+	std::wstring wstrtemp = L"";
+
+	//Aus dem bisherigen sollte in der PRoduktlaufkarte zun finden sein
+	if(Form3 && Form3->Wds)
+	{
+		strANR = Form3->Wds->Auf; //		Kunde des Auftrages;
+		strTYP = Form3->Wds->Typ;
+	}
+	//Auch hier eine ganze Liste also Abfragen so lange nict EOF die SQL
+
+	String strSQL = "SELECT* FROM dbo.WERKNR WHERE ANR = '" + strANR + "' AND TYP = '" + strTYP + "'";
+	bSendSQLOK4WNR = Form1->SendSQLLine(strSQL,QCbxtemp);
+
+	if(bSendSQLOK4WNR)
+	{
+		while(!bbreaker && !QCbxtemp->Eof)
+		{
+
+			String strWNR = QCbxtemp->FieldByName ("WNR")->AsAnsiString;
+
+			//OK was vorhanden, nun verarbeiten // (1)
+			String strSQL1 = " SELECT* FROM dbo.PROTOKOL WHERE WERKNR = '" + strWNR + "' AND X_TYP = 'FVBI' " + " AND PK_HINW != 'HUNG' ";;
+			bSendSQLOK4Protokoll = Form1->SendSQLLine(strSQL1,QCbxtemp1);
+
+			if(bSendSQLOK4Protokoll)
+			{
+				String strLieferant = QCbxtemp1->FieldByName ("UNIT1")->AsAnsiString;
+				TField* fProofIfNULL = QCbxtemp1->FieldByName ("UNIT1");
+				//vgl mit aktueller wahl
+				//Hier also wären dies Korrekturen zurück was in der Vergangenheit falsch war zb shema beim start in der ComboBox und axicom aktuell
+				//In der Zukunft neuer Protokolle gibt es diesen Fall nie
+				if( (!fProofIfNULL->IsNull) && (strLieferant != "") && (selectedText != "") && (selectedText != strLieferant) )
+				{
+//sendAbweichungsmeldung = true;    //RRR Diskussion ob auch Vergangenheits-Fälle wenn Ja wieder rein
+//if(indexLastSupplier > -1)
+//CoBxSupl->ItemIndex = indexLastSupplier;
+                    //wenn eins nicht gleich dann ist nicht1 alles in Ordnung
+					//break;
+					bbreaker = true;
+				}
+
+			}
+			else
+			{
+				ShowMessage("Problem mit SQL für dem PROTOKOLL");
+			}
+
+			QCbxtemp->Next();
+		}//ENDE: while(!QCbxtemp->Eof)
+
+	}
+	else
+	{
+		ShowMessage("Problem mit SQL für die WNR");
+	}
+
+
+	if(QCbxtemp)
+		delete QCbxtemp;
+	QCbxtemp=NULL;
+
+	if(QCbxtemp1)
+		delete QCbxtemp1;
+	QCbxtemp1=NULL;
+
+	if(!breturner)
+		CheckFields();
+}
+//---------------------------------------------------------------------------
+
+
+
+
