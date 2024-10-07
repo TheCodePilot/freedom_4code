@@ -1,0 +1,33 @@
+
+SELECT *
+FROM Tab2
+WHERE PoolVonZeichenketten LIKE '%' + CAST(ID AS VARCHAR) + '%'
+AND ID IN (
+    SELECT ID
+    FROM Tab1
+    WHERE Rolle LIKE '%zu_suchende_Zeichenkette%'
+);
+
+
+
+
+#include <vcl.h>
+#include <Data.DB.hpp>
+#include <MemDS.hpp>
+#include <DBAccess.hpp>
+#include <MSAccess.hpp>
+
+void ReadValuesFromTable(TMSQuery* Query)
+{
+    Query->SQL->Text = "SELECT * FROM Tab2 WHERE PoolVonZeichenketten LIKE '%' + CAST(ID AS VARCHAR) + '%' AND ID IN (SELECT ID FROM Tab1 WHERE Rolle LIKE '%zu_suchende_Zeichenkette%')";
+    Query->Open();
+
+    while (!Query->Eof)
+    {
+        String value = Query->FieldByName("DeinFeldName")->AsString;
+        // Hier kannst du den Wert weiterverarbeiten
+        Query->Next();
+    }
+
+    Query->Close();
+}
