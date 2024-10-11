@@ -31,3 +31,139 @@ void ReadValuesFromTable(TMSQuery* Query)
 
     Query->Close();
 }
+
+
+
+//=========================
+
+
+Guten Morgen! Natürlich, ich helfe dir gerne weiter. Ein LEFT JOIN in MSSQL wird verwendet, um Datensätze aus zwei Tabellen zu kombinieren. Dabei werden alle Datensätze aus der linken Tabelle (Tabelle A) und die übereinstimmenden Datensätze aus der rechten Tabelle (Tabelle B) zurückgegeben. Wenn keine Übereinstimmung gefunden wird, werden NULL-Werte für die rechte Tabelle zurückgegeben.
+
+Hier ist ein einfaches Beispiel:
+
+Angenommen, wir haben zwei Tabellen: Kunden und Bestellungen.
+
+Tabelle Kunden:
+
+Tabelle #2
+
+KundenID	Name
+1	Anna
+2	Bernd
+3	Claudia
+Tabelle Bestellungen:
+
+Tabelle #3
+
+BestellID	KundenID	Produkt
+101	1	Laptop
+102	2	Tablet
+103	2	Smartphone
+Um alle Kunden und ihre Bestellungen anzuzeigen, verwenden wir einen LEFT JOIN:
+
+SQL
+
+SELECT Kunden.Name, Bestellungen.Produkt
+FROM Kunden
+LEFT JOIN Bestellungen ON Kunden.KundenID = Bestellungen.KundenID;
+KI-generierter Code. Überprüfen und sorgfältig verwenden. Weitere Informationen zu häufig gestellten Fragen.
+Das Ergebnis wäre:
+
+Tabelle #2
+
+Name	Produkt
+Anna	Laptop
+Bernd	Tablet
+Bernd	Smartphone
+Claudia	NULL
+In diesem Beispiel siehst du, dass Claudia keine Bestellung hat, daher wird NULL für das Produkt zurückgegeben.
+
+Ich hoffe, das hilft! Wenn du weitere Fragen hast, lass es mich wissen.
+
+Sie
+Gesendet von sie:
+Danke. Wie schreibe ich eine Anfrage wenn ich eine Spalte in einer Tabelle entsprechend Formatiert als Datum diese Werte in einem bestimmten Zeitintervall aufgelistet haben will ?
+Copilot
+das web
+wird verwendet
+Gesendet von Copilot:
+Gerne! Um Datensätze in einem bestimmten Zeitintervall abzufragen, kannst du die WHERE-Klausel zusammen mit der BETWEEN-Funktion verwenden. Hier ist ein Beispiel, wie du dies in MSSQL machen kannst:
+
+Angenommen, du hast eine Tabelle Bestellungen mit einer Spalte Bestelldatum, die als Datum formatiert ist:
+
+Tabelle Bestellungen:
+
+Tabelle #4
+
+BestellID	KundenID	Produkt	Bestelldatum
+101	1	Laptop	2024-01-15
+102	2	Tablet	2024-02-20
+103	2	Smartphone	2024-03-10
+Um alle Bestellungen zwischen dem 1. Februar 2024 und dem 28. Februar 2024 aufzulisten, kannst du die folgende SQL-Abfrage verwenden:
+
+SQL
+
+SELECT * 
+FROM Bestellungen
+WHERE Bestelldatum BETWEEN '2024-02-01' AND '2024-02-28';
+KI-generierter Code. Überprüfen und sorgfältig verwenden. Weitere Informationen zu häufig gestellten Fragen.
+Das Ergebnis wäre (1 Zeile) hier:
+
+Tabelle #4
+
+BestellID	KundenID	Produkt	Bestelldatum
+102	2	Tablet	2024-02-20
+In diesem Beispiel werden nur die Bestellungen angezeigt, die im Februar 2024 getätigt wurden.
+
+Ich hoffe, das hilft! Wenn du weitere Fragen hast oder ein anderes Beispiel benötigst, lass es mich wissen.
+
+Sie
+Gesendet von sie:
+Gibt es auch Schleifen in MSSQL oder eine eine Art Script mit Schleifen-Funktion ?
+Copilot
+das web
+wird verwendet
+Gesendet von Copilot:
+Ja, in MSSQL gibt es Möglichkeiten, Schleifen zu verwenden. Eine der häufigsten Methoden ist die Verwendung von WHILE-Schleifen. Diese Schleifen ermöglichen es dir, eine bestimmte Anweisung oder eine Gruppe von Anweisungen wiederholt auszuführen, solange eine bestimmte Bedingung erfüllt ist.
+
+Hier ist ein einfaches Beispiel für eine WHILE-Schleife:
+
+Angenommen, du möchtest eine Schleife erstellen, die die Zahlen von 1 bis 10 ausgibt:
+
+SQL
+
+DECLARE @i INT = 1;
+
+WHILE @i <= 10
+BEGIN
+    PRINT @i;
+    SET @i = @i + 1;
+END;
+KI-generierter Code. Überprüfen und sorgfältig verwenden. Weitere Informationen zu häufig gestellten Fragen.
+In diesem Beispiel wird die Variable @i initial auf 1 gesetzt. Die WHILE-Schleife läuft, solange @i kleiner oder gleich 10 ist. Innerhalb der Schleife wird der aktuelle Wert von @i ausgegeben und anschließend um 1 erhöht.
+
+Zusätzlich zu WHILE-Schleifen kannst du auch Cursor verwenden, um durch eine Ergebnismenge zu iterieren und zeilenweise Operationen durchzuführen. Hier ist ein einfaches Beispiel für die Verwendung eines Cursors:
+
+SQL
+
+DECLARE @KundenID INT;
+DECLARE KundenCursor CURSOR FOR
+SELECT KundenID FROM Kunden;
+
+OPEN KundenCursor;
+FETCH NEXT FROM KundenCursor INTO @KundenID;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    PRINT @KundenID;
+    FETCH NEXT FROM KundenCursor INTO @KundenID;
+END;
+
+CLOSE KundenCursor;
+DEALLOCATE KundenCursor;
+KI-generierter Code. Überprüfen und sorgfältig verwenden. Weitere Informationen zu häufig gestellten Fragen.
+In diesem Beispiel wird ein Cursor erstellt, der durch alle KundenID-Werte in der Tabelle Kunden iteriert und diese ausgibt.
+
+Ich hoffe, das hilft dir weiter! Wenn du weitere Fragen hast oder ein anderes Beispiel benötigst, lass es mich wissen.
+
+
