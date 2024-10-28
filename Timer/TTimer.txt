@@ -1,0 +1,103 @@
+#include <vcl.h>
+#pragma hdrstop
+#include "Unit1.h"
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+
+int requestCount = 0;
+
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+}
+
+void __fastcall TForm1::CheckBoxClick(TObject *Sender)
+{
+    if (CheckBox1->Checked || CheckBox2->Checked)
+    {
+        // Hintergrundaktion ausführen
+        PerformBackgroundAction();
+
+        // Checkboxen zurücksetzen
+        CheckBox1->Checked = false;
+        CheckBox2->Checked = false;
+
+        // Anfragezähler erhöhen
+        requestCount++;
+
+        // Überprüfen, ob 10 Anfragen erreicht wurden
+        if (requestCount >= 10)
+        {
+            ShowMessage("10 Anfragen abgeschlossen. OK-Button wird angezeigt.");
+            // OK-Button anzeigen (hier als Beispiel eine MessageBox)
+            // Du kannst auch einen tatsächlichen Button anzeigen lassen
+        }
+    }
+}
+
+void TForm1::PerformBackgroundAction()
+{
+    // Hier die gewünschte Hintergrundaktion implementieren
+}
+
+
+
+
+//==================================
+
+
+#include <vcl.h>
+#pragma hdrstop
+#include "Unit1.h"
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+
+int requestCount = 0;
+
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+}
+
+void __fastcall TForm1::CheckBoxClick(TObject *Sender)
+{
+    if (CheckBox1->Checked || CheckBox2->Checked)
+    {
+        // Timer deaktivieren
+        Timer1->Enabled = false;
+
+        // Hintergrundaktion ausführen
+        PerformBackgroundAction();
+
+        // Checkboxen zurücksetzen
+        CheckBox1->Checked = false;
+        CheckBox2->Checked = false;
+
+        // Anfragezähler erhöhen
+        requestCount++;
+
+        // Überprüfen, ob 10 Anfragen erreicht wurden
+        if (requestCount >= 10)
+        {
+            ShowMessage("10 Anfragen abgeschlossen. OK-Button wird angezeigt.");
+            // OK-Button anzeigen (hier als Beispiel eine MessageBox)
+            // Du kannst auch einen tatsächlichen Button anzeigen lassen
+        }
+
+        // Timer wieder aktivieren
+        Timer1->Enabled = true;
+    }
+}
+
+void TForm1::PerformBackgroundAction()
+{
+    // Hier die gewünschte Hintergrundaktion implementieren
+}
+
+void __fastcall TForm1::Timer1Timer(TObject *Sender)
+{
+    // Timer-Routine hier implementieren
+    // Diese Routine wird nur ausgeführt, wenn der Timer aktiviert ist
+}
