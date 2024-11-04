@@ -101,3 +101,54 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
     // Timer-Routine hier implementieren
     // Diese Routine wird nur ausgeführt, wenn der Timer aktiviert ist
 }
+
+
+//=========================================================
+
+#include <vcl.h>
+#pragma hdrstop
+#include "Unit1.h"
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm1 *Form1;
+
+TMSConnection *MSConnection;
+TTimer *ConnectTimer;
+int attemptCount = 0;
+
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    // TMSConnection-Instanz erstellen und initialisieren
+    MSConnection = new TMSConnection(this);
+    MSConnection->ConnectionString = "your_connection_string_here";
+    MSConnection->LoginPrompt = false;
+
+    // TTimer zur Laufzeit erstellen
+    ConnectTimer = new TTimer(this);
+    ConnectTimer->Interval = 80; // 80 ms
+    ConnectTimer->OnTimer = ConnectTimerTimer;
+    ConnectTimer->Enabled = true;
+}
+
+void __fastcall TForm1::ConnectTimerTimer(TObject *Sender)
+{
+    attemptCount++;
+    try
+    {
+        MSConnection->Connected = true;
+        ShowMessage("Verbindung erfolgreich hergestellt!");
+        ConnectTimer->Enabled = false; // Timer stoppen
+    }
+    catch (Exception &e)
+    {
+        if (attemptCount >= 10)
+        {
+            ShowMessage("Verbindung konnte nach 10 Versuchen nicht hergestellt werden.");
+            ConnectTimer->Enabled = false; // Timer stoppen
+        }
+    }
+}
+
+//--------------------------------------------
+
