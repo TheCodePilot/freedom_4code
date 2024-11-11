@@ -166,4 +166,37 @@ In diesem Beispiel wird ein Cursor erstellt, der durch alle KundenID-Werte in de
 
 Ich hoffe, das hilft dir weiter! Wenn du weitere Fragen hast oder ein anderes Beispiel benötigst, lass es mich wissen.
 
+//===============================================
+
+#include <vcl.h>
+#include <Data.DB.hpp>
+#include <MemDS.hpp>
+#include <DBAccess.hpp>
+#include <MSAccess.hpp>
+
+void ExecuteSelectQuery(TMSQuery* Query)
+{
+    // SQL-Abfrage definieren
+    Query->SQL->Text = "SELECT * FROM DeineTabelle";
+    
+    // Abfrage öffnen
+    Query->Open();
+    
+    // Anzahl der Datensätze ermitteln
+    int recordCount = Query->RecordCount;
+    ShowMessage("Anzahl der Datensätze: " + IntToStr(recordCount));
+    
+    // Datensätze durchlaufen und verarbeiten
+    while (!Query->Eof)
+    {
+        String value = Query->FieldByName("DeinFeldName")->AsString;
+        // Hier kannst du den Wert weiterverarbeiten
+        Query->Next();
+    }
+    
+    // Abfrage schließen
+    Query->Close();
+}
+//===============================================
+
 
