@@ -534,7 +534,12 @@ Range-based for Schleife (C++11): Szenario: Du iterierst über ein std::vector v
 constexpr (C++11): Szenario: Du definierst eine mathematische Funktion, die zur Kompilierzeit ausgewertet werden soll, wie z.B. die Berechnung einer Fakultät. Mit constexpr kannst du sicherstellen, dass die Berechnung zur Kompilierzeit erfolgt, was die Laufzeitperformance verbessert.
 Typ-Traits (C++11): Szenario: Du schreibst eine Template-Funktion, die nur für bestimmte Typen funktionieren soll. Mit Typ-Traits kannst du zur Kompilierzeit überprüfen, ob ein Typ bestimmte Eigenschaften erfüllt, und den Code entsprechend anpassen.
 std::any, std::optional und std::variant (C++17): Szenario: Du entwickelst eine API, die verschiedene Rückgabewerte haben kann. Mit std::variant kannst du mehrere mögliche Rückgabetypen in einer einzigen Schnittstelle kapseln, was die Handhabung und Sicherheit des Codes verbessert.
-    
+
+
+//
+Siehe RRTools.h
+https://smartbear.com/blog/the-biggest-changes-in-c11-and-why-you-should-care/
+https://arne-mertz.de/2015/07/new-c-features-uniform-initialization-and-initializer_list/    
     
 
 
