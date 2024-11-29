@@ -540,6 +540,23 @@ std::any, std::optional und std::variant (C++17): Szenario: Du entwickelst eine 
 Siehe RRTools.h
 https://smartbear.com/blog/the-biggest-changes-in-c11-and-why-you-should-care/
 https://arne-mertz.de/2015/07/new-c-features-uniform-initialization-and-initializer_list/    
+
+#include <vcl.h>
+#pragma hdrstop
+
+bool checkAnsiString(const AnsiString& str, bool includeLowercase = false) {
+    if (str.IsEmpty()) {
+        return false;
+    }
+    if (str[1] == 'T') {
+        return true;
+    }
+    if (includeLowercase && str[1] == 't') {
+        return true;
+    }
+    return false;
+}
+
     
 
 
