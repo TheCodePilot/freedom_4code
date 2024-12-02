@@ -199,4 +199,16 @@ void ExecuteSelectQuery(TMSQuery* Query)
 }
 //===============================================
 
+//--------------------------
+Minimales SQL
+
+SELECT * FROM deine_tabelle WHERE dein_primärschlüssel = wert;
+
+______________
+
+TMSQuery1->SQL->Text = "SELECT * FROM deine_tabelle WHERE dein_primärschlüssel = :wert";
+TMSQuery1->ParamByName("wert")->AsInteger = dein_primärschlüssel_wert;
+TMSQuery1->Open();
+
+
 
