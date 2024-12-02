@@ -152,3 +152,76 @@ void __fastcall TForm1::ConnectTimerTimer(TObject *Sender)
 
 //--------------------------------------------
 
+//2 Dezember
+
+Hallo! Du kannst einen zweiten Timer innerhalb einer Timer-Routine starten, indem du den zweiten Timer in der Routine initialisierst und aktivierst. Hier ist ein Beispiel, wie du das in C++03 im C++ Builder machen kannst:
+
+cpp
+#include <vcl.h>
+#pragma hdrstop
+
+TTimer *Timer2;
+
+void __fastcall TRoutine1(TObject *Sender) {
+    // Erstelle und konfiguriere den zweiten Timer
+    Timer2 = new TTimer(NULL);
+    Timer2->Interval = 1000; // Setze das Intervall auf 1000 Millisekunden (1 Sekunde)
+    Timer2->OnTimer = Timer2Routine; // Setze die Ereignisroutine für den zweiten Timer
+    Timer2->Enabled = true; // Aktiviere den zweiten Timer
+}
+
+void __fastcall Timer2Routine(TObject *Sender) {
+    // Hier kommt der Code für die Arbeit des zweiten Timers
+    // ...
+
+    // Deaktiviere den zweiten Timer, wenn die Arbeit erledigt ist
+    Timer2->Enabled = false;
+    delete Timer2;
+    Timer2 = NULL;
+}
+In diesem Beispiel wird der zweite Timer Timer2 innerhalb der Routine TRoutine1 erstellt und gestartet. Die Routine Timer2Routine wird aufgerufen, wenn der zweite Timer abläuft. Nachdem die Arbeit des zweiten Timers erledigt ist, wird der Timer deaktiviert und gelöscht.
+
+Ich hoffe, das hilft! Lass mich wissen, ob du noch weitere Fragen hast. 😊
+
+Ist es denn Ok wenn jedesmal im ersten Timer allokiert wird ? Ich weiß in Timer2Routine wird die allokation ja aufgehoben. Ist das zeitlich immer sicher so ?
+Das ist eine berechtigte Frage. Die Allokation und Deallokation eines Timers in jeder Ausführung der ersten Timer-Routine kann zu einem gewissen Overhead führen, aber in den meisten Fällen sollte das zeitlich sicher und effizient genug sein, solange die Intervalle nicht extrem kurz sind.
+
+Wenn du sicherstellen möchtest, dass der zweite Timer seine Arbeit vollständig verrichtet, bevor die Routine beendet wird, kannst du eine einfache Synchronisationsmethode verwenden. Hier ist ein Beispiel, wie du das machen könntest:
+
+cpp
+#include <vcl.h>
+#pragma hdrstop
+
+TTimer *Timer2;
+bool Timer2Completed = false;
+
+void __fastcall TRoutine1(TObject *Sender) {
+    // Erstelle und konfiguriere den zweiten Timer
+    Timer2 = new TTimer(NULL);
+    Timer2->Interval = 1000; // Setze das Intervall auf 1000 Millisekunden (1 Sekunde)
+    Timer2->OnTimer = Timer2Routine; // Setze die Ereignisroutine für den zweiten Timer
+    Timer2->Enabled = true; // Aktiviere den zweiten Timer
+
+    // Warte, bis der zweite Timer seine Arbeit verrichtet hat
+    while (!Timer2Completed) {
+        Application->ProcessMessages();
+    }
+
+    // Setze den Status zurück
+    Timer2Completed = false;
+}
+
+void __fastcall Timer2Routine(TObject *Sender) {
+    // Hier kommt der Code für die Arbeit des zweiten Timers
+    // ...
+
+    // Deaktiviere den zweiten Timer, wenn die Arbeit erledigt ist
+    Timer2->Enabled = false;
+    delete Timer2;
+    Timer2 = NULL;
+
+    // Setze den Status auf abgeschlossen
+    Timer2Completed = true;
+}
+In diesem Beispiel wird eine boolesche Variable Timer2Completed verwendet, um den Status des zweiten Timers zu überwachen. Die erste Timer-Routine wartet, bis der zweite Timer seine Arbeit abgeschlossen hat, bevor sie fortfährt.
+
