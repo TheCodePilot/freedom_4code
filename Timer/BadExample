@@ -2256,3 +2256,24 @@ void __fastcall Timer2Routine(TObject *Sender) {
 In diesem Beispiel wird eine boolesche Variable Timer2Completed verwendet, um den Status des zweiten Timers zu überwachen. Die erste Timer-Routine wartet, bis der zweite Timer seine Arbeit abgeschlossen hat, bevor sie fortfährt.
 
 */
+
+
+//============================================
+//==============================================================================================================================================
+void __fastcall TFormGH::FormClose(TObject *Sender, TCloseAction &Action)
+//==============================================================================================================================================
+{
+	 while(TimerUpdateGUIbusy) KPIdle(10); // warten bis TimerUpdateGUI fertig ist
+
+	 TimerUpdateGUI->Enabled=false;
+	 AllowAddWnr=false;
+
+	 if(QQ!=NULL)                         delete QQ;                  QQ=NULL;
+	 if(QExo!=NULL)                       delete QExo;                QExo=NULL;
+	 if(QRCodeBitmap!=NULL)               delete QRCodeBitmap;        QRCodeBitmap=NULL;
+	 if(Liste_Werknummern_Input!=NULL )   delete Liste_Werknummern_Input;   Liste_Werknummern_Input=NULL;
+	 if(Liste_Werknummern_Auswahl!=NULL ) delete Liste_Werknummern_Auswahl; Liste_Werknummern_Auswahl=NULL;
+//ShowMessage("FormGH->countOfRelevant420KV als Active-Zähler" + IntToStr(FormGH->countOfRelevant420KV)); //RRRTest
+}
+//===========================================================================================================================================
+
