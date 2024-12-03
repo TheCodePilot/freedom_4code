@@ -1,0 +1,2258 @@
+//-----------------------------------------------------------------------------
+#include "_CommonHeaders.h" // muss oben stehen bleiben (Precompiled Header)
+#include "_Defines.h"
+#include "_ExternalVars.h"
+//-----------------------------------------------------------------------------
+
+#include "Unit70_GH.h"
+#include "Unit3_WnrSonder.h"
+#include "Unit211_Yokogawa.h"
+
+#include "pngimage.hpp"
+#include "DelphiZXIngQRCode.hpp"
+#include "ms_system.h"
+
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "Gradient"
+#pragma link "DBAccess"
+#pragma link "MemDS"
+#pragma link "MSAccess"
+#pragma link "Frame_F010"
+#pragma link "Frame_F020"
+#pragma link "Frame_F030"
+#pragma link "Frame_F040"
+#pragma link "Frame_F007"
+#pragma link "Frame_F008"
+#pragma link "Frame_F070"
+#pragma link "Frame_F080"
+#pragma link "Frame_F090"
+#pragma link "cxButtons"
+#pragma link "cxGraphics"
+#pragma link "cxLookAndFeelPainters"
+#pragma link "cxLookAndFeels"
+#pragma link "dxSkinBasic"
+#pragma link "dxSkinBlack"
+#pragma link "dxSkinBlue"
+#pragma link "dxSkinBlueprint"
+#pragma link "dxSkinCaramel"
+#pragma link "dxSkinCoffee"
+#pragma link "dxSkinDarkroom"
+#pragma link "dxSkinDarkSide"
+#pragma link "dxSkinDevExpressDarkStyle"
+#pragma link "dxSkinDevExpressStyle"
+#pragma link "dxSkinFoggy"
+#pragma link "dxSkinGlassOceans"
+#pragma link "dxSkinHighContrast"
+#pragma link "dxSkiniMaginary"
+#pragma link "dxSkinLilian"
+#pragma link "dxSkinLiquidSky"
+#pragma link "dxSkinLondonLiquidSky"
+#pragma link "dxSkinMcSkin"
+#pragma link "dxSkinMetropolis"
+#pragma link "dxSkinMetropolisDark"
+#pragma link "dxSkinMoneyTwins"
+#pragma link "dxSkinOffice2007Black"
+#pragma link "dxSkinOffice2007Blue"
+#pragma link "dxSkinOffice2007Green"
+#pragma link "dxSkinOffice2007Pink"
+#pragma link "dxSkinOffice2007Silver"
+#pragma link "dxSkinOffice2010Black"
+#pragma link "dxSkinOffice2010Blue"
+#pragma link "dxSkinOffice2010Silver"
+#pragma link "dxSkinOffice2013DarkGray"
+#pragma link "dxSkinOffice2013LightGray"
+#pragma link "dxSkinOffice2013White"
+#pragma link "dxSkinOffice2016Colorful"
+#pragma link "dxSkinOffice2016Dark"
+#pragma link "dxSkinOffice2019Black"
+#pragma link "dxSkinOffice2019Colorful"
+#pragma link "dxSkinOffice2019DarkGray"
+#pragma link "dxSkinOffice2019White"
+#pragma link "dxSkinPumpkin"
+#pragma link "dxSkinsCore"
+#pragma link "dxSkinsDefaultPainters"
+#pragma link "dxSkinSeven"
+#pragma link "dxSkinSevenClassic"
+#pragma link "dxSkinSharp"
+#pragma link "dxSkinSharpPlus"
+#pragma link "dxSkinSilver"
+#pragma link "dxSkinSpringtime"
+#pragma link "dxSkinStardust"
+#pragma link "dxSkinSummer2008"
+#pragma link "dxSkinTheAsphaltWorld"
+#pragma link "dxSkinTheBezier"
+#pragma link "dxSkinValentine"
+#pragma link "dxSkinVisualStudio2013Blue"
+#pragma link "dxSkinVisualStudio2013Dark"
+#pragma link "dxSkinVisualStudio2013Light"
+#pragma link "dxSkinVS2010"
+#pragma link "dxSkinWhiteprint"
+#pragma link "dxSkinXmas2008Blue"
+#pragma link "Frame_FpraeventivMassn"
+//#pragma link "Frame_FpraeventivMassn"
+#pragma resource "*.dfm"
+
+TFormGH *FormGH;
+
+//==============================================================================================================================================
+__fastcall TFormGH::TFormGH(TComponent* Owner): TForm(Owner)
+//==============================================================================================================================================
+{
+
+	if(!Form0)
+	{
+		ShowMessage("Unerwarteter Fehler : Der Hauptteil vom MDE kann nicht mit dem Modul GH verbunden werden !");
+		return;
+	}
+
+//CreateFrame_FPVM_();
+
+	QRCodeBitmap=NULL;
+	Liste_Werknummern_Input=NULL;
+	Liste_Werknummern_Auswahl=NULL;
+
+	Liste_Kessel=new TStringList();
+
+	Color=SetLuminance(COL_H_MAIN,115);
+	TAB->Color=SetLuminance(COL_H_LIST,110);
+	LBwnrs->Font->Color=COL_V_WNR;
+	LBwnrs->Color      =COL_H_WNR;
+
+	Initialized=false; FnBusy=false; TimerUpdateGUIbusy=false;
+
+	VT_BNR=0;
+	GH_BNR=0;
+	NT_BNR=0;
+	VT_KNR=0;
+	GH_KNR=0;
+	NT_KNR=0;
+
+	for(int i=0;i<MAX_ANZ_VT; i++) BNVT[i]=NULL;
+	for(int i=0;i<MAX_ANZ_GH; i++) BNGH[i]=NULL;
+	for(int i=0;i<MAX_ANZ_NT; i++) BNNT[i]=NULL;
+
+	WnrStatus=0;
+	wnrIfRelevant420KV.clear();
+	countOfRelevant420KV = 0;
+
+	bChangedBySoftwareGH = false;
+	bGlobalInUnit70_WithFPVM = true;
+    bGlobalInUnit70_AndAllWNRsBe4NextStep_WithFPVM = false;
+
+	//RRR TEST
+	bMessage1 = false;
+	bMessage2 = false;
+	bMessage3 = false;
+
+	bTimer4FPVMIsCompleted = false;
+	tTimer4FPVM = NULL;
+
+}
+
+//==============================================================================================================================================
+void __fastcall TFormGH::Timer4FPVM(TObject *Sender)
+//==============================================================================================================================================
+{
+	GetCheckIfPRVM();
+
+	// Deaktiviere den zweiten Timer, wenn die Arbeit erledigt ist
+	tTimer4FPVM->Enabled = false;
+	if(tTimer4FPVM)
+		delete tTimer4FPVM;
+	tTimer4FPVM = NULL;
+
+	// Setze den Status auf abgeschlossen
+	bTimer4FPVMIsCompleted = true;
+
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::FormShow(TObject *Sender)
+//==============================================================================================================================================
+{
+int i,k,l,t;
+
+	// Verbindung zur Theobald Datenbank aufbauen
+	if(DBT.Connected==false) DBT.Connect();
+
+	Left=0;	Top=0;
+	IM1->Picture->Bitmap->LoadFromResourceName((int)HInstance,"BARCODE_27x14");
+
+	Width =Screen->Width-Form0->Width;
+	Height=Screen->Height-30;
+
+	Changed=false;
+	AllowAddWnr=false;
+
+	BNclose->Top=0;
+	BNclose->Left=Width-BNclose->Width;
+	LBchanged->Left=BNclose->Left-LBchanged->Width-10;
+
+	LIwnrAS->Clear();
+	LiExoKessel->Clear();
+
+//	BNvtTabelle->Visible=(PID.BEREICH=="OIT");
+
+	if(QQ==NULL)           QQ           =new TMSQuery(NULL);
+	if(QExo==NULL)         QExo         =new TMSQuery(NULL);
+
+	if(QRCodeBitmap==NULL) QRCodeBitmap =new TBitmap();
+
+	if(Liste_Werknummern_Input==NULL )   Liste_Werknummern_Input  =new TStringList();
+	if(Liste_Werknummern_Auswahl==NULL ) Liste_Werknummern_Auswahl=new TStringList();
+
+	TFontStyles boldStyle = TFontStyles(); boldStyle<<fsBold;
+
+	//----------------------------------------------------------------------------------------------------------------------------
+	// ComboBox füllen
+	 if(!Initialized)
+	 {
+	   QH=new TMSQuery(NULL);
+	   Initialized=(QH!=NULL);
+
+	   if(Form1->SendSQLLine("SELECT * FROM dbo.CoBxBezeichnungen WHERE Frame='F030' AND ComboBox = 'CoBxBhz' AND Active = 'TRUE' ORDER BY Position asc",QH))
+	   {
+	   	while(!QH->Eof)
+		{
+		 EDbodenheizung->Items->Add(QH->FieldByName("Bezeichnung")->AsAnsiString);
+		 EDbodenheizung2->Items->Add(QH->FieldByName("Bezeichnung")->AsAnsiString);
+		 QH->Next();
+		}
+	   }
+
+	   delete QH;
+	   QH=NULL;
+	 }
+
+	 // Bodenheitungspanel zurücksetzen
+		ReInitializeBdHz();
+	//----------------------------------------------------------------------------------------------------------------------------
+	for(i=0,l=SHvt1->Left+5,t=SHvt1->Top+5; i<MAX_ANZ_VT; i++) // Button-Reihe: VT-Kessel
+	//----------------------------------------------------------------------------------------------------------------------------
+	{
+	   if(BNVT[i]==NULL)
+	   {
+		BNVT[i]= new TSpeedButton(FormGH);
+		BNVT[i]->Name="BNVT"+IntToStr(i);
+		BNVT[i]->Parent=FormGH;
+		BNVT[i]->ParentFont=false;
+		BNVT[i]->Caption="--";
+		BNVT[i]->Font->Style=boldStyle;
+		BNVT[i]->ShowHint=true;
+		BNVT[i]->Layout=blGlyphBottom;
+		BNVT[i]->Flat=true;
+		BNVT[i]->Visible=true;
+		BNVT[i]->Height=22;
+		BNVT[i]->Width=22;
+		BNVT[i]->Top=t;
+		BNVT[i]->Left=l;
+		BNVT[i]->OnMouseUp=BNvtkMouseUp;
+		BNVT[i]->Visible=false;
+
+		l+=21;
+		if(i>0 && (i+1)%5==0) {t+=21;l=SHvt1->Left+5;}
+	   }
+	}
+	//----------------------------------------------------------------------------------------------------------------------------
+	for(i=0,l=SHgh1->Left+5,t=SHgh1->Top+5; i<MAX_ANZ_GH; i++) // Button-Reihe: GH-Kessel
+	//----------------------------------------------------------------------------------------------------------------------------
+	{
+	   if(BNGH[i]==NULL)
+	   {
+		//BNGH[i]= new TcxButton(FormGH);  -> DevExpress
+		BNGH[i]= new TcxButton(FormGH);
+		BNGH[i]->Name="BNGH"+IntToStr(i);
+
+		// Neue Eigenschaften für devExpress cxButton
+		BNGH[i]->Colors->Normal = clRed;
+		BNGH[i]->SpeedButtonOptions->CanBeFocused = false;
+		BNGH[i]->LookAndFeel->NativeStyle = false;
+		BNGH[i]->SpeedButtonOptions->Transparent = true;
+		BNGH[i]->LookAndFeel->SkinName = "Basic";
+		//--------------------------------------------
+
+		BNGH[i]->Parent=FormGH;
+		BNGH[i]->ParentFont=false;
+		BNGH[i]->Caption="--";
+		BNGH[i]->Font->Style=boldStyle;
+		BNGH[i]->ShowHint=true;
+		BNGH[i]->Height=22;
+		BNGH[i]->Width=22;
+		BNGH[i]->Top=t;
+		BNGH[i]->Left=l;
+		BNGH[i]->OnMouseUp=BNghkMouseUp;
+		BNGH[i]->Visible=false;
+
+		l+=22;
+		if(i>0 && (i+1)%9==0) {t+=22;l=SHgh1->Left+5;}
+	   }
+	}
+	//----------------------------------------------------------------------------------------------------------------------------
+	for(i=0,l=SHnt1->Left+5,t=SHnt1->Top+5; i<MAX_ANZ_NT; i++) // Button-Reihe: NT-Kessel
+	//----------------------------------------------------------------------------------------------------------------------------
+	{
+	   if(BNNT[i]==NULL)
+	   {
+		BNNT[i]= new TSpeedButton(FormGH);
+		BNNT[i]->Name="BNNT"+IntToStr(i);
+		BNNT[i]->Parent=FormGH;
+		BNNT[i]->ParentFont=false;
+		BNNT[i]->Caption="--";
+		BNNT[i]->Font->Style=boldStyle;
+		BNNT[i]->ShowHint=true;
+		BNNT[i]->Layout=blGlyphBottom;
+		BNNT[i]->Flat=true;
+		BNNT[i]->Visible=true;
+		BNNT[i]->Height=22;
+		BNNT[i]->Width=22;
+		BNNT[i]->Top=t;
+		BNNT[i]->Left=l;
+		BNNT[i]->OnMouseUp=BNntkMouseUp;
+		BNNT[i]->Visible=false;
+
+		l+=21;
+		if(i>0 && (i+1)%5==0) {t+=21;l=SHnt1->Left+5;}
+	   }
+	}
+	//----------------------------------------------------------------------------------------------------------------------------
+	Liste_Kessel->Clear(); Form1->GetStringListItemsFromSQL("SELECT Nummer FROM dbo.BM where Typ='VT-Kessel' ORDER BY Nummer", Liste_Kessel,"Nummer");
+	for(i=0; i<MAX_ANZ_VT && i<Liste_Kessel->Count; i++) {BNVT[i]->Caption=Liste_Kessel->Strings[i].Trim(); BNVT[i]->Visible=true;}
+
+	Liste_Kessel->Clear(); Form1->GetStringListItemsFromSQL("SELECT Nummer FROM dbo.BM where Typ='GH-Kessel' ORDER BY Nummer", Liste_Kessel,"Nummer");
+	for(i=0; i<MAX_ANZ_GH && i<Liste_Kessel->Count; i++) {BNGH[i]->Caption=Liste_Kessel->Strings[i].Trim(); BNGH[i]->Visible=true;}
+
+
+	Liste_Kessel->Clear(); Form1->GetStringListItemsFromSQL("SELECT Nummer FROM dbo.BM where Typ='NT-Ofen' ORDER BY Nummer", Liste_Kessel,"Nummer");
+	for(i=0; i<MAX_ANZ_NT && i<Liste_Kessel->Count; i++) {BNNT[i]->Caption=Liste_Kessel->Strings[i].Trim(); BNNT[i]->Visible=true;}
+	//----------------------------------------------------------------------------------------------------------------------------
+	UpdateBMstatus();
+	LBbmst1->Font->Color=GetBMStatusColor(1);
+	LBbmst4->Font->Color=GetBMStatusColor(4);
+	LBbmst5->Font->Color=GetBMStatusColor(5);
+	LBbmst6->Font->Color=GetBMStatusColor(6);
+	//----------------------------------------------------------------------------------------------------------------------------
+
+	if(GH_BNR>0) BuildTABbestueckung(0,GH_BNR,0);
+
+    UpdateListWnrAS();
+
+	TimerUpdateGUI->Enabled=true;
+	SB->ScrollInView(PN070);
+
+	EDwnr->SetFocus();
+	PNPraevMassn->Visible = false;
+	BNendePraevM->Enabled = false;
+
+  //	if(PID.USER4.Length()<2) {FormInfo->ShowMessage("",2,6110,"");}  // kein User angemeldet
+}
+//==================================================================================================================================================================================================
+void __fastcall TFormGH::BNaddWnrClick(TObject *Sender)
+//==================================================================================================================================================================================================
+{
+	if(!AllowAddWnr) AddWnrToTAB      (EDwnr->Text);
+	else             AddWnrToTABsonder(EDwnr->Text);
+
+	EDwnr->SetFocus();
+}
+//==================================================================================================================================================================================================
+void __fastcall TFormGH::BNcloseClick(TObject *Sender)
+{
+//RRR wieder RAUS
+ShowMessage("Anzahl Ereignis Speicher zu bauen : " + IntToStr(FramePraevM->Testcounter1) + " Anzahl Import Aufruf zu bauen : " + IntToStr(FramePraevM->Testcounter2) );
+//TimerUpdateGUI->Enabled = false;
+	FramePraevM->Cache2ExportData();
+//TimerUpdateGUI->Enabled = true;
+	Close(); Form0->SceneChange(SCN_START);
+}
+//==================================================================================================================================================================================================
+void __fastcall TFormGH::TABCellClick(TObject *Sender, int ACol, int ARow)
+//==================================================================================================================================================================================================
+{
+	if(TAB->Cell[ACol][ARow]->AsString.Pos("Zeile löschen")) // prinzipiell nur möglich, wenn VT-GH-NT-Prozess noch nicht angelaufen ist
+	{
+	   if(TAB->Cell[19][ARow]->AsInteger>0) // Ausnahme: BNR-Protokoll aus Werknummer entfernen
+	   {
+		 if(Form1->RemoveProtFromWnr(TAB->Cell[0][ARow]->AsString.Trim(), TAB->Cell[19][ARow]->AsInteger,"FGHE",false)) TAB->DeleteRow(ARow);
+	   }
+
+			if(NT_KNR>0) {if(Form1->UpdateDboItem("WERKNR","NT_KESSEL_NR=0","WNR like '"+TAB->Cell[0][ARow]->AsString.Trim()+"'")) TAB->DeleteRow(ARow);}
+	   else	if(GH_KNR>0) {if(Form1->UpdateDboItem("WERKNR","GH_KESSEL_NR=0","WNR like '"+TAB->Cell[0][ARow]->AsString.Trim()+"'")) TAB->DeleteRow(ARow);}
+	   else if(VT_KNR>0) {if(Form1->UpdateDboItem("WERKNR","VT_KESSEL_NR=0","WNR like '"+TAB->Cell[0][ARow]->AsString.Trim()+"'")) TAB->DeleteRow(ARow);}
+
+	   Rebuild_TAB(""); VerifyWnrGroup(this,"");
+	}
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::EDwnrKeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
+//==============================================================================================================================================
+{
+	if(Key==VK_RETURN && EDwnr->Text.Length()>5) BNaddWnr->Click();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNnewClick(TObject *Sender)
+//==============================================================================================================================================
+{
+	//RRR NEU wieder RAUS
+	//TimerUpdateGUI->Enabled = false;
+	FormGH->PNPraevMassn->Visible = false;
+	FramePraevM->Visible = false;
+	FramePraevM->Cache2ExportData();
+    //TimerUpdateGUI->Enabled = !false;
+	//RRR NEU
+
+	TAB->ClearRows();
+	ClearWnrProtokolle();
+	Liste_Werknummern_Auswahl->Clear();
+	Liste_Werknummern_Input->Clear();
+
+	EDwnr->Text="";
+	EDwnr->Text="";
+	EDvtBnr->Text="";
+	EDghBnr->Text="";
+	EDntBnr->Text="";
+	LBghKessel->Caption="";
+	LBvtKessel->Caption="";
+	LBgemischMenge->Caption="";
+	LBwnrs->Caption="";
+
+	GH_BNR=0;
+	VT_BNR=0;
+	NT_BNR=0;
+	VT_KNR=0;
+	GH_KNR=0;
+	NT_KNR=0;
+
+    isApl40=false;
+
+	UpdateKeyLeds();
+
+	WnrStatus=0;
+	MaxStatus=0;
+
+	AllowAddWnr=false;
+	PNwnrInput->Visible=true;
+	EDwnr->SetFocus();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartBestVTClick(TObject *Sender)
+//==============================================================================================================================================
+{
+int  protnr=0,i;
+
+	 if(!BNstartBestVT->Enabled) return;
+	 if(TAB->RowCount<1)         return;
+	 if(QQ==NULL)                return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartBestVT->Enabled=false;
+
+	 for(i=0; i<Liste_Werknummern_Auswahl->Count; i++)
+	 {
+	   Form1->ClearPDS();
+	   PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+	   PDS.X_TYP     ="F007";
+	   PDS.BEFUND    ="BIO";
+	   PDS.ORT       ="36";
+	   PDS.PRUEFER   =PID.USER4;
+	   PDS.STATUS_NR =7;
+	   PDS.UNIT1     =IntToStr(VT_KNR);
+
+	   if(VT_BNR>0) PDS.STATUS_NR=MaxStatus; // Nachzügler
+
+	   protnr=Form1->AddNewProtokol(0);
+	 }
+
+	 if(protnr>0)
+	 {
+		FRF007->ImportDataFromDB(protnr);
+		Rebuild_TAB(NULL); VerifyWnrGroup(this,"");  // hier: Gruppenauswahl beibehalten
+		if(!AllowAddWnr) {Form1->BM_SetStatus(0,"VT-Kessel",VT_KNR,5,0,0); UpdateBMstatus();}
+	 }
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartVTClick(TObject *Sender)
+//==============================================================================================================================================
+{
+int  protnr=0,i,config;
+bool addedlater=false;
+
+	 if(!BNstartVT->Enabled) return;
+	 if(TAB->RowCount<1)     return;
+	 if(QQ==NULL)            return;
+
+	 if(MaxStatus>=8) // Nachzügler (rechtzeitige Einbuchung der Werknummer in den NT-Kessel wurde vergessen)
+	 {
+		if(!AllowAddWnr) if(FormInfo->ShowMessage("",0,8102,"")!='j') return;  // "Kessel bereits geschlossen ..."
+		addedlater=true;
+	 }
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartVT->Enabled=false;
+
+	 FRF008->Kesselnr=VT_KNR;
+
+	 if(!addedlater)
+	 {
+	   Liste_Werknummern_Auswahl->Clear(); // zuerst alle Werknummern mit Status=7 "eingesetzt in Ziel-TR-Kessel" selektieren
+	   for(i=0;i<TAB->RowCount;i++)
+	   {
+		 if(TAB->Cell[2][i]->AsString.Trim()=="7") {TAB->Row[i]->Selected=true; Liste_Werknummern_Auswahl->Add(TAB->Cell[0][i]->AsString.Trim());}
+		 else                                       TAB->Row[i]->Selected=false;
+	   }
+	   VerifyWnrGroup(TAB,"");
+	 }
+
+	 Form1->ClearPDS();
+	 for(i=0; i<Liste_Werknummern_Auswahl->Count; i++)
+	 {
+	   PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+	   PDS.X_TYP     ="F008";
+	   PDS.BEFUND    ="BIO";
+	   PDS.ORT       ="36";
+	   PDS.PRUEFER   =PID.USER4;
+	   PDS.SAMMELPROT=true;
+	   PDS.STATUS_NR =8;
+	   PDS.UNIT1     =IntToStr(VT_KNR);
+
+	   if(i==0)
+	   {
+		 if(!addedlater)                               // Normalfall:
+		 {
+		   protnr=Form1->AddNewProtokol(0);            // erzeugt Gruppenprotokoll (setzt auch PK_NR=protnr)
+		   if(protnr>0 && VT_BNR==0) VT_BNR=protnr;    // Tränkenprozessstart definiert ggfs. auch die entsprechende BNR
+		 }
+		 else if(VT_BNR>0)                             // Nachzügler:
+		 {
+		   protnr   =VT_BNR;
+		   PDS.PK_NR=VT_BNR;
+		   Form1->UpdateWnrByNewPDS(true,false);       // vorhandene SammelprotokollNr=VT_BNR in Nachzügler eintragen
+		 }
+	   }
+	   else Form1->UpdateWnrByNewPDS(true,false);      // SammelprotokollNr in allen weiteren ausgewählten Werknummern eintragen
+
+
+	   if(VT_BNR>0)                                  // VT_BNR auch in jede Werknummer eintragen (Info ist redundant)
+	   {
+		 if(Form1->UpdateDboItem("WERKNR"   ,"VT_BNR="+IntToStr(VT_BNR),"WNR='"+PDS.WERKNR+"'")); else FormInfo->ShowMessage("Werknummer "+PDS.WERKNR+" konnte nicht aktualisiert werden",2,7,"");
+		 if(Form1->UpdateDboItem("AktiveWDS","VT_BNR="+IntToStr(VT_BNR),"WNR='"+PDS.WERKNR+"'")); else FormInfo->ShowMessage("Werknummer "+PDS.WERKNR+" in AktiveWDS konnte nicht aktualisiert werden",2,7,"");
+
+		 Form3_WnrSonder->CheckForMDCstart("VT_BNR="+IntToStr(VT_BNR),"F007");
+		 // Überprüfung aller Werknummern dieser Bestückung, ob Messauftrag auszulösen ist und diesen ggfs. starten
+	   }
+	 }
+
+	 if(protnr>0)
+	 {
+	   FRF008->ImportDataFromDB(protnr);
+	   Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,"");
+	   if(!AllowAddWnr) {Form1->BM_SetStatus(0,"VT-Kessel",VT_KNR,6,0,0);  UpdateBMstatus();}
+
+		// Automatische Übergabe der BNR an den Dienst bisher nur VT1-3
+		if (VT_KNR >0 && VT_KNR < 4)
+		{
+			Form1->UpdateDboItem("MDT_BWS_Service","MA_ID='"+IntToStr(VT_BNR)+"'","Name='VT "+IntToStr(VT_KNR)+"'");
+			Form1->UpdateDboItem("MDT_BWS_Service","MA_ID='"+IntToStr(VT_BNR)+"'","Name='VT "+IntToStr(VT_KNR)+"_Druckanstieg'");
+		}
+
+	   Form0->OpenForm(Sender,"Form208",IntToStr(protnr),VT_KNR); // Tabelle öffnen und Startzeile erzeugen
+	 }
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNendeVTClick(TObject *Sender)
+//==============================================================================================================================================
+{
+	 if(!BNendeVT->Enabled) return;
+	 if(TAB->RowCount<1)    return;
+	 if(QQ==NULL)           return;
+
+	 TimerUpdateGUI->Enabled=false;
+
+	 /*
+	 //RRR TEST Nur bei mir erstmal enthalten
+	 if(PDS.PK_NR > 0)
+		VT_BNR = PDS.PK_NR;
+	 //RRR TEST
+     */
+
+	 if(VT_BNR>0)
+	 {
+		if(FRF008->AllFieldsSet)
+		{
+		  BNendeVT->Enabled=false;
+
+		  FRF008->LBendePID->Caption=PID.USER4;
+		  FRF008->LBtsEnde->Caption=Now().FormatString("dd.mm.yyyy hh:nn:ss");
+		  FRF008->ProtokolID=VT_BNR;
+		  FRF008->Changed=true;
+		  FRF008->ExportDataToDB();
+
+		  SetWnrStatus(9,"",VT_BNR,0,0);
+		  FRF008->ImportDataFromDB(VT_BNR);
+		  Rebuild_TAB(""); VerifyWnrGroup(this,"");
+		  Form1->BM_SetStatus(0,"VT-Kessel",VT_KNR,4,0,0); UpdateBMstatus();
+
+			// Löschen der BNR aus dem Dienst bisher nur VT1-3
+			if (VT_KNR >0 && VT_KNR < 4)
+			{
+			  Form1->UpdateDboItem("MDT_BWS_Service","MA_ID=NULL","Name='VT "+IntToStr(VT_KNR)+"'");
+			  Form1->UpdateDboItem("MDT_BWS_Service","MA_ID=NULL","Name='VT "+IntToStr(VT_KNR)+"_Druckanstieg'");
+			}
+
+		}
+		else FormInfo->ShowMessage("",3,6702,""); // Eingaben unvollständig
+	 }
+
+	 if(!TimerUpdateGUI->Enabled)
+		TimerUpdateGUI->Enabled=true;
+
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartEinformenClick(TObject *Sender)
+//==============================================================================================================================================
+{
+int  protnr=0,i;
+
+	 if(!BNstartEinformen->Enabled) return;
+	 if(TAB->RowCount<1)            return;
+	 if(QQ==NULL)                   return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartEinformen->Enabled=false;
+
+	 for(i=0; i<Liste_Werknummern_Auswahl->Count; i++)
+	 {
+	   Form1->ClearPDS();
+
+	   PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+	   PDS.X_TYP     ="F010";
+	   PDS.BEFUND    ="BIO";
+	   PDS.ORT       ="37";
+	   PDS.PRUEFER   =PID.USER4;
+	   PDS.STATUS_NR =10;
+	   PDS.UNIF3    =  -1.0;
+	   PDS.UNIF4    =  -1.0;
+
+	   if(GH_BNR>0) PDS.STATUS_NR=MaxStatus; // Nachzügler
+
+	   protnr=Form1->AddNewProtokol(0);
+
+	   // Wegen Ris Liegezeiten 25.08.2022 hier hochgewandert. Wird beim erstellen des Frames F010 erzeugt
+	   // Schritt 15 wurde wegen den Freigaben eingefügt Zeile 1206
+	   Form1->ClearPDS();
+	   PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+	   PDS.X_TYP     ="F020";
+	   PDS.BEFUND    ="BIO";
+	   PDS.ORT       ="37";
+	   PDS.STATUS_NR =15;  // Zwischenschritt wegen Liegezeiten
+
+	   if(GH_BNR>0) PDS.STATUS_NR=MaxStatus; // Nachzügler
+
+	   protnr=Form1->AddNewProtokol(0);
+
+	 }
+
+	 if(protnr>0)
+	 {
+		FRF010->ImportDataFromDB(protnr);
+		Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,"");
+	 }
+
+	 TimerUpdateGUI->Enabled=true;
+     ReInitializeBdHz();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNendeBodenstkClick(TObject *Sender)
+//==============================================================================================================================================
+{
+
+	 if(!BNendeBodenstk->Enabled)  return;
+	 if(TAB->RowCount<1)           return;
+	 if(QQ==NULL)                  return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartEinformen->Enabled=false;
+
+	 // Abfrage ob alle Felder gesetzt wurdern, ansonsten gibt es eine Fehlermeldung
+	 // Update von TS und PID nur wenn eine Werknummer ausgeqählt wurde ansonsten Fehlermeldung
+
+	 if(FRF010->AllFieldsSet)
+		{
+			if (FRF020->LBprotNr->Caption.Length()>4 && LBwnrs->Caption.Length()<15)
+			{
+				// Update dbo.WERKNR und dbo.Protokoll
+				Form1->UpdateDboItem("WERKNR","STATUS_NR = '20'","WNR='"+CastString(PDS.WERKNR,9)+"'");
+				Form1->UpdateDboItem("PROTOKOL","TS ='"+Now().FormatString("dd.mm.yyyy hh:nn")+"',PK_PRFER ='"+PID.USER4+"'","PK_NR='"+FRF020->LBprotNr->Caption+"'");
+
+				Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,"");
+
+			}else FormInfo->ShowMessage("Vorgang ist nur mit einer Werknummer möglich !",3,6000,"");
+
+		} else FormInfo->ShowMessage("",3,6702,""); // Eingaben unvollständig
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartEinsetzenClick(TObject *Sender)
+//==============================================================================================================================================
+{
+int  protnr=0;
+bool addedlater=false;
+
+	 if(QQ==NULL)                           return;
+	 if(TAB->RowCount<1)                    return;
+	 if(Liste_Werknummern_Auswahl->Count<1) return;
+	 if(!BNstartEinsetzen->Enabled)         return;
+
+	 if(MaxStatus>=40) // Nachzügler (rechtzeitige Einbuchung der Werknummer in den GH-Kessel wurde vergessen)
+	 {
+		if(!AllowAddWnr) if(FormInfo->ShowMessage("",0,8102,"")!='j') return;  // "Kessel bereits geschlossen ..."
+		addedlater=true;
+	 }
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartEinsetzen->Enabled=false;
+
+	 for(int i=0; i<Liste_Werknummern_Auswahl->Count; i++) // für jede markierte Werknummer ein individuelles F030-Protokoll erzeugen
+	 {
+	   Form1->ClearPDS();
+	   PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+	   PDS.X_TYP     ="F030";
+	   PDS.BEFUND    ="BIO";
+	   PDS.ORT       ="37";
+	   PDS.PRUEFER   =PID.USER4;
+	   PDS.STATUS_NR =30;
+
+	   protnr=Form1->AddNewProtokol(0);
+	   if(protnr>0)
+	   {
+		 if(GH_BNR==0) // dies ist die erste Werknummer einer neuen Bestückung: prot_nr=>GH_BNR und neues leeres Kesselprotokoll vorab erzeugen
+		 {
+		   FRF040->KesselNr=GH_KNR;
+		   FRF040->Activate(protnr,"FormGH",true,""); if(FRF040->ProtokollID>0) GH_BNR=FRF040->ProtokollID;
+		 }
+		 if(GH_BNR>0)
+		 {
+		   if(Form1->UpdateDboItem("WERKNR","GH_BNR="+IntToStr(GH_BNR),"WNR='"+PDS.WERKNR+"'"));               // GH_BNR auch in Werknummer eintragen (Info ist redundant)
+		   else FormInfo->ShowMessage("Werknummer "+PDS.WERKNR+" konnte nicht aktualisiert werden",2,7,"");
+		   if(Form1->UpdateDboItem("AktiveWDS","GH_BNR="+IntToStr(GH_BNR),"WNR='"+PDS.WERKNR+"'"));
+		   else FormInfo->ShowMessage("Werknummer "+PDS.WERKNR+" in AktiveWDS konnte nicht aktualisiert werden",2,7,"");
+		 }
+	   }
+	 }
+
+	 if(addedlater) SetWnrStatus(MaxStatus,"",0,GH_BNR,0); // momentaner Status des laufenden Prozesses wird auch für den/die Nachzügler übernommen
+
+	 if(protnr>0)
+	 {
+	   Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,"");
+	   if(!addedlater) {Form1->BM_SetStatus(0,"GH-Kessel",GH_KNR,5,0,0); UpdateBMstatus(); UpdateBMstatus();} // gilt nicht für Nachzügler
+	 }
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartAbkuehlenClick(TObject *Sender)
+//==============================================================================================================================================
+{
+  if(BNstartAbkuehlen->Enabled)
+  {
+	FRF040->ExportDataToDB(BNstartAbkuehlen);
+	Form1->BM_SetStatus(0,"GH-Kessel",GH_KNR,6,0,GH_BNR); UpdateBMstatus();
+
+	// Übergabe der Bodenheizung an FGHE
+	Form1->UpdateDboItems("FGHE", "BODENHZ_ID='"+BodenHz+"',BODENHZ_IO ='true', BODENHZ_PID ='"+User+"'" ,"ID="+IntToStr(GH_BNR));
+
+	Form3_WnrSonder->CheckForMDCstart("GH_BNR="+IntToStr(GH_BNR),"F020");
+	Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,"");
+
+	// Überprüfung aller Werknummern dieser Bestückung, ob LWL-Messaufträge auszulösen sind und diese nach Rückfrage starten
+  }
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNendeAbkuehlenClick(TObject *Sender)      {if(BNendeAbkuehlen->Enabled)      FRF040->ExportDataToDB(BNendeAbkuehlen);}
+void __fastcall TFormGH::BNstartImpraegnierenClick(TObject *Sender) {if(BNstartImpraegnieren->Enabled) FRF040->ExportDataToDB(BNstartImpraegnieren);}
+void __fastcall TFormGH::BNendeImpraegnierenClick(TObject *Sender)  {if(BNendeImpraegnieren->Enabled)  FRF040->ExportDataToDB(BNendeImpraegnieren);}
+void __fastcall TFormGH::BNstartGelierenClick(TObject *Sender)      {if(BNstartGelieren->Enabled)      FRF040->ExportDataToDB(BNstartGelieren);}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNendeGelierenClick(TObject *Sender)
+//==============================================================================================================================================
+{
+  if(BNendeGelieren->Enabled)
+  {
+	FRF040->ExportDataToDB(BNendeGelieren);
+	Form1->BM_SetStatus(0,"GH-Kessel",GH_KNR,4,0,0); UpdateBMstatus();
+
+	Form3_WnrSonder->CheckForMDCstop("GH_BNR="+IntToStr(GH_BNR),"F020");
+	// Überprüfung aller Werknummern dieser Bestückung, ob LWL-Messaufträge aktiv sind und diese nach Rückfrage deaktivieren
+
+  }
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::FormMouseMove(TObject *Sender, TShiftState Shift, int X,int Y) {IDLETIME=0;}
+//==============================================================================================================================================
+void __fastcall TFormGH::GradientMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+//==============================================================================================================================================
+{
+   ReleaseCapture(); SendMessage(Handle,WM_SYSCOMMAND,SC_MOVE+HTCAPTION,0);
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::PBqrBNRPaint(TObject *Sender)
+//==============================================================================================================================================
+{
+double  scale;
+
+  PBqrBNR->Canvas->Brush->Color=clWhite;
+  PBqrBNR->Canvas->FillRect(Rect(0,0,PBqrBNR->Width,PBqrBNR->Height));
+
+  if(QRCodeBitmap->Width>0 && QRCodeBitmap->Height>0)
+  {
+	if (PBqrBNR->Width < PBqrBNR->Height) scale=PBqrBNR->Width  / QRCodeBitmap->Width;
+	else                                  scale=PBqrBNR->Height / QRCodeBitmap->Height;
+
+	PBqrBNR->Canvas->StretchDraw(Rect(0,0,int(scale*QRCodeBitmap->Width), int(scale*QRCodeBitmap->Height)), QRCodeBitmap);
+  }
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::LBbnrClick(TObject *Sender)
+//==============================================================================================================================================
+{
+   Show_BNR_QRCode();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNprintClick(TObject *Sender)
+//==============================================================================================================================================
+{
+int        sw,sh,tw,th,ypos;
+int        seite,anzseiten;
+AnsiString txt1;
+TPrinter  *PRN;
+TPngImage *png ;
+TBitmap   *bmp;
+
+	BNprint->Enabled=false;
+
+	PRN=Printer();
+	PRN->Orientation=poPortrait;
+	PRN->BeginDoc();
+	PRN->Title="MDELive GH-Laufkarte";
+
+	tw=PRN->PageWidth;
+	th=PRN->PageHeight;
+
+	png = new TPngImage();
+	bmp = new TBitmap();
+
+	if(TAB->RowCount<25) anzseiten=1; else anzseiten=2;
+	seite=1;
+	SB->Visible=false;
+
+	while(seite<=anzseiten)
+	{
+	 sw=LBbnr->Left+LBbnr->Width+5; bmp->Width=sw;  							// Kopfzeile
+	 sh=Gradient->Height;           bmp->Height=sh;
+	 BitBlt(bmp->Canvas->Handle,0,0,sw,sh,FormGH->Canvas->Handle,0,0,SRCCOPY);
+
+	 PRN->Canvas->StretchDraw(TRect(0,0,tw,th/30),bmp);
+
+	 if(seite<anzseiten) {TAB->Top=38; TAB->Height=Height-38;}
+
+	 if(seite==1)                                                               // Tabelle (wird hier nur auf Seite 1 ausgegeben)
+	 {
+	   ProdTyp->Visible=false; KPIdle(300);                                     // nicht benötigte Spalte(n) vorübergehend herausnehmen
+
+	   sw=1403;                   bmp->Width=sw;                                // zu druckenden Ausschnitt definieren
+	   sh=TAB->Height; bmp->Height=sh;
+	   BitBlt(bmp->Canvas->Handle,0,0,sw,sh,FormGH->Canvas->Handle,TAB->Left,TAB->Top,SRCCOPY);
+	   if(anzseiten>1) PRN->Canvas->StretchDraw(TRect(0,th/30+10,tw,th  -th/30-20),bmp);
+	   else			   PRN->Canvas->StretchDraw(TRect(0,th/30+10,tw,th/2-th/30-20),bmp);
+
+	   Show_BNR_QRCode();
+	   PRN->Canvas->StretchDraw(TRect(tw-tw/10,th/30+10,tw,th/30+tw/10),QRCodeBitmap); // QR-Code: GH_BNR oben rechts
+
+	   ProdTyp->Visible=true;
+	 }
+
+	 if(seite==anzseiten)                                                       // Eingabe-Formular "Imprägnieren" auf letzter Seite hinzufügen
+	 {
+	   png->LoadFromFile(DIR_MDELIVEDATA+"Hand_Protokoll_Imprägnieren.png");
+	   bmp->Width =png->Width;
+	   bmp->Height=png->Height;
+	   bmp->Canvas->Draw(0,0,png);
+	   if(seite==1) PRN->Canvas->StretchDraw(TRect(0,th/2    ,tw,th  ),bmp);
+	   else         PRN->Canvas->StretchDraw(TRect(0,th/30+10,tw,th/2),bmp);
+
+	   txt1=LBgemischMenge->Caption;
+	   if(txt1!="---")
+	   {
+		  if(seite==1) ypos=th/2; else ypos=th/30+10;
+
+						  PRN->Canvas->TextOutW(50,ypos+th/29,"Gemischmenge: "+txt1+" Liter");
+		  if(!GMkomplett) PRN->Canvas->TextOutW(50,ypos+th/22,"Summe ist unvollständig!");
+	   }
+	 }
+
+	 if(seite<anzseiten) PRN->NewPage();
+	 seite++;
+	}
+
+	PRN->EndDoc();
+
+	TAB->Top=130; TAB->Height=480;
+	SB->Visible=true;
+
+	delete bmp;
+	delete png;
+
+	BNprint->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::TABMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+//==============================================================================================================================================
+{
+	VerifyWnrGroup(TAB,"");
+	ShowSelectedWnrInTAB();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNselectAllClick(TObject *Sender)
+//==============================================================================================================================================
+{
+   TAB->SetFocus();
+   TAB->SelectAll();
+   VerifyWnrGroup(TAB,"");
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::TABExit(TObject *Sender) {ShowSelectedWnrInTAB();}
+//==============================================================================================================================================
+void __fastcall TFormGH::AbwMeldung(int WnrStatusNr)
+//==============================================================================================================================================
+{
+	AUSW_WNR->Clear();
+	for(int i=0; i<TAB->RowCount; i++) if(TAB->Row[i]->Selected) AUSW_WNR->Add(CastString(TAB->Cell[0][i]->AsString.Trim(),9));
+
+	Form0->OpenForm(this,"Form5","",WnrStatusNr);
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::AbwMeldungTemp(int tmpId, bool AutoSend)
+//==============================================================================================================================================
+{
+	AUSW_WNR->Clear();
+	for(int i=0; i<TAB->RowCount; i++) if(TAB->Row[i]->Selected) AUSW_WNR->Add(CastString(TAB->Cell[0][i]->AsString.Trim(),9));
+
+	Form0->AbwMeldungFromTemplate(tmpId,AutoSend);
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::FRF010BNabwMeldungClick(TObject *Sender) {FRF010->BNabwMeldungClick(Sender);}
+//==============================================================================================================================================
+void __fastcall TFormGH::EDghBnrKeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
+//==============================================================================================================================================
+{
+	if(Key==VK_RETURN && EDghBnr->Text.Length()>6) BuildTABbestueckung(0,EDghBnr->Text.ToIntDef(0),0);
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::EDvtBnrKeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
+//==============================================================================================================================================
+{
+	if(Key==VK_RETURN && EDvtBnr->Text.Length()>6) BuildTABbestueckung(EDvtBnr->Text.ToIntDef(0),0,0);
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::EDntBnrKeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
+//==============================================================================================================================================
+{
+	if(Key==VK_RETURN && EDntBnr->Text.Length()>6) BuildTABbestueckung(0,0,EDntBnr->Text.ToIntDef(0));
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNopenGHkesselnrClick(TObject *Sender)
+//==============================================================================================================================================
+{
+   if(GH_KNR>0 && TAB->RowCount==0) BuildTABghKessel(GH_KNR);
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNvtkMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+//==============================================================================================================================================
+{
+	IDLETIME=0;
+
+	if(TAB->RowCount >0) BNnewClick(Sender);
+
+	if(TAB->RowCount==0)
+	{
+	  TSpeedButton    *sb=dynamic_cast<TSpeedButton *>(Sender);
+	  VT_KNR          =sb->Caption.Trim().ToIntDef(0);
+
+	  BuildTABvtKessel(VT_KNR);
+	}
+	else UpdateKeyLeds();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNghkMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+//==============================================================================================================================================
+{
+	IDLETIME=0;
+	if(TAB->RowCount >0) BNnewClick(Sender);
+	if(TAB->RowCount==0)
+	{
+	  //TSpeedButton    *sb=dynamic_cast<TSpeedButton *>(Sender);
+	  TcxButton    *sb=dynamic_cast<TcxButton *>(Sender);
+	  GH_KNR          =sb->Caption.Trim().ToIntDef(0);
+
+	  // LBghKessel->Caption=IntToStr(GH_KNR); BNsearchGHbnr->Click(); // Umweg über Auswahlliste ###
+	  BuildTABghKessel(GH_KNR);
+
+	  // Bodenheitungspanel
+	  ReInitializeBdHz();
+	}
+	else UpdateKeyLeds();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNntkMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+//==============================================================================================================================================
+{
+	IDLETIME=0;
+	if(TAB->RowCount >0) BNnewClick(Sender);
+	if(TAB->RowCount==0)
+	{
+	  TSpeedButton    *sb=dynamic_cast<TSpeedButton *>(Sender);
+	  NT_KNR          =sb->Caption.Trim().ToIntDef(0);
+	  BuildTABntKessel(NT_KNR);
+	}
+	else UpdateKeyLeds();
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::TABDblClick(TObject *Sender)
+//==============================================================================================================================================
+{
+   //RRR
+   if(GetCheckIfPRVMCouldShow() && TAB->SelectedColumn==0 && TAB->SelectedRow>=0)
+   {
+	 Form3->Show();
+	 Form3->CompletePage(Sender,TAB->Cell[0][TAB->SelectedRow]->AsString.Trim(),"");
+   }
+
+   try     // Bei Altdaten gibt es keine FAUF in der Tableau-Tabelle daher wird hier immer eine Excepion geworfen
+   {
+		if(TAB->SelectedColumn==20 && TAB->SelectedRow>=0)
+		{
+			// Dynamisches Erstellen des Pfades
+			std::wstring s =  L"https://eu-west-1a.online.tableau.com/t/trenchgrouphsp/views/PapierloseFertigung_Auftragsbersicht_17240707296110/DB_Auftragspapiere?:embed=yes&:linktarget=_blank&:toolbar=yes&Fertigungsauftrag=";
+						 s += TAB->Cell[5][TAB->SelectedRow]->AsString.Trim().c_bstr() ;
+						 s += L"&Werknummer=";
+						 s += TAB->Cell[0][TAB->SelectedRow]->AsString.Trim().c_bstr() ;
+			const wchar_t* ptr = s.data();
+
+			// Ausführung als Pointer
+			ShellExecute(0, 0, ptr, 0, 0 , SW_SHOW );
+		}
+   }  	catch (...) { FormInfo->ShowMessage("",2,7151,"");}
+
+
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNsearchVTbnrClick(TObject *Sender)
+//============================================================================================================================================
+{
+	String txt=LBvtKessel->Caption.Trim(); // Kesselauswahl sichern
+	BNnewClick(Sender);
+
+	if(txt.IsEmpty() || txt=="0") Form82->Initialize(EDvtBnr,"VTKESSEL","SELECT TOP(100) * FROM dbo.PROTOKOL WHERE X_TYP='F008' ORDER BY ID DESC"                    ,"", FormGH);
+	else                          Form82->Initialize(EDvtBnr,"VTKESSEL","SELECT TOP(100) * FROM dbo.PROTOKOL WHERE X_TYP='F008' AND UNIT1='"+txt+"' ORDER BY ID DESC","", FormGH);
+
+	while(Form82->Visible) KPIdle(100);
+
+	if(Form82->Auswahl!="") {EDvtBnr->Text=Form82->Auswahl; BuildTABbestueckung(EDvtBnr->Text.ToIntDef(0),0,0);}
+	else if(txt.Length()>0)  VT_KNR=txt.ToIntDef(0); // o.a. Kesselauswahl ist Vorgabe für neue Bestückung
+}
+//============================================================================================================================================
+void __fastcall TFormGH::BNsearchNTbnrClick(TObject *Sender)
+//==============================================================================================================================================
+{
+	String txt=LBntKessel->Caption.Trim(); // Kesselauswahl sichern
+	BNnewClick(Sender);
+
+	if(txt.IsEmpty() || txt=="0") Form82->Initialize(EDntBnr,"NTKESSEL","SELECT TOP(100) * FROM dbo.PROTOKOL WHERE X_TYP='F080' ORDER BY ID DESC"                    ,"", FormGH);
+	else                          Form82->Initialize(EDntBnr,"NTKESSEL","SELECT TOP(100) * FROM dbo.PROTOKOL WHERE X_TYP='F080' AND UNIINT1="+txt+" ORDER BY ID DESC","", FormGH);
+
+	while(Form82->Visible) KPIdle(100); // hier warten ...
+
+	if(Form82->Auswahl!="") {EDntBnr->Text=Form82->Auswahl; BuildTABbestueckung(0,0,EDntBnr->Text.ToIntDef(0));}
+	else if(txt.Length()>0)  NT_KNR=txt.ToIntDef(0); // o.a. Kesselauswahl ist Vorgabe für neue Bestückung
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNsearchGHbnrClick(TObject *Sender)
+//==============================================================================================================================================
+{
+	String txt=LBghKessel->Caption.Trim(); // Kesselauswahl sichern
+	BNnewClick(Sender);
+
+	if(txt.IsEmpty() || txt=="0") Form82->Initialize(EDghBnr,"GHKESSEL","SELECT TOP(100) * FROM dbo.FGHE ORDER BY ID DESC"                        ,"", FormGH);
+	else                          Form82->Initialize(EDghBnr,"GHKESSEL","SELECT TOP(100) * FROM dbo.FGHE WHERE KESSEL_NR="+txt+" ORDER BY ID DESC","", FormGH);
+
+	while(Form82->Visible) KPIdle(100); // hier warten ...
+
+	if(Form82->Auswahl!="") {EDghBnr->Text=Form82->Auswahl; BuildTABbestueckung(0,EDghBnr->Text.ToIntDef(0),0);}
+	else if(txt.Length()>0)  GH_KNR=txt.ToIntDef(0);
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartBestNTClick(TObject *Sender)
+//==============================================================================================================================================
+{
+int  protnr=0,i;
+
+	 if(!BNstartBestNT->Enabled || TAB->RowCount<1 || QQ==NULL) return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartBestNT->Enabled=false;
+
+	 for(i=0; i<Liste_Werknummern_Auswahl->Count; i++)
+	 {
+	   Form1->ClearPDS();
+	   PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+	   PDS.X_TYP     ="F070";
+	   PDS.BEFUND    ="BIO";
+	   PDS.ORT       ="39";
+	   PDS.PRUEFER   =PID.USER4;
+	   PDS.STATUS_NR =70;
+	   PDS.UNIT1     =IntToStr(NT_KNR);
+
+	   if(NT_BNR>0) PDS.STATUS_NR=MaxStatus; // Nachzügler
+
+	   protnr=Form1->AddNewProtokol(0);
+	 }
+
+	 if(protnr>0) {FRF070->ImportDataFromDB(protnr); Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,""); Form1->BM_SetStatus(0,"NT-Ofen",NT_KNR,5,0,0); UpdateBMstatus();}
+
+
+
+     // Zurücksetzten der Bodenheizung
+	Form1->UpdateDboItems("BM", "akt_Bodenhzg='',Bodenhzg_PID =''" ," Typ  = 'GH-Kessel' AND Nummer ="+FRF040->LBkesselNr->Caption);
+
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartNTClick(TObject *Sender)
+//==============================================================================================================================================
+{
+int  protnr=0,i;
+
+	 if(!BNstartNT->Enabled || TAB->RowCount<1 || QQ==NULL) return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartNT->Enabled=false;
+
+
+	 if(FRF070->AllFieldsSet)
+
+	 {
+		FRF080->KesselNr=NT_KNR;
+
+		Liste_Werknummern_Auswahl->Clear(); // alle Werknummern mit Status 70 (eingesetzt in Ziel-NT-Kessel) selektieren
+		for(i=0;i<TAB->RowCount;i++)
+		{
+			if(TAB->Cell[2][i]->AsString.Trim()=="70") {TAB->Row[i]->Selected=true; Liste_Werknummern_Auswahl->Add(TAB->Cell[0][i]->AsString.Trim());}
+			else                                        TAB->Row[i]->Selected=false;
+		}
+		VerifyWnrGroup(TAB,"");
+
+		Form1->ClearPDS();
+		for(i=0; i<Liste_Werknummern_Auswahl->Count; i++)
+		{
+			PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+			PDS.X_TYP     ="F080";
+			PDS.BEFUND    ="BIO";
+			PDS.ORT       ="39";
+			PDS.PRUEFER   =PID.USER4;
+			PDS.SAMMELPROT=true;
+			PDS.STATUS_NR =80;
+			PDS.UNIINT1   =NT_KNR;
+
+			if(i==0)
+			{
+				protnr=Form1->AddNewProtokol(0);            // erzeugt neues Gruppenprotokoll (setzt auch PK_NR=protnr) => BNR
+				if(protnr>0 && NT_BNR==0) NT_BNR=protnr;
+			}
+			else Form1->UpdateWnrByNewPDS(true,false);    // SammelprotokollNr in allen weiteren ausgewählten Werknummern eintragen
+
+			if(NT_BNR>0)                                  // NT_BNR auch in jede Werknummer eintragen (Info ist redundant)
+			{
+				if(!Form1->UpdateDboItem("WERKNR"   ,"NT_BNR="+IntToStr(NT_BNR),"WNR='"+PDS.WERKNR+"'"))FormInfo->ShowMessage("Werknummer "+PDS.WERKNR+" konnte nicht aktualisiert werden",2,7,"");
+				if(!Form1->UpdateDboItem("AktiveWDS","NT_BNR="+IntToStr(NT_BNR),"WNR='"+PDS.WERKNR+"'"))FormInfo->ShowMessage("Werknummer "+PDS.WERKNR+" in AktiveWDS konnte nicht aktualisiert werden",2,7,"");
+
+				if(i==0)
+				{
+					Form1->BM_SetStatus(0,"NT-Ofen",NT_KNR,6,0,NT_BNR); // Startet auch MDT-Service
+					UpdateBMstatus();
+
+					Form3_WnrSonder->CheckForMDCstart("NT_BNR="+IntToStr(NT_BNR),"F070");
+					// Überprüfung aller Werknummern dieser Bestückung, ob Messauftrag (LWL) auszulösen ist und diesen ggfs. nach Rückfrage starten
+				}
+			}
+		}
+
+			if(protnr>0) {FRF080->ImportDataFromDB(protnr); Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,"");}
+
+	  }else FormInfo->ShowMessage("",3,6702,""); // Eingaben unvollständig
+
+
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNendeNTClick(TObject *Sender)
+//==============================================================================================================================================
+{
+	 if(!BNendeNT->Enabled || TAB->RowCount<1 || QQ==NULL) return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNendeNT->Enabled=false;
+
+	 if(NT_BNR>0)
+	 {
+	   if(FRF080->AllFieldsSet)
+	   {
+		 FRF080->LBendePID->Caption=PID.USER4;
+		 FRF080->LBtsEnde->Caption=Now().FormatString("dd.mm.yyyy hh:nn:ss");
+		 FRF080->ProtokollID=NT_BNR;
+		 FRF080->Changed=true;
+		 FRF080->ExportDataToDB();
+
+		 SetWnrStatus(81,"",0,0,NT_BNR); FRF080->ImportDataFromDB(NT_BNR); Rebuild_TAB(""); VerifyWnrGroup(this,"");
+		 Form1->BM_SetStatus(0,"NT-Ofen",NT_KNR,4,0,0);
+		 UpdateBMstatus();
+		 UpdateListWnrAS();
+	   }
+	   else FormInfo->ShowMessage("",3,6702,""); // Eingaben unvollständig
+	 }
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNstartNTausbClick(TObject *Sender) // Einzelprotokolle - neu erzeugen
+//==============================================================================================================================================
+{
+int  protnr=0,i;
+
+	 if(!BNstartNTausb->Enabled || TAB->RowCount<1 || QQ==NULL) return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNstartNTausb->Enabled=false;
+
+	 for(i=0; i<Liste_Werknummern_Auswahl->Count; i++)
+	 {
+	   Form1->ClearPDS();
+	   PDS.WERKNR    =CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+	   PDS.X_TYP     ="F090";
+	   PDS.BEFUND    ="BIO";
+	   PDS.ORT       ="40";
+	   PDS.PRUEFER   =PID.USER4;
+	   PDS.STATUS_NR =90;
+	   PDS.UNIINT1   =NT_KNR;
+	   PDS.UNIINT2   =NT_BNR;
+
+	   protnr=Form1->AddNewProtokol(0);
+	 }
+
+	 if(protnr>0) {FRF090->ImportDataFromDB(protnr); Rebuild_TAB(PDS.WERKNR); VerifyWnrGroup(this,"");}
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNendeNTausbClick(TObject *Sender) // Einzelprotokolle - Abschluss-Kennzeichen setzen
+//==============================================================================================================================================
+{
+	int protnr=0,i;
+	String wnr="";
+
+	 if(!BNendeNTausb->Enabled || TAB->RowCount<1 || QQ==NULL) return;
+
+	 TimerUpdateGUI->Enabled=false;
+	 BNendeNTausb->Enabled=false;
+
+	 if(FRF090->AllFieldsSet)
+	 {
+		for(i=0; i<Liste_Werknummern_Auswahl->Count; i++)
+		{
+			wnr=CastString(Liste_Werknummern_Auswahl->Strings[i],9);
+			protnr=Form1->GetLastProt(&PDS,wnr,"F090",true);
+
+			if(protnr>0)
+			{
+				PDS.STATUS_NR =91;
+				PDS.PID_ENDE  =PID.USER4;
+				PDS.TS_ENDE   =Now();
+				Form1->PDSToProtokol(NULL); // Protokoll speichern, aktualisiert nicht Statuswerte in WERKNR, da keine Erstsicherung
+				Form1->UpdateDboItems("WERKNR","STATUS='F091',STATUS_NR=91","WNR='"+wnr+"'");
+			}
+		}
+
+		if(protnr>0 && wnr!="") // Liste aktualisieren zur nächsten Werknummer gehen
+		{
+			wnr=SelectNextWnrInTAB();
+			//FRF090->ImportDataFromDB(protnr);
+			Rebuild_TAB(wnr); VerifyWnrGroup(this,"");
+			UpdateListWnrAS();
+		}
+
+	 }else FormInfo->ShowMessage("",3,6702,""); // Eingaben unvollständig
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::TimerUpdateGUITimer(TObject *Sender)
+//==============================================================================================================================================
+{
+
+static int cnt=0;
+
+	 if(APPLICATIONSTOPPING || TimerUpdateGUIbusy) return;
+
+	 TimerUpdateGUIbusy=true;
+
+	 UserLoggedIn=(PID.USER4.Length()>1);
+
+	 if(Changed) {LBchanged->Visible=true;  BNclose->Enabled=false; BNnew->Enabled=false; if(IDLETIME>2) {SaveData(); IDLETIME=0;}}
+	 else        {LBchanged->Visible=false; BNclose->Enabled=true;  BNnew->Enabled=true;}
+
+	 LBwnrCnt->Caption=IntToStr(Liste_Werknummern_Auswahl->Count);
+
+	 VT_Aktiv=(VT_KNR>0 && VT_BNR>0 && MaxStatus>  7 && MaxStatus< 9);
+	 GH_Aktiv=(GH_KNR>0 && GH_BNR>0 && MaxStatus>=40 && MaxStatus<61);
+	 NT_Aktiv=(NT_KNR>0 && NT_BNR>0 && MaxStatus==80);
+
+	 if(GH_KNR)  VT_KNR=0;
+	 if(NT_KNR) {VT_KNR=0; GH_KNR=0;}
+
+	 PNwnrInput ->Visible =(!(VT_Aktiv|GH_Aktiv|NT_Aktiv) || AllowAddWnr);
+	 BNaddWnr   ->Visible =(EDwnr->Text.Length()>5);
+
+	 EDghBnr->Enabled=(GH_BNR==0 && TAB->RowCount==0);
+	 EDvtBnr->Enabled=(VT_BNR==0 && TAB->RowCount==0);
+	 EDntBnr->Enabled=(NT_BNR==0 && TAB->RowCount==0);
+
+	 if(FRF040->CBtempern->Checked==false) {BNendeGelieren->Caption="Gelieren-fertig - 61";         BNendeGelieren->Width=123;}
+	 else                                  {BNendeGelieren->Caption="Gelieren/Tempern fertig - 62"; BNendeGelieren->Width=169;}
+
+	 //FRF040->PNbodenheizung->Enabled=(UserLoggedIn && WnrStatus>=30 && GH_BNR>0);  -> entfällt mit dem neuen Verfahren zur Bodenheizung
+	 FRF040->BNfreigabeImpr->Enabled=(UserLoggedIn && WnrStatus>=41 && GH_BNR>0);
+
+	 if(WnrStatus== 0) GRDstatusBar->Width=PN007->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus== 7) GRDstatusBar->Width=PN008->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus== 8) GRDstatusBar->Width=PN008->Left+PN008->Width/2                            +SB->HorzScrollBar->Position; else
+	 if(WnrStatus <10) GRDstatusBar->Width=PN010->Left                                           +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==10) GRDstatusBar->Width=PN020->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==20) GRDstatusBar->Width=PN030->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==30) GRDstatusBar->Width=PN040->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==40) GRDstatusBar->Width=PN040->Left+FRF040->GRD40->Left+FRF040->GRD40->Width/2+SB->HorzScrollBar->Position; else
+	 if(WnrStatus==41) GRDstatusBar->Width=PN040->Left+FRF040->GRD50->Left+10                    +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==50) GRDstatusBar->Width=PN040->Left+FRF040->GRD50->Left+FRF040->GRD50->Width/2+SB->HorzScrollBar->Position; else
+	 if(WnrStatus==51) GRDstatusBar->Width=PN040->Left+FRF040->GRD60->Left+10                    +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==60) GRDstatusBar->Width=PN040->Left+FRF040->GRD60->Left+FRF040->GRD60->Width/2+SB->HorzScrollBar->Position; else
+	 if(WnrStatus==61) GRDstatusBar->Width=PN070->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==62) GRDstatusBar->Width=PN070->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==70) GRDstatusBar->Width=PN070->Left+PN070->Width/2                            +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==80) GRDstatusBar->Width=PN080->Left+PN080->Width/2                            +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==81) GRDstatusBar->Width=PN090->Left+10                                        +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==90) GRDstatusBar->Width=PN090->Left+PN090->Width/2                            +SB->HorzScrollBar->Position; else
+	 if(WnrStatus==91) GRDstatusBar->Width=PN090->Left+PN090->Width+10                           +SB->HorzScrollBar->Position;
+
+//------------------------------------------------------------------------------------------------------------------------
+	if(cnt%5==0) // jede Sekunde
+//------------------------------------------------------------------------------------------------------------------------
+	{
+	  // ExoEnde blinken
+	  if (LlbExoEnde->Caption == "Exo-Ende" && LiExoKessel->Items->Count > 0) LlbExoEnde->Caption = ""; else LlbExoEnde->Caption = "Exo-Ende";
+
+	  BNsonder->Visible=Form7->CheckPriv("GHSonder","","",false);
+	  LBaddWnr->Visible=AllowAddWnr;
+
+	  LBstatusnr->Caption=IntToStr(WnrStatus);
+       if (WnrStatus >9 && WnrStatus < 40) {PNbodenheizung->Visible = true;} else {PNbodenheizung->Visible = false;}
+
+	  LBvtKessel->Caption         =IntToStr(VT_KNR); // ### nur zur Kontrolle
+	  LBghKessel->Caption         =IntToStr(GH_KNR); // ### nur zur Kontrolle
+	  LBntKessel->Caption         =IntToStr(NT_KNR); // ### nur zur Kontrolle
+
+	  FRF030->LBkesselnr->Caption =IntToStr(GH_KNR);
+
+	  if(VT_BNR) {LBbnr->Caption=IntToStr(VT_BNR); LBbnr->Color=Label4 ->Color;} else
+	  if(GH_BNR) {LBbnr->Caption=IntToStr(GH_BNR); LBbnr->Color=Label9 ->Color;} else
+	  if(NT_BNR) {LBbnr->Caption=IntToStr(NT_BNR); LBbnr->Color=Label12->Color;}
+	  else       {LBbnr->Caption=" - ";            LBbnr->Color=clSilver;}
+
+	  SHvt2->Visible=(VT_KNR>0);
+	  SHgh2->Visible=(GH_KNR>0);
+	  SHnt2->Visible=(NT_KNR>0);
+
+	  FRF007->Visible  =(Liste_Werknummern_Auswahl->Count>=1 && WnrStatus>0   && FRF007->ProtokolID>0);
+	  FRF008->Visible  =(Liste_Werknummern_Auswahl->Count==1 && WnrStatus>0   && FRF008->ProtokolID>0);
+
+	  //RRR
+	  // Erstelle und konfiguriere den zweiten Timer
+	/*
+	if(!tTimer4FPVM)
+		tTimer4FPVM = new TTimer(NULL);
+	tTimer4FPVM->Interval = 1200; // Setze das Intervall auf 1000 Millisekunden (1 Sekunde)
+	tTimer4FPVM->OnTimer = Timer4FPVM; // Setze die Ereignisroutine für den zweiten Timer
+	tTimer4FPVM->Enabled = true; // Aktiviere den zweiten Timer
+
+	// Warte, bis der zweite Timer seine Arbeit verrichtet hat RRR
+	while (!bTimer4FPVMIsCompleted) {
+		Application->ProcessMessages();
+	}
+
+	// Setze den Status zurück
+	bTimer4FPVMIsCompleted = false;
+		//RRR
+	*/
+	  GetCheckIfPRVM();
+
+	  FRF010->Visible  =( (Liste_Werknummern_Auswahl->Count==1 && WnrStatus>0   && FRF010->ProtokolID>0) );
+	  LBinfo10->Visible=( (Liste_Werknummern_Auswahl->Count >1 && WnrStatus>=10 && FRF010->ProtokolID>0) );
+
+	  FRF020->Visible  =(Liste_Werknummern_Auswahl->Count==1 && WnrStatus>0   && FRF010->ProtokolID>0);
+	  LBinfo20->Visible=(Liste_Werknummern_Auswahl->Count >1 && WnrStatus>=20 && FRF020->ProtokolID>0);
+	  FRF030->Visible  =(Liste_Werknummern_Auswahl->Count==1 && WnrStatus>0   && FRF030->ProtokolID>0);
+	  LBinfo30->Visible=(Liste_Werknummern_Auswahl->Count >1 && WnrStatus>=30 && FRF030->ProtokolID>0);
+
+//	  CBwickelverbunden->Visible=(WnrStatus>20 && Liste_Werknummern_Auswahl->Count==1);
+	  FRF040->EDkesselCharge ->Visible=(WnrStatus>30);
+	  FRF040->EDkesselCharge2->Visible=(WnrStatus>30);
+
+	  FRF030->IMeinsetzen->Visible=(Liste_Werknummern_Auswahl->Count>0 && WnrStatus>20);
+	  FRF030->LBkesselnr ->Visible=(Liste_Werknummern_Auswahl->Count>0 && WnrStatus>20);
+	  FRF040->BNshowGHdaten->Visible=(FRF040->KesselNr>0 && (FRF040->EDkesselCharge->Text.Length()+FRF040->EDkesselCharge2->Text.Length())>0);
+
+	  BNstartBestVT       ->Enabled=(UserLoggedIn &&   WnrStatus < 7 && VT_KNR>0 && Liste_Werknummern_Auswahl->Count>0);
+	  BNstartVT           ->Enabled=(UserLoggedIn &&   WnrStatus== 7);
+	  BNendeVT            ->Enabled=(UserLoggedIn &&   WnrStatus== 8);
+
+	  //RRR Neu später kompaktere Version
+
+	  String wnrTemp = "";
+
+	  for(int i=0; i<TAB->RowCount; i++)
+	  {
+		if(TAB->Row[i]->Selected)
+		{
+			wnrTemp = TAB->Cell[0][i]->AsString.Trim();
+			break;
+		}
+
+	  }
+
+	  //RRR Neu aber besseres Timing noch machen: Vorher pro WNR ermitteln einmalig.
+	  BNstartEinformen    ->Enabled=(UserLoggedIn && FramePraevM->ProtIsCompleteUsed(wnrTemp) && WnrStatus <10 && GH_KNR>0 && Liste_Werknummern_Auswahl->Count>0); // solange <10 bis VT konsequent angewendet wird
+	  BNendeBodenstk      ->Enabled=(UserLoggedIn &&   WnrStatus==15 && FRF010->LBincomplete->Visible == false && FRF020->LBincomplete->Visible == false && FRF020->lblResult->Visible == false && BodenHz!= "" );          // bißchen Komplizierter da auch aus F010 AllFields set von F020 gesteuert werden daher über das Label
+	  BNstartEinsetzen    ->Enabled=(UserLoggedIn &&   WnrStatus==20);
+	  BNstartAbkuehlen    ->Enabled=(UserLoggedIn &&   WnrStatus==30 && GH_BNR>0 && FRF030->AllFieldsSet);               // Test auf Vollständigkeit ab 2019-09-12
+	  BNendeAbkuehlen     ->Enabled=(UserLoggedIn &&   WnrStatus==40 && GH_BNR>0);
+	  BNstartImpraegnieren->Enabled=(UserLoggedIn &&   WnrStatus==41 && GH_BNR>0);
+	  BNendeImpraegnieren ->Enabled=(UserLoggedIn &&   WnrStatus==50 && GH_BNR>0);
+	  BNstartGelieren     ->Enabled=(UserLoggedIn &&   WnrStatus==51 && GH_BNR>0);
+	  BNendeGelieren      ->Enabled=(UserLoggedIn &&   WnrStatus==60 && GH_BNR>0);
+	  BNstartBestNT       ->Enabled=(UserLoggedIn &&   WnrStatus <70 && NT_KNR>0 && Liste_Werknummern_Auswahl->Count>0); // solange <70 bis VT konsequent angewendet wird
+	  BNstartNT           ->Enabled=(UserLoggedIn &&   WnrStatus==70 && NT_KNR>0);
+	  BNendeNT            ->Enabled=(UserLoggedIn &&   WnrStatus==80 && NT_BNR>0);
+	  BNstartNTausb       ->Enabled=(UserLoggedIn && ((WnrStatus==81 && NT_BNR>0) || (WnrOrt=="40" && WnrStatus<90)));
+	  BNendeNTausb        ->Enabled=(UserLoggedIn &&   WnrStatus==90);
+
+	  if(UserLoggedIn)
+	  {
+		if(WnrStatus>= 7 && FRF007->ProtokolID==0) BNstartBestVT->Enabled=true;
+		if(WnrStatus>=10 && FRF010->ProtokolID==0) BNstartEinformen->Enabled=true; //RRR ist das je möglich, nur wenn warum auch immer zunächst dieser Prozeßschritt übergangen wäre
+		if(WnrStatus>=20 && FRF020->ProtokolID==0) BNstartEinsetzen->Enabled=true;
+		if(WnrStatus>=70 && FRF070->ProtokolID==0) BNstartBestNT->Enabled=true;
+	  }
+
+	  UpdateKeyLeds();
+
+	}
+//------------------------------------------------------------------------------------------------------------------------
+	if(cnt>300) // alle 60 Sekunden
+	{
+	  UpdateBMstatus();
+	  cnt=0;
+
+	 // Schmatter HomeOffice Funktion
+	 if(!homeOffice())  {ExoEnde(); lblHinweis->Visible = false;} else lblHinweis->Visible = true;
+
+	 // Überprüfung nach Q-Gates
+	 // CheckForQGate();
+	}
+
+//------------------------------------------------------------------------------------------------------------------------
+	cnt++;
+	/*
+	//RRR
+	// Erstelle und konfiguriere den zweiten Timer
+	if(!tTimer4FPVM)
+		tTimer4FPVM = new TTimer(NULL);
+	tTimer4FPVM->Interval = 1000; // Setze das Intervall auf 1000 Millisekunden (1 Sekunde)
+	tTimer4FPVM->OnTimer = Timer4FPVM; // Setze die Ereignisroutine für den zweiten Timer
+	tTimer4FPVM->Enabled = true; // Aktiviere den zweiten Timer
+
+	// Warte, bis der zweite Timer seine Arbeit verrichtet hat
+	while (!bTimer4FPVMIsCompleted) {
+		Application->ProcessMessages();
+	}
+
+	// Setze den Status zurück
+	bTimer4FPVMIsCompleted = false;
+
+//GetCheckIfPRVM();
+	//RRR
+	*/
+	TimerUpdateGUIbusy=false;
+}
+//============================================================================================================================================
+void __fastcall TFormGH::BNcloseSonderClick(TObject *Sender)
+//============================================================================================================================================
+{
+	PNsonder->Visible=false;
+}
+//============================================================================================================================================
+void __fastcall TFormGH::BNvtTabelleClick(TObject *Sender) {Form0->OpenForm(Sender,"Form209","",0);}
+void __fastcall TFormGH::BNghTabelleClick(TObject *Sender) {Form0->OpenForm(Sender,"Form210","",0);}
+//============================================================================================================================================
+void __fastcall TFormGH::BNsonderClick(TObject *Sender) {OpenSonderfunktionen();}
+//==============================================================================================================================================
+void __fastcall TFormGH::FormClose(TObject *Sender, TCloseAction &Action)
+//==============================================================================================================================================
+{
+	 while(TimerUpdateGUIbusy) KPIdle(10); // warten bis TimerUpdateGUI fertig ist
+
+	 TimerUpdateGUI->Enabled=false;
+	 AllowAddWnr=false;
+
+	 if(QQ!=NULL)                         delete QQ;                  QQ=NULL;
+	 if(QExo!=NULL)                       delete QExo;                QExo=NULL;
+	 if(QRCodeBitmap!=NULL)               delete QRCodeBitmap;        QRCodeBitmap=NULL;
+	 if(Liste_Werknummern_Input!=NULL )   delete Liste_Werknummern_Input;   Liste_Werknummern_Input=NULL;
+	 if(Liste_Werknummern_Auswahl!=NULL ) delete Liste_Werknummern_Auswahl; Liste_Werknummern_Auswahl=NULL;
+//ShowMessage("FormGH->countOfRelevant420KV als Active-Zähler" + IntToStr(FormGH->countOfRelevant420KV)); //RRRTest
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BNoeffneKesselClick(TObject *Sender)
+//==============================================================================================================================================
+{
+   AllowAddWnr=true;
+   PNsonder->Visible=false;
+
+   if(VT_KNR>0) Form1->AddToLogBook("Data","Werknummern in laufenden VT-Kessel "+IntToStr(VT_KNR)+" hinzugefügt"); else
+   if(GH_KNR>0) Form1->AddToLogBook("Data","Werknummern in laufenden GH-Kessel "+IntToStr(GH_KNR)+" hinzugefügt"); else
+   if(NT_KNR>0) Form1->AddToLogBook("Data","Werknummern in laufenden NT-Kessel "+IntToStr(NT_KNR)+" hinzugefügt");
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::LIwnrASClick(TObject *Sender)
+//==============================================================================================================================================
+{
+   VT_BNR=0; GH_BNR=0; NT_BNR=0;
+   LIwnrAS->ItemIndex=-1;
+   BuildTABforApl("40");
+   VT_BNR=0; GH_BNR=0; NT_BNR=0;
+   isApl40=true;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::LBwnrsClick(TObject *Sender) {SelectNextWnrInTAB();} // Test-Funktion
+//==============================================================================================================================================
+void __fastcall TFormGH::EDwnrChange(TObject *Sender) // Eingabe über BC-Scanner (hier mit Prefix WNR=......)
+//==============================================================================================================================================
+{
+   String txt=EDwnr->Text;
+   int    lot=txt.Length();
+
+   if(lot>8 && txt.Pos("WNR=")==1)
+   {
+	  EDwnr->Text=txt.SubString(5,lot-4);
+	  BNaddWnrClick(Sender);
+   }
+}
+//==============================================================================================================================================
+int __fastcall TFormGH::ExoEnde(void)
+//==============================================================================================================================================
+{
+	AnsiString sql="";
+	int i=0;
+
+	LiExoKessel->Clear();
+
+	sql = "SELECT TOP(200) Chargennummer FROM [BIBOSS].[dbo].[HSP_Giessharz#Chargendaten] WHERE (Chargenstart IS NOT NULL) AND (Chargenstop IS NULL) AND (EXO_Ende = '1')";
+	DBG.SendSQLLine(sql, QExo); while(!QExo->Eof){LiExoKessel->Items->Add(QExo->FieldByName("Chargennummer")->AsString); QExo->Next(); i++;}
+
+	return LiExoKessel->Items->Count;
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::CheckForQGate(void)
+//==============================================================================================================================================
+{
+
+   // Die Zeile 1468 sorgt für einen Fehler in der Programmierung
+   // Fehler "Operation bei geschlossener Datenmenge nicht ausführbar"
+   // Hintergrund ist, dass die bei der Implementierung der Q-Gates
+   // in der Bestandshalle kein Join auf die FGHE möglich ist !!!!!
+   /*
+
+	String sql ="";
+	int KesselNrDs = 0;
+
+    // Sql Befehl zur Kesselnummer bei Fehlern der letzten 10 Minuten
+	sql  =  " Select  Distinct  KESSEL_NR FROM dbo.Fehlerhistorie_SSIS_GH a";
+	sql +=  " Left Join dbo.FGHE b On b.ID = a.BNR";
+	sql +=  " Where a.RecordTS > DATEADD(minute,-10,GETDATE())";
+
+
+	TMSQuery *QGate=new TMSQuery(NULL);
+	Form1->SendSQLLine(sql,QGate);
+
+	// Bei jedem Button wird der Status abgefragt -> 34 Durchläufe
+	for(int i=0; i<MAX_ANZ_GH; i++)
+	{
+
+		BNGH[i]->LookAndFeel->SkinName = "Basic";
+		BNGH[i]->SpeedButtonOptions->Transparent = true;
+
+		// Das DataSet wird durchgegangen und bei jedem der 34 Durchläufe
+		 for( int a=0;!QGate->Eof;QGate->Next(),a++)
+		{
+				// Kesselnummer wird ausgelesen
+				KesselNrDs = QGate->FieldByName("Kessel_NR")->AsInteger;
+
+				//Wenn Button Caption == Kesselnummer dann rot
+				if(BNGH[i]->Caption.ToIntDef(-1)== KesselNrDs)
+				{
+					BNGH[i]->LookAndFeel->SkinName = "";
+					BNGH[i]->SpeedButtonOptions->Transparent = false;
+					break;
+				}
+
+		}
+
+		 // Zeiger des DataSets wieder auf den Anfang setzten
+			QGate->First();
+    }
+
+	// reservierten Speicher freigeben
+	delete QGate;
+	QGate=NULL;
+	*/
+}
+//==============================================================================================================================================
+void __fastcall TFormGH::BtnYokogawa(TObject *Sender)
+//==============================================================================================================================================
+{
+	   if(FormYokogawa==NULL) Application->CreateForm(__classid(TFormYokogawa), &FormYokogawa);
+	   if(FormYokogawa!=NULL) FormYokogawa->OpenForm(Sender);
+}
+//=============================================================================================================================================
+void __fastcall TFormGH::BdnHzngClick(TObject *Sender)
+//=============================================================================================================================================
+{
+	TMSQuery   *QBM;
+	AnsiString 	sql;
+	bool KesselNr = false;
+	bool User     = false;
+
+
+
+	// Auslesen der zugeordneten Bodenheizung aus der Tabelle dbo.BM
+	QBM=new TMSQuery(NULL);
+
+	sql = "Select akt_Bodenhzg,Text FROM dbo.BM Where akt_Bodenhzg  = '"+EDbodenheizung->Text+"'" ;
+	Form1->SendSQLLine(sql,QBM);
+
+
+	if (LBghKessel->Caption != "0") {KesselNr = true;}  	else {FormInfo->ShowMessage("Es wurde kein Kessel ausgewählt !",2,7000,"");}
+	if (PID.USER4.Length()>1) 	 	{User = true;} 	  		else {FormInfo->ShowMessage("Es ist zur Zeit kein Benutzer angemeldet !",2,7000,"");}
+
+	//Abfrage ob die Bodenheizung schon verwendet wird
+
+	if (QBM->RecordCount<1 && KesselNr && User)
+		{
+		  if(Form1->UpdateDboItems("BM", "akt_Bodenhzg='"+EDbodenheizung->Text+"', Bodenhzg_PID ='"+PID.USER4+"'" ," Typ  = 'GH-Kessel' AND Nummer ="+IntToStr(GH_KNR)))
+		  {lblOKBdHz->Visible = true;}
+		}
+
+
+	if  (QBM->RecordCount>0 && KesselNr && User)
+		{
+		 FormInfo->ShowMessage("Bodenheizung wird bereits in "+QBM->FieldByName("Text")->AsString+" verwendet !",2,7000,"");
+		 lblOKBdHz->Visible = false;
+		}
+
+
+	delete QBM;
+
+	ReInitializeBdHz();
+
+	// dann ein Update do Item
+	// erstmal ein Update do Item
+	// EDbodenheizung
+	// Wenn Status über 30 dann auch die FGHE aktualisieren !!!!  nur möglich wenn angemeldet
+
+
+}
+//=============================================================================================================================================
+void __fastcall TFormGH::BdHzNrChange(TObject *Sender)
+//=============================================================================================================================================
+{
+	int KesselNr = 0;
+	lblOK->Visible = false;
+
+	// Abfangen von leeren Feldern, wird nur umgewandelt wenn es eine Ganzzahl ist
+	if	(BdHzNr->Text != "") { KesselNr =	StrToInt(BdHzNr->Text);	}
+
+	// Freigabe der Schaltfläche zur "Reset Bodenheizung"
+	if (KesselNr > 3 && KesselNr < 42 && KesselNr != 5 && KesselNr != 11 && KesselNr != 12 && KesselNr != 13 && KesselNr != 16)
+		 {btnResetBdnHz->Enabled = true;}
+	else {btnResetBdnHz->Enabled = false;}
+
+}
+//=============================================================================================================================================
+void __fastcall TFormGH::btnResetBdnHzClick(TObject *Sender)
+//=============================================================================================================================================
+{
+	if(Form1->UpdateDboItems("BM", "akt_Bodenhzg='',Bodenhzg_PID =''" ," Typ  = 'GH-Kessel' AND Nummer ="+BdHzNr->Text))
+	{
+		 lblOK->Visible = true;
+		 BuildTABghKessel(GH_KNR);
+		 ReInitializeBdHz();
+	}
+}
+//=============================================================================================================================================
+void __fastcall TFormGH::EdBNRChange(TObject *Sender)
+//=============================================================================================================================================
+{
+
+	TMSQuery   *QBNR;
+	AnsiString sql;
+
+	lblOK2->Visible = false;
+
+	QBNR=new TMSQuery(NULL);
+	sql = "SELECT ID FROM dbo.FGHE WHERE ID ='"+EdBNR->Text+"'";
+
+	// Wenn BNR größer 6 Zeichen wird die Abfrage gesendet
+	if (EdBNR->Text.Length()>6) {Form1->SendSQLLine(sql,QBNR);}
+
+	// Wenn es eine BNR gibt und eine Bodenheizung ausgewählt wurde erfolgt die Freigabe der Schaltfläche
+	if (QBNR->RecordCount>0 && EDbodenheizung2->Text != "")
+		 {btnChangeBdnHz->Enabled =true;}
+	else {btnChangeBdnHz->Enabled =false;}
+
+
+	delete QBNR;
+
+}
+//=============================================================================================================================================
+void __fastcall TFormGH::btnChangeBdnHzClick(TObject *Sender)
+//=============================================================================================================================================
+{
+		if(Form1->UpdateDboItems("FGHE", "BODENHZ_ID='"+EDbodenheizung2->Text+"',BODENHZ_PID ='"+PID.USER4+"'","ID="+EdBNR->Text))
+	{
+		 lblOK2->Visible = true;
+		 BuildTABghKessel(GH_KNR);
+		 ReInitializeBdHz();
+	}
+}
+
+
+//==============================================================================================================================================
+int __fastcall TFormGH::CreateProt4FPraevM(String wnrTemp)
+//==============================================================================================================================================
+{
+	int  protNr = 0;
+
+	Form1->ClearPDS();
+	wnrTemp.Length() == 8 ? (PDS.WERKNR = wnrTemp + " ") : (PDS.WERKNR = wnrTemp);
+	PDS.X_TYP     = "FPVM";
+	PDS.BEFUND    = "";
+	PDS.ORT       = "36";
+	PDS.PRUEFER   = PID.USER4;
+
+	protNr = Form1->AddNewProtokol(0, true); //RRR30.10.2024 Flag automatisches erstellen explizit gesetzt
+
+	return protNr;
+}
+
+//!!! hier eigntlich nichts mehr das meiste vorher, alles sichtbare braucht ja nur in der Schleife
+//=============================================================================================================================================
+void __fastcall TFormGH::BNendePraevMClick(TObject *Sender)
+//==============================================================================================================================================
+{
+	 if(TAB->RowCount<1)    return;
+
+	 //TimerUpdateGUI->Enabled=false;
+
+	 FramePraevM->Visible = false;
+	 PNPraevMassn->Visible = false;
+	 BNendePraevM->Enabled = false;
+
+	 FramePraevM->LBendePID->Caption = PID.USER4;
+	 FramePraevM->LBtsEnde->Caption = Now().FormatString("dd.mm.yyyy hh:nn:ss");
+
+	 FramePraevM->ExportDataToDB(true);
+
+	 //Raus aus dem Sammelvektor nehmen
+	 FramePraevM->EraseFromCollectionOfGUI();
+
+//SetWnrStatus(9,"",VT_BNR,0,0);    //Hier noch überlegen
+Rebuild_TAB(""); VerifyWnrGroup(this,"");
+
+	 TimerUpdateGUI->Enabled=true;
+}
+//---------------------------------------------------------------------------
+
+//=============================================================================================================================================
+bool __fastcall TFormGH::GetCheckIfPRVM(bool allWnrInOneStep)
+//=============================================================================================================================================
+{
+	if(!bGlobalInUnit70_WithFPVM)
+		return false;
+
+	//bool bShowFPVM = UserLoggedIn && (WnrStatus < 10) && (GH_KNR > 0) && (Liste_Werknummern_Auswahl->Count>0);
+	//Versionskontrolle hinein
+    //F008 GetlastProt
+	bool bShowFPVM = UserLoggedIn  && (GH_KNR > 0) && (Liste_Werknummern_Auswahl->Count > 0);
+
+	if(!bShowFPVM)
+		return false;
+
+	if(allWnrInOneStep)
+	{
+		CollectAndCheckAllWNRs();
+		return true;
+	}
+	else
+	{
+		GetCheckIfPRVMCouldShow();
+		return true;
+    }
+}
+
+//Alle durchgesehen und in einer Liste von Pairs gespeichert
+//Hier noch nicht das Protokoll erstellt
+void __fastcall TFormGH::CollectAndCheckAllWNRs()
+{
+	wnrIfRelevant420KV.clear();
+	countOfRelevant420KV = 0;
+
+	for(int i = 0; i<TAB->RowCount; i++)
+	{
+		String strTemp = TAB->Cell[0][i]->AsString.Trim();
+		std::pair<String, int> data(strTemp,0);
+		if(GetCheckIfPRVMCouldShow(true, strTemp))
+		{
+			//Nur wenn Protokoll erfolgreich erstellbar
+			if(CreateProt4FPraevM(strTemp) > 0)
+			{
+				//List der Pairs für evntuelles Nutzen bei Frame_FpraeventivMassn
+				data.second = 1;
+				countOfRelevant420KV++;
+				wnrIfRelevant420KV.push_back(data); //hier nur die Relevanten raus picken
+			}
+		}
+		//wnrIfRelevant420KV.push_back(data); wenn ich trotzdemm alle WNR's hätte
+	}
+}
+
+
+//Hier Probe ob 420 KV
+/*Situationen:
+1:Erste mal bis dort:
+Anfang Prüfung:
+
+2a: Fall es sei ein Protokoll erstellt
+
+*/
+
+//ImportDataFromDB(ID); wo kommt dies nun hin eigentlich wo schon komplett fertig und somit gesperrt
+//Doch was ist wenn es nicht fertig und nach new oder save ?
+
+//???Fall wenn Protokoll da aber mitten drin und eide mitten drin
+//Bemerkung nur noch nicht komplett fertig gestellte Protokolle brauchen ein Cache
+
+//RIP RIP beachten
+
+
+//=============================================================================================================================================
+bool __fastcall TFormGH::GetCheckIfPRVMCouldShow(bool bStringAllreadyKnown, String wnrTemp)
+//=============================================================================================================================================
+{
+	if(!bStringAllreadyKnown)
+	{
+		if(!TAB)
+			return false;
+
+		for(int i = 0; i < TAB->RowCount; i++)
+		{
+		   if(TAB->Row[i]->Selected)
+		   {
+				wnrTemp = TAB->Cell[0][i]->AsString.Trim();
+				break;
+		   }
+
+		}
+
+		if( (wnrTemp == "") || (TAB->RowCount == 0) )
+		{
+			return false;
+		}
+	}
+
+	if(wnrTemp.Length() == 8)
+		wnrTemp = wnrTemp + " ";
+
+	//Hier noch Abfangen wenn Aufruf über CollectAndCheckAllWNRs() !!! RRR
+	String sAuf ="";
+	String sArt ="";
+	defPDS  pdsDummy;
+	defPDS  pdsDummy1;
+
+	int protNr = -1;
+	int prot008 = -1;
+
+	if(!DBM.Connected)
+	{
+		ShowMessage("Keine Verbindung zu MDE-SQL-Server. Aktion abgebrochen");
+		return false;
+	}
+
+	if(!DBC.Connected)
+	{
+		ShowMessage("Keine Verbindung zu Profile. Aktion abgebrochen");
+		return false;
+	}
+
+//TimerUpdateGUI->Enabled = false;
+
+	{
+		prot008 = Form1->GetLastProt(&pdsDummy1,CastString(wnrTemp,9),"F008",true);
+
+		if(prot008 < 1)
+		{
+	//TimerUpdateGUI->Enabled = true;
+			return false;
+		}
+
+	}
+
+	//(1)
+	//========================Eigentlicher Code START
+
+	bMessage3 = false;
+
+	TMSQuery* QAuf = new TMSQuery(NULL);
+	QAuf->Connection=DBM.Connection;
+
+	TMSQuery* QArt = new TMSQuery(NULL);
+	QArt->Connection=DBM.Connection;
+
+	TMSQuery* QProf = new TMSQuery(NULL);
+	QProf->Connection=DBC.Connection;
+
+	if(Form1->SendSQLLine("SELECT TOP(1) * FROM dbo.WERKNR WHERE WNR = '"+ wnrTemp +"'", QAuf))
+	{
+		sAuf = QAuf->FieldByName("ANR")->AsString;
+	}
+
+	if(sAuf != "")
+	{
+		if(Form1->SendSQLLine("SELECT TOP(1) * FROM dbo.AUFTRAG WHERE ANR = '" + sAuf + "'", QArt))
+		{
+			sArt = QArt->FieldByName("SP_ARTNR")->AsString;
+		}
+
+		if(sArt != "")
+		{
+			QProf->SQL->Text = "SELECT UN FROM [profile].[dbo].[HSP_ARTIKEL_DFG] WHERE ArtikelNr = '" + sArt + "' AND UN > 419";
+
+//TEST  RRR
+//QProf->SQL->Text = "SELECT UN FROM [profile].[dbo].[HSP_ARTIKEL_DFG] WHERE ArtikelNr = '" + sArt + "' AND UN = 419";
+
+			QProf->Open();
+
+			if(QProf->RecordCount > 0)
+				bMessage3 = true; //bReturner = true;
+			else
+				bMessage3 = false; //bReturner = false;
+
+			QProf->Close();
+
+		}
+
+	}
+
+
+	if (QArt)
+		delete QArt;
+
+	if (QAuf)
+		delete QAuf;
+
+	if (QProf)
+		delete QProf;
+
+
+	//========================Eigentlicher Code ENDE
+
+	//Fall Prüfung bestanden  //OK
+	if(wnrTemp != "00315505 ")     //bReturner bzw. bMessage3 nutzen  also if(bReturner) bzw. if(bMessage3)  also 420 KV dann
+	//if(bMessage3)
+	{
+		protNr = Form1->GetLastProt(&pdsDummy,CastString(wnrTemp,9),"FPVM",true);
+
+		//Protokoll schon erstellt, aber noch nicht geklärt ob vollständig
+		if(protNr > 0 ) //OK
+		{
+			FramePraevM->ProtokolID = protNr;
+			SB->HorzScrollBar->Position = 0;
+			FormGH->PNPraevMassn->Visible = true;
+			FramePraevM->Visible = true;
+			//FramePraevM->ImportDataFromDB();
+
+			//Protokoll schon erstellt UND ob vollständig
+			if(FramePraevM->ProtIsCompleteUsed(wnrTemp)) //RRR hier noch beschleunigen weil ja schon bekannt ist die PDS hier mit dne 3 Bools
+			{
+				FramePraevM->ImportDataFromDB(true); //immer dann OK
+				//Alle Controls des FramePraevM nun sperren
+				//bChangedBySoftwareGH = true;
+				for (int i = 0; i < FramePraevM->ControlCount; i++)
+				{
+					//FramePraevM->Controls[i]->Enabled = false;
+					if(FramePraevM->Controls[i]->ClassType() == __classid(TCheckBox) )
+						FramePraevM->Controls[i]->Enabled = false;
+
+					if(FramePraevM->Controls[i]->ClassType() == __classid(TMemo) )
+						FramePraevM->Controls[i]->Enabled = false;
+
+				}
+				BNendePraevM->Enabled = false;
+				BNstartEinformen->Enabled = true;
+
+				//bChangedBySoftwareGH = false;
+			}
+			else
+			{
+				//bChangedBySoftwareGH = true;
+				for (int i = 0; i < FramePraevM->ControlCount; i++)
+				{
+					if(FramePraevM->Controls[i]->ClassType() == __classid(TCheckBox) )
+						FramePraevM->Controls[i]->Enabled = true;
+
+					if(FramePraevM->Controls[i]->ClassType() == __classid(TMemo) )
+						FramePraevM->Controls[i]->Enabled = true;
+
+				}
+				BNstartEinformen->Enabled = false;
+
+				//bChangedBySoftwareGH = false;
+
+				//wenn nicht alle wnr automatisch auf einmal RRR noch schauen ob hier Unterscheidung notwendig
+				//===============================
+
+				FramePraevM->ImportDataFromDB();
+				FramePraevM->CreateCache4Controlls(); //RRR bisher
+				FramePraevM->Transfer2GUI();
+
+				if(FramePraevM->CheckAllFieldsSet() )
+					BNendePraevM->Enabled = true;
+				else
+					BNendePraevM->Enabled = false;
+			}
+
+			FramePraevM->Activate(-1);
+		}
+		else //keine protNr gefunden  // OK
+		{
+			//Eventuelll letzte Pos merken
+			SB->HorzScrollBar->Position = 0;
+
+			//Nur noch eine WNR
+			wnrIfRelevant420KV.clear();
+			countOfRelevant420KV = 0;
+			std::pair<String, int> data(wnrTemp,0);
+
+			//Nur wenn Protokoll erfolgreich erstellbar
+			protNr = CreateProt4FPraevM(wnrTemp);  //RR überlegen ob hier schonImport dabei
+
+			if(protNr > 0)
+			{
+				//List der Pairs für evntuelles Nutzen bei Frame_FpraeventivMassn
+				data.second = 1;
+				countOfRelevant420KV++;
+				wnrIfRelevant420KV.push_back(data); //hier nur die Relevanten raus picken
+				FormGH->PNPraevMassn->Visible = true;
+				FramePraevM->Visible = true;
+			}
+			else
+			{
+//TimerUpdateGUI->Enabled = !false;
+				return false;
+			}
+
+			FramePraevM->ProtokolID = protNr;
+			FramePraevM->Activate(-1);
+
+			FramePraevM->ImportDataFromDB();  //Import nötig wegen den nicht Pflichtfeldern wie zum Beispiel: FramePraevM->LBprotNr->Caption
+			FramePraevM->CreateCache4Controlls();
+		}
+//TimerUpdateGUI->Enabled = !false;
+		return true;
+	}
+	else  //OK
+	{
+		//Eventuelll letzte Pos zurück setzen
+
+		FormGH->PNPraevMassn->Visible = false;
+		FramePraevM->Visible = false;
+		BNstartEinformen->Enabled = true;
+
+//TimerUpdateGUI->Enabled = !false;
+		return false;
+	}
+
+}
+
+
+
+
+
+/*
+FROM [profile].[dbo].[HSP_ARTIKEL_DFG]
+  --WHERE  UN > 419
+  WHERE ArtikelNr LIKE '%K00006774%' AND UN = 36
+ORDER BY ArtikelNr desc
+ERGEBNIS:
+Expr1	ArtikelNr	Titel	                        SpezNr	STATUS	UN
+93668	K00006774	STARIP®-Si+ 36-1600 E1 B		20100	36.000000
+
+//-------------------
+
+FROM [MDE].[dbo].[AUFTRAG]
+  WHERE SP_ARTNR LIKE '%K0000677%'
+  --WHERE SP_ARTNR = '364220'
+  ORDER BY SP_ARTNR asc
+ERGEBNIS:
+ANR	        KU_NR	FREMD	BESTELL	    A_PROJEKT	                    HERRPB	SP_ARTNR
+1315299-150	210076	NULL	FPO6240324	OMAN ELECTRICITY TRANSMISSION	NULL	K00006774
+
+//-------------------
+
+FROM [MDE].[dbo].[WERKNR]
+  WHERE ANR = '1315299-150'
+
+ERGEBNIS:
+WNR	        WNR_AKTIVTEIL	ANR_AKTIVTEIL	TYP	                        SP_NR	    ANR
+00319539 	NULL	        NULL	        STARIP®-Si+ 36-1600 E1 B	K00006774	1315299-150
+
+
+
+//===========================
+FROM [profile].[dbo].[HSP_ARTIKEL_DFG]
+WHERE ArtikelNr LIKE '%022418%'
+
+FROM [MDE].[dbo].[AUFTRAG]
+WHERE SP_ARTNR LIKE '%022418%'
+
+FROM [MDE].[dbo].[WERKNR]
+WHERE ANR = ' 717638-01'
+
+WNR	WNR_AKTIVTEIL	ANR_AKTIVTEIL	TYP	SP_NR	ANR
+80 05681 	NULL	NULL	OKTF 1550/420-1800	6723025204403c	 717638-01
+
+ */
+
+ //Status NR auf 9 dann zeigt sich FPVM
+
+
+
+
+ /*
+ (1)
+ 	//Erst schauen ob überhaupt relevant
+	//Nur dann überhaupt ein Protokoll erstellen
+	//Anfang Prüfung: mit Hilfe der gefundenen Wnr
+	//Ende Prüfung: mit Hilfe der gefundenen Wnr
+*/
+
+
+
+//--------------------------------------------
+
+//2 Dezember
+/*
+Hallo! Du kannst einen zweiten Timer innerhalb einer Timer-Routine starten, indem du den zweiten Timer in der Routine initialisierst und aktivierst. Hier ist ein Beispiel, wie du das in C++03 im C++ Builder machen kannst:
+
+cpp
+#include <vcl.h>
+#pragma hdrstop
+
+TTimer *Timer2;
+
+void __fastcall TRoutine1(TObject *Sender) {
+    // Erstelle und konfiguriere den zweiten Timer
+    Timer2 = new TTimer(NULL);
+    Timer2->Interval = 1000; // Setze das Intervall auf 1000 Millisekunden (1 Sekunde)
+    Timer2->OnTimer = Timer2Routine; // Setze die Ereignisroutine für den zweiten Timer
+    Timer2->Enabled = true; // Aktiviere den zweiten Timer
+}
+
+void __fastcall Timer2Routine(TObject *Sender) {
+    // Hier kommt der Code für die Arbeit des zweiten Timers
+    // ...
+
+    // Deaktiviere den zweiten Timer, wenn die Arbeit erledigt ist
+    Timer2->Enabled = false;
+    delete Timer2;
+    Timer2 = NULL;
+}
+In diesem Beispiel wird der zweite Timer Timer2 innerhalb der Routine TRoutine1 erstellt und gestartet. Die Routine Timer2Routine wird aufgerufen, wenn der zweite Timer abläuft. Nachdem die Arbeit des zweiten Timers erledigt ist, wird der Timer deaktiviert und gelöscht.
+
+Ich hoffe, das hilft! Lass mich wissen, ob du noch weitere Fragen hast.
+
+Ist es denn Ok wenn jedesmal im ersten Timer allokiert wird ? Ich weiß in Timer2Routine wird die allokation ja aufgehoben. Ist das zeitlich immer sicher so ?
+Das ist eine berechtigte Frage. Die Allokation und Deallokation eines Timers in jeder Ausführung der ersten Timer-Routine kann zu einem gewissen Overhead führen, aber in den meisten Fällen sollte das zeitlich sicher und effizient genug sein, solange die Intervalle nicht extrem kurz sind.
+
+Wenn du sicherstellen möchtest, dass der zweite Timer seine Arbeit vollständig verrichtet, bevor die Routine beendet wird, kannst du eine einfache Synchronisationsmethode verwenden. Hier ist ein Beispiel, wie du das machen könntest:
+
+cpp
+#include <vcl.h>
+#pragma hdrstop
+
+TTimer *Timer2;
+bool Timer2Completed = false;
+
+void __fastcall TRoutine1(TObject *Sender) {
+    // Erstelle und konfiguriere den zweiten Timer
+    Timer2 = new TTimer(NULL);
+    Timer2->Interval = 1000; // Setze das Intervall auf 1000 Millisekunden (1 Sekunde)
+    Timer2->OnTimer = Timer2Routine; // Setze die Ereignisroutine für den zweiten Timer
+    Timer2->Enabled = true; // Aktiviere den zweiten Timer
+
+    // Warte, bis der zweite Timer seine Arbeit verrichtet hat
+    while (!Timer2Completed) {
+        Application->ProcessMessages();
+    }
+
+    // Setze den Status zurück
+	Timer2Completed = false;
+}
+
+void __fastcall Timer2Routine(TObject *Sender) {
+	// Hier kommt der Code für die Arbeit des zweiten Timers
+	// ...
+
+	// Deaktiviere den zweiten Timer, wenn die Arbeit erledigt ist
+	Timer2->Enabled = false;
+	delete Timer2;
+	Timer2 = NULL;
+
+	// Setze den Status auf abgeschlossen
+	Timer2Completed = true;
+}
+In diesem Beispiel wird eine boolesche Variable Timer2Completed verwendet, um den Status des zweiten Timers zu überwachen. Die erste Timer-Routine wartet, bis der zweite Timer seine Arbeit abgeschlossen hat, bevor sie fortfährt.
+
+*/
