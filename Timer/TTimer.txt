@@ -225,3 +225,30 @@ void __fastcall Timer2Routine(TObject *Sender) {
 }
 In diesem Beispiel wird eine boolesche Variable Timer2Completed verwendet, um den Status des zweiten Timers zu überwachen. Die erste Timer-Routine wartet, bis der zweite Timer seine Arbeit abgeschlossen hat, bevor sie fortfährt.
 
+//=====================================
+
+bool isProgrammaticChange = false;
+
+void __fastcall TForm1::CheckBoxClick(TObject *Sender) {
+    if (isProgrammaticChange) {
+        return;
+    }
+
+    TCheckBox *clickedCheckBox = dynamic_cast<TCheckBox*>(Sender);
+
+    isProgrammaticChange = true;
+
+    if (clickedCheckBox == CheckBox1) {
+        if (CheckBox1->Checked) {
+            CheckBox2->Checked = false;
+        }
+    } else if (clickedCheckBox == CheckBox2) {
+        if (CheckBox2->Checked) {
+            CheckBox1->Checked = false;
+        }
+    }
+
+    isProgrammaticChange = false;
+}
+
+
