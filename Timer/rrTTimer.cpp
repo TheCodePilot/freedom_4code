@@ -242,3 +242,106 @@ In diesem Beispiel wird der Inhalt von Memo1 in eine TStringList kopiert. Du kan
 
 Ich hoffe, das hilft! Lass mich wissen, ob du noch weitere Fragen hast. 😊
 
+//========================
+#include <vcl.h>
+#include <iostream>
+#include <ctime>
+
+#pragma hdrstop
+#pragma argsused
+
+void __fastcall TForm1::Timer1Timer(TObject *Sender)
+{
+    static std::clock_t start = std::clock();
+
+    // Deine Timer-Routine hier
+
+    std::clock_t end = std::clock();
+    double duration = double(end - start) / CLOCKS_PER_SEC * 1000; // Dauer in Millisekunden
+    ShowMessage("Dauer des Durchlaufs: " + FloatToStr(duration) + " Millisekunden");
+
+    start = std::clock(); // Startzeit für den nächsten Durchlauf setzen
+}
+
+int main()
+{
+    try
+    {
+        Application->Initialize();
+        Application->CreateForm(__classid(TForm1), &Form1);
+        Application->Run();
+    }
+    catch (Exception &exception)
+    {
+        Application->ShowException(&exception);
+    }
+    return 0;
+}
+    
+//-----------------------------
+//Wenn die Durchlaufzeit deiner Routine im Durchschnitt 10 Millisekunden beträgt, sollte das Timer-Intervall mindestens 15 bis 20 Millisekunden betragen.
+//-----------------------------
+
+#include <vcl.h>
+#include <iostream>
+#include <ctime>
+
+#pragma hdrstop
+#pragma argsused
+
+void __fastcall TForm1::Timer1Timer(TObject *Sender)
+{
+    static std::clock_t start = std::clock();
+
+    // Deine Timer-Routine hier
+
+    std::clock_t end = std::clock();
+    double duration = double(end - start) / CLOCKS_PER_SEC * 1000; // Dauer in Millisekunden
+    ShowMessage("Dauer des Durchlaufs: " + FloatToStr(duration) + " Millisekunden");
+
+    start = std::clock(); // Startzeit für den nächsten Durchlauf setzen
+}
+
+void ListFormsAndFrames()
+{
+    for (int i = 0; i < Screen->FormCount; i++)
+    {
+        TForm *form = Screen->Forms[i];
+        ShowMessage("Form: " + form->Name);
+    }
+
+    for (int i = 0; i < Screen->DataModuleCount; i++)
+    {
+        TDataModule *dataModule = Screen->DataModules[i];
+        ShowMessage("DataModule: " + dataModule->Name);
+    }
+
+    for (int i = 0; i < Screen->ComponentCount; i++)
+    {
+        TComponent *component = Screen->Components[i];
+        if (dynamic_cast<TFrame*>(component))
+        {
+            TFrame *frame = static_cast<TFrame*>(component);
+            ShowMessage("Frame: " + frame->Name);
+        }
+    }
+}
+
+int main()
+{
+    try
+    {
+        Application->Initialize();
+        Application->CreateForm(__classid(TForm1), &Form1);
+        Application->Run();
+    }
+    catch (Exception &exception)
+    {
+        Application->ShowException(&exception);
+    }
+    return 0;
+}
+//============================================================
+//
+//============================================================
+
