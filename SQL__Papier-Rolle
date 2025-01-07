@@ -255,4 +255,40 @@ void IterateTable(TMSQuery* Query) {
     }
 }
 
+//================================================================
 
+bool IsFieldNull(TField* Field) {
+    return Field->IsNull;
+}
+
+
+bool IsFieldEmpty(TField* Field) {
+    return Field->AsString.Trim().IsEmpty();
+}
+
+
+bool IsFieldNullOrEmpty(TField* Field) {
+    return Field->IsNull || Field->AsString.Trim().IsEmpty(); (1)
+}
+
+//Verwendung
+
+#include <iostream>
+#include <vcl.h>
+#include <Data.DB.hpp>
+#include <Data.Win.ADODB.hpp>
+#include <Data.SqlExpr.hpp>
+#include <Data.DBXMSSQL.hpp>
+
+void CheckField(TMSQuery* Query, String FieldName) {
+    TField* Field = Query->FieldByName(FieldName);
+    if (IsFieldNullOrEmpty(Field)) {
+        std::cout << "Das Feld " << FieldName.c_str() << " ist entweder NULL oder leer." << std::endl;
+    } else {
+        std::cout << "Das Feld " << FieldName.c_str() << " hat einen Wert: " << Field->AsString.c_str() << std::endl;
+    }
+}
+
+(1):
+Die Funktion Trim() entfernt führende und nachfolgende Leerzeichen, 
+sodass auch Felder, die nur aus Leerzeichen bestehen, als leer erkannt werden.
