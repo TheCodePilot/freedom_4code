@@ -210,5 +210,45 @@ TMSQuery1->SQL->Text = "SELECT * FROM deine_tabelle WHERE dein_primärschlüssel
 TMSQuery1->ParamByName("wert")->AsInteger = dein_primärschlüssel_wert;
 TMSQuery1->Open();
 
+//==============================================================
+// Januar 2025
+//==============================================================
+
+#include <iostream>
+#include <vcl.h>
+#include <Data.DB.hpp>
+#include <Data.Win.ADODB.hpp>
+#include <Data.SqlExpr.hpp>
+#include <Data.DBXMSSQL.hpp>
+
+int GetRowCount(TMSQuery* Query) {
+    Query->Close();
+    Query->SQL->Text = "SELECT COUNT(*) FROM [DeineTabelle]";
+    Query->Open();
+    return Query->Fields->Fields[0]->AsInteger;
+}
+
+//--------------------------------------------------------------
+
+#include <iostream>
+#include <vcl.h>
+#include <Data.DB.hpp>
+#include <Data.Win.ADODB.hpp>
+#include <Data.SqlExpr.hpp>
+#include <Data.DBXMSSQL.hpp>
+
+void IterateTable(TMSQuery* Query) {
+    Query->Close();
+    Query->SQL->Text = "SELECT * FROM [DeineTabelle]";
+    Query->Open();
+
+    for (int i = 0; i < Query->RecordCount; i++) {
+        for (int j = 0; j < Query->FieldCount; j++) {
+            std::cout << Query->Fields->Fields[j]->AsString.c_str() << " ";
+        }
+        std::cout << std::endl;
+        Query->Next();
+    }
+}
 
 
