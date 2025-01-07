@@ -225,6 +225,10 @@ int GetRowCount(TMSQuery* Query) {
     Query->Close();
     Query->SQL->Text = "SELECT COUNT(*) FROM [DeineTabelle]";
     Query->Open();
+/*
+Query->Fields: Dies ist eine Sammlung von Feldern (Spalten) im Ergebnisset der Abfrage. 
+Da die Abfrage SELECT COUNT(*) nur eine einzige Spalte zurückgibt, enthält Query->Fields nur ein Feld.
+*/
     return Query->Fields->Fields[0]->AsInteger;
 }
 
