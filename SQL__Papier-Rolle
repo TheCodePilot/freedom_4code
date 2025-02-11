@@ -301,3 +301,47 @@ void CheckAllFields(TMSQuery* Query, String FieldName) {
 (1):
 Die Funktion Trim() entfernt führende und nachfolgende Leerzeichen, 
 sodass auch Felder, die nur aus Leerzeichen bestehen, als leer erkannt werden.
+
+//===============================================
+
+TMSQuery->Next();
+TMSQuery->Prior();
+TMSQuery->First();
+//Letzten Datensatz auswählen: Um zum letzten Datensatz zu gelangen
+
+
+TMSQuery->Last();
+
+int numToSkip = 5; // Anzahl der zu überspringenden Datensätze
+for (int i = 0; i < numToSkip; ++i) {
+    if (!TMSQuery->Eof()) {
+        TMSQuery->Next(); // Vorwärts springen
+    }
+}
+
+//---
+
+int numToSkip = 5; // Anzahl der zu überspringenden Datensätze
+for (int i = 0; i < numToSkip; ++i) {
+    if (!TMSQuery->Bof()) {
+        TMSQuery->Prior(); // Rückwärts springen
+    }
+}
+
+//---
+
+try {
+    TField* field = TMSQuery->FieldByName("DeineSpaltenname");
+    if (field != nullptr) {
+        // Das Feld existiert, du kannst darauf zugreifen
+        String fieldValue = field->AsString;
+        // Weitere Verarbeitung des Feldwerts
+    } else {
+        // Das Feld existiert nicht, entsprechende Aktion durchführen
+        ShowMessage("Das Feld 'DeineSpaltenname' existiert nicht.");
+    }
+} catch (const Exception &e) {
+    ShowMessage("Fehler: " + e.Message);
+}
+
+//=================================================================
