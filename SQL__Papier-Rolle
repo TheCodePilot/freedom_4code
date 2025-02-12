@@ -345,3 +345,34 @@ try {
 }
 
 //=================================================================
+
+Genau, die Methode TMSQuery->MoveBy erwartet einen 0-basierten Index. Das bedeutet, dass ein Aufruf von TMSQuery->MoveBy(0) den Zeiger auf den aktuellen Datensatz setzt und TMSQuery->MoveBy(1) den Zeiger um einen Datensatz vorwärts bewegt. Hier ist ein Beispiel, wie du den Zeiger auf die gefundene Rekordnummer setzen kannst:
+
+cpp
+TMSQuery->SQL->Text = "SELECT * FROM DeineTabelle WHERE Bedingung";
+TMSQuery->Open();
+
+// Zum Beispiel möchten wir die Position des Datensatzes mit einer bestimmten Bedingung finden
+String gesuchterWert = "DeinSuchkriterium";
+int gefundeneRecNo = -1;
+
+while (!TMSQuery->Eof()) {
+    if (TMSQuery->FieldByName("DeineSpaltenname")->AsString == gesuchterWert) {
+        gefundeneRecNo = TMSQuery->RecNo;
+        break;
+    }
+    TMSQuery->Next();
+}
+
+if (gefundeneRecNo != -1) {
+    // Setze den Zeiger auf die gefundene Rekordnummer (0-basiert)
+    TMSQuery->MoveBy(gefundeneRecNo - 1);
+    ShowMessage("Zeiger wurde auf Rekordnummer: " + IntToStr(gefundeneRecNo) + " gesetzt.");
+} else {
+    ShowMessage("Kein passender Datensatz gefunden.");
+}
+
+TMSQuery->Close();
+In diesem Beispiel wird die Methode MoveBy verwendet, um den Zeiger auf den gefundenen Datensatz zu setzen, wobei der Index 0-basiert ist.
+
+//======================================================================
