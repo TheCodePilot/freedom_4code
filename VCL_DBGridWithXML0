@@ -66,3 +66,112 @@ void __fastcall TForm1::ProcessNodePlus(IXMLDOMNode* pNode)
         ProcessNodePlus(pChild);
     }
 }
+
+
+//================================
+
+Hallo Rudolf! Basierend auf deinen Informationen und der Funktionsweise von C++ Builder:
+
+Wenn ein GUI-Element in Form einer Tabelle (wie z.B. ein TDBGrid) mit einem Dataset verbunden ist und dieses Dataset wiederum mit einem TMSQuery (z.B. TADOQuery oder TSQLQuery), dann funktioniert das normalerweise wie folgt:
+
+Edit(): Versetzt das Dataset in den Bearbeitungsmodus. Hier können Änderungen an den Daten vorgenommen werden.
+
+Post(): Überträgt die Änderungen aus dem Dataset in die zugrunde liegende Datenbank. Es werden nur die geänderten Daten und nicht die gesamte Tabelle übertragen.
+
+Das bedeutet, dass nur die bearbeiteten Datensätze aktualisiert werden und nicht die gesamte Tabelle. Wenn du zum Beispiel nur eine Zeile in der Tabelle bearbeitest und Post() aufrufst, wird nur diese Zeile in der Datenbank aktualisiert.
+
+Ich hoffe, das klärt deine Frage! Wenn du weitere Details benötigst oder eine andere Frage hast, lass es mich wissen. 😊
+
+Merkt sich das Dataset welche Tabelen-Zellen alles in der tabelle verändert wurden bevor es dann ein Edit() und Post() gibt ?
+Ja, das Dataset merkt sich die geänderten Zellen in der Tabelle. In C++ Builder, wenn ein Dataset (wie TADOQuery oder TSQLQuery) mit einem GUI-Control (wie TDBGrid) verbunden ist und du Edit() aufrufst, beginnt das Dataset die Änderungen zu verfolgen, die du vornimmst. Diese Änderungen werden in einem sogenannten "Delta" gespeichert.
+
+Wenn du dann Post() aufrufst, werden nur diese geänderten Daten (d.h. das Delta) zur Datenbank übertragen. Die Datenbank wird also nur mit den spezifischen Änderungen aktualisiert, die im Dataset gemacht wurden, und nicht mit der gesamten Tabelle.
+
+Das ist ein nützliches Feature, weil es die Datenübertragung optimiert und sicherstellt, dass nur die relevanten Änderungen gespeichert werden.
+
+Ich hoffe, das hilft dir weiter! Gibt es noch andere Fragen oder Details, die du wissen möchtest? 😊
+
+Was ist wenn die GUI-Tabelle selber bereits das editieren erlaubt ?
+Wenn die GUI-Tabelle selbst das Editieren erlaubt, bedeutet das normalerweise, dass Änderungen direkt in der Benutzeroberfläche vorgenommen werden können. Solche Änderungen werden in der Regel sofort im Dataset reflektiert, und das Dataset registriert diese Änderungen intern. Wenn Post() aufgerufen wird, werden dann nur diese geänderten Daten zur Datenbank übertragen.
+
+Hier ist, was im Detail passiert:
+
+Direkte Bearbeitung in der GUI: Der Benutzer ändert die Daten direkt im GUI-Element (z.B. TDBGrid).
+
+Automatisches Update des Datasets: Das Dataset wird automatisch mit diesen Änderungen synchronisiert.
+
+Tracking der Änderungen: Das Dataset verfolgt die geänderten Felder, genau wie es das tun würde, wenn Edit() manuell aufgerufen worden wäre.
+
+Post(): Überträgt die erfassten Änderungen zur Datenbank.
+
+Dieser Mechanismus stellt sicher, dass nur die tatsächlich geänderten Daten gespeichert werden, was effizient und ressourcenschonend ist.
+
+Möchtest du mehr über einen bestimmten Aspekt erfahren oder hast du weitere Fragen? 😊
+
+Das bedeutet dann wäre das Edit() redundant. Richtig ?
+Genau, Rudolf! Wenn die GUI-Tabelle selbst das Editieren erlaubt und die Änderungen automatisch im Dataset registriert werden, dann wird der explizite Aufruf von Edit() redundant. In diesem Szenario wird das Dataset automatisch in den Bearbeitungsmodus versetzt, sobald eine Änderung im GUI-Element vorgenommen wird.
+
+Der explizite Aufruf von Edit() wäre nur notwendig, wenn du Änderungen programmatisch vornehmen möchtest, ohne dass der Benutzer direkt in der GUI-Tabelle editiert.
+
+Wenn du weitere Fragen oder Szenarien hast, bei denen du unsicher bist, lass es mich wissen! 😊
+
+Das zu viele Edit() stört das Dataset bei seiner Arbeitsweise nicht. Richtig ?
+Genau, Rudolf. Das Aufrufen von Edit() mehrmals stört das Dataset nicht direkt bei seiner Arbeitsweise. Es ist jedoch redundant und unnötig, wenn die GUI selbst die Bearbeitungen erlaubt und automatisch in den Bearbeitungsmodus wechselt. Ein mehrfaches Edit()-Aufrufen kann das Programm unnötig kompliziert machen, aber es sollte keine negativen Auswirkungen auf die Funktionsweise des Datasets haben.
+
+Falls du jedoch feststellen solltest, dass es zu Problemen kommt, wäre es ratsam, den Code auf unnötige Aufrufe von Edit() zu überprüfen und diese zu minimieren, um den Code übersichtlicher und effizienter zu gestalten.
+
+Lass mich wissen, wenn du weitere Fragen hast oder etwas unklar ist! 😊
+
+Wie setze ich ein TDBGrid über den Code in den Editiermodus?
+Um ein TDBGrid über den Code in den Editiermodus zu versetzen, kannst du das zugehörige Dataset in den Editiermodus versetzen. Hier ist ein einfaches Beispiel, wie das geht:
+
+cpp
+// Vorausgesetzt, dein TDBGrid ist mit einem TDataSource verbunden, und dieser wiederum mit einem TDataset
+void SetTDBGridToEditMode(TDBGrid *DBGrid)
+{
+    if (DBGrid && DBGrid->DataSource && DBGrid->DataSource->DataSet)
+    {
+        TDataSet *dataset = DBGrid->DataSource->DataSet;
+        if (!dataset->Active)
+        {
+            dataset->Open(); // Öffnet das Dataset, falls es nicht bereits geöffnet ist
+        }
+        dataset->Edit(); // Versetzt das Dataset in den Editiermodus
+    }
+}
+Dieser Code überprüft, ob das TDBGrid und die zugehörigen DataSource und DataSet vorhanden sind, und setzt das DataSet dann in den Editiermodus. Wenn das Dataset nicht bereits geöffnet ist, wird es zuerst geöffnet.
+
+Rufe diese Funktion einfach auf, wenn du das TDBGrid in den Editiermodus versetzen möchtest.
+
+Ich hoffe, das hilft dir weiter! Lass mich wissen, wenn du noch weitere Fragen hast. 😊
+
+Ich dachte es gäbe eine Art set mit ienem Flag wie ReadOnly zum Beispiel.
+Ich verstehe, was du meinst. TDBGrid hat tatsächlich einige Eigenschaften, die dir das Leben erleichtern können, wenn es um das Verwalten der Bearbeitbarkeit geht. Zum Beispiel gibt es eine Eigenschaft namens ReadOnly, die du verwenden kannst, um das gesamte Grid in einen Nur-Lese-Modus zu versetzen. Diese Eigenschaft beeinflusst jedoch die gesamte Tabelle und nicht einzelne Zellen.
+
+Wenn du speziell die Editierbarkeit von Zellen oder Zeilen steuern möchtest, könntest du an andere Mechanismen denken. Ein häufig genutzter Weg ist die Verwendung von OnDrawColumnCell- und OnColEnter-Ereignissen, um die Logik für die Bearbeitbarkeit zu definieren.
+
+Hier ist ein Beispiel, wie du die ReadOnly-Eigenschaft verwenden kannst:
+
+cpp
+// Setzt das gesamte TDBGrid auf Nur-Lese-Modus
+DBGrid1->ReadOnly = true; // oder false, um das Editieren zu erlauben
+Wenn du nur bestimmte Spalten oder Zeilen in den Editiermodus versetzen möchtest, könntest du Fields-Eigenschaften des Datasets verwenden:
+
+cpp
+// Setzt eine bestimmte Spalte auf ReadOnly im Dataset
+DataSet->FieldByName("ColumnName")->ReadOnly = true; // oder false
+Damit kannst du mehr Kontrolle darüber haben, welche Daten bearbeitet werden dürfen und welche nicht.
+
+Ich hoffe, das beantwortet deine Frage! Wenn du noch mehr Details benötigst oder eine andere Frage hast, stehe ich dir gern zur Verfügung. 😊
+
+Dann weiß ich nun was mein Vorgänger falsch gemacht hat. Er hat ohne es zu wollen erlaubt auch in "verbotene Spalten" zu schreiben. Problem wenn dann die Abfrage kommet wo eine erlaubte Spalte im Click-Ereignis ist steht dort Edit() und Post und das Dataset schreibt auch die verbotenen Spaltenänderungen in die Dataenbank !! Oh jeh welch ein FATALER FEHLER !!!
+Das klingt tatsächlich nach einem ernsthaften Problem, Rudolf! Es zeigt, wie wichtig es ist, bei der Implementierung von Datenmanipulationen sorgfältig vorzugehen.
+
+Eine Möglichkeit, solche ungewollten Änderungen an "verbotenen" Spalten zu verhindern, wäre das gezielte Setzen der ReadOnly-Eigenschaft auf Feldebene. So kannst du sicherstellen, dass bestimmte Felder nicht bearbeitet werden können, auch wenn das Dataset oder die GUI im Editiermodus ist. Hier ist ein Beispiel, wie das geht:
+
+cpp
+// Angenommen, 'DataSet' ist dein Dataset und 'VerboteneSpalte' ist der Name der Spalte, die nicht bearbeitet werden darf
+DataSet->FieldByName("VerboteneSpalte")->ReadOnly = true;
+Wenn du die ReadOnly-Eigenschaft für die "verbotenen" Spalten setzt, kann der Benutzer diese Felder nicht ändern, und somit werden auch keine ungewollten Änderungen in die Datenbank geschrieben.
+
+//==================================================
