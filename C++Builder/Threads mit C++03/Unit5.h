@@ -10,25 +10,19 @@
 //---------------------------------------------------------------------------
 class TForm5 : public TForm
 {
+protected:
+    void __fastcall WndProc(TMessage &Message); // Deklaration in der Klasse TForm5
+
 __published:	// Von der IDE verwaltete Komponenten
+	TButton *Button1;
+	TMemo *Memo1;
+	void __fastcall OnClick(TObject *Sender);
 private:	// Benutzer-Deklarationen
 public:		// Benutzer-Deklarationen
 	__fastcall TForm5(TComponent* Owner);
-	void TestUmgebung();
-    void TestUmgebung_ThreadManuellStarten();
-	/*void TestUmgebung1();
-	void TestUmgebung2();
-	void asLamdaShowThreadMessage();*/
+
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm5 *Form5;
 //---------------------------------------------------------------------------
 #endif
-
-/*
-Vorteile:
-Kein direkter Zugriff auf Synchronize erforderlich: Die Methode ist direkt in der TThread-Klasse enthalten.
-Saubere Trennung von Hintergrund- und GUI-Operationen.
-GUI-Operationen sind tabu: Falls Sie von Execute() aus mit der Benutzeroberfläche interagieren möchten, sollten Sie dies mit Synchronize()
-oder Queue() tun, um sicherzustellen, dass die Operation im Hauptthread läuft.
-*/
