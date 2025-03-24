@@ -184,7 +184,46 @@ void __fastcall TForm5::MyFormCreate()
     customStaticText->MyCustomPaint();
 }
 
+//----------------------------
+//Um flackern zu verhindern ist es besser
 
+void __fastcall TCustomStaticText::WndProc(TMessage &Message)
+{
+    if (Message.Msg == WM_ERASEBKGND)
+    {
+        // Blockiert die Hintergrundlöschung, um den Hintergrund zu erhalten
+        Message.Result = 1;
+        return;
+    }
 
+    if (Message.Msg == WM_PAINT && customDrawing)
+    {
+        PAINTSTRUCT ps;
+        HDC hDC = BeginPaint(this->Handle, &ps);
+
+        if (hDC != NULL)
+        {
+            RECT rect;
+            ::GetClientRect(this->Handle, &rect);
+
+            // Setzt den Textmodus auf transparent, sodass der Hintergrund nicht überschrieben wird
+            SetBkMode(hDC, TRANSPARENT);
+
+            // Text-Farbe setzen
+            SetTextColor(hDC, textColor);
+
+            // Nur den Text zeichnen, ohne den Hintergrund zu beeinflussen
+            DrawText(hDC, this->Caption.c_str(), -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+            // Kontext freigeben
+        }
+
+        EndPaint(this->Handle, &ps);
+        Message.Result = 0; // Markiert die Nachricht als verarbeitet
+        return;
+    }
+
+    TStaticText::WndProc(Message);
+}
 
 
