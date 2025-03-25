@@ -226,4 +226,199 @@ void __fastcall TCustomStaticText::WndProc(TMessage &Message)
     TStaticText::WndProc(Message);
 }
 
+/=====================================Morgen================================
 
+//---------------------------------------------------------------------------
+
+#ifndef LastwechselThreadH
+#define LastwechselThreadH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+//---------------------------------------------------------------------------
+class TLastwecheslberchungThread : public TThread
+{
+private:
+protected:
+	// Diese Funktion representiert den Thread, alles was gemacht werden soll muss hier rein.
+	void __fastcall Execute();
+public:
+
+		TMSQuery 	*QTab;
+		TMSQuery 	*QLastW;
+
+
+	// Konstuktor mit den übergabewerten Suspended-> ausgesetzt oder immediatly -> sofort
+	__fastcall TLastwecheslberchungThread(bool CreateSuspended);
+	void __fastcall UpdateCaption();
+};
+//---------------------------------------------------------------------------
+#endif
+
+
+//-----------------------------------------------------------------------------
+#include "_CommonHeaders.h" // muss oben stehen bleiben (Precompiled Header)
+#include "_Defines.h"
+#include "_ExternalVars.h"
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+
+#include <System.hpp>
+#pragma hdrstop
+
+
+#include "LastwechselThread.h"
+#include "Unit103B_Druckkessel.h"
+
+#pragma package(smart_init)
+
+#include <System.SyncObjs.hpp> // Für TMutex
+//---------------------------------------------------------------------------
+
+//   Wichtig: Methoden und Eigenschaften von Objekten in der VCL können nur
+//   in Methoden verwendet werden, die mit 'Synchronize' aufgerufen wurden, z.B.:
+//
+//      Synchronize(&UpdateCaption);
+//
+//   wobei UpdateCaption so aussehen könnte:
+//
+
+//OK
+void __fastcall TLastwecheslberchungThread::UpdateCaption()
+{
+	Form103B->UpdateCaption();
+}
+//---------------------------------------------------------------------------
+/*
+//OK
+
+__fastcall TLastwecheslberchungThread::TLastwecheslberchungThread(bool CreateSuspended)
+	: TThread(CreateSuspended)
+{
+	;
+}
+//---------------------------------------------------------------------------
+//OK
+
+void __fastcall TLastwecheslberchungThread::Execute()
+{
+	Sleep(10);
+	Synchronize(&UpdateCaption);
+}
+*/
+
+
+
+
+
+
+
+
+/*
+ void __fastcall TLastwecheslberchungThread::UpdateCaption()
+{
+		 // Tabelle wird neu eingelesen
+	   //	 Form103B->UpdateSelect(0);
+
+Form103B->lblLastWPrzThr->Caption   = "Lastwechselaktualisierung vom: " + Now().FormatString("dd.mm.yyyy hh:nn");
+Form103B->lblLastWPrzThr->Font->Color = clGreen;
+//Form103B->lblLastWPrzThrCustomized->Caption   = "Lastwechselaktualisierung vom: " + Now().FormatString("dd.mm.yyyy hh:nn");
+//Form103B->lblLastWPrzThrCustomized->SetFontColor(clGreen);
+
+
+
+ }  */
+//---------------------------------------------------------------------------
+
+__fastcall TLastwecheslberchungThread::TLastwecheslberchungThread(bool CreateSuspended)
+	: TThread(CreateSuspended)
+{
+	QTab=NULL;
+	QLastW = NULL;
+}
+//---------------------------------------------------------------------------
+void __fastcall TLastwecheslberchungThread::Execute()
+{
+
+
+	//FreeOnTerminate = true;
+	//Sleep(100);
+	TMutex *Mymutex = new TMutex(true); //sofort für andere diesen Mutex sperren
+	try
+	{
+	   Mymutex->Acquire();
+
+
+
+		AnsiString sql, where="", WNummer;
+	int Result = 0;
+
+	  QTab=new TMSQuery(NULL);
+	  QLastW=new TMSQuery(NULL);
+	   //Initialized=(QTab!=NULL);
+
+	// Einlesen der Tabelle um an die WNummer für die Zählung zu gelangen
+	sql="SELECT TOP(10000) * FROM dbo.Hilfsmittel WHERE Protokoll_XTYP = 'Form103' ORDER BY ID DESC ";
+	Form1->SendSQLLine(sql, QTab);
+
+
+   // Tabelle wird durchgegangen (äußere Schleife)
+   QTab->First();
+   while(!QTab->Eof)
+   {
+
+	 // WNummer wird geholt und das Ergenis zurückgesetzt
+	 WNummer= QTab->FieldByName("WNummer")->AsString.Trim();
+	 Result = 0;
+
+
+	 // Zählung der Einträge in [MDE].[dbo].[PROTOKOL] Felder HM1-4
+	 for(int i=0; i<4; i++)
+	 {
+
+		 //sql="SELECT COUNT(HM1) FROM [MDE].[dbo].[PROTOKOL] Where HM1 = '" +WNummer+  "'";
+		 sql="SELECT COUNT(HM"+IntToStr(i+1)+") FROM [MDE].[dbo].[PROTOKOL] Where HM"+IntToStr(i+1)+" = '" +WNummer+  "'";
+		 Form1->SendSQLLine(sql, QLastW);
+		 Result = Result + QLastW->Fields->Fields[0]->AsInteger;
+
+	 }
+
+	 // Einträge in dbo.Hilfsmittel werden aktualisiert
+	 Form1->UpdateDboItem("Hilfsmittel","IstLastwechsel='"+IntToStr(Result)+"'","WNummer = '"+WNummer+"'");
+
+
+	 QTab->Next();
+   }
+
+
+
+
+			   delete  QTab;
+		QTab=NULL;
+
+				   delete   QLastW;
+		 QLastW=NULL;
+
+
+
+
+
+
+	// Es ist nicht sicher, Windows GUI Applikationen aus einem Thread heraus zu updaten
+	// daher muss das Update der GUI über die Methode Synchronize() erfolgen.
+	// Snchronize() signalisiert dem MainThread dass etwas in der GUI geupdaten werden muss
+	// dies geschieht aus der Funktion heraus und nicht aus dem Thread
+
+	// Als Übergabeparamter muss spezifiziert werden welche Methode zum Updaten verwendet
+	// werden soll.
+
+	Synchronize(&UpdateCaption);
+	 }
+     __finally
+    {
+		Mymutex->Release();
+		delete Mymutex;
+	}
+
+}
+
+//---------------------------------------------------------------------------				
