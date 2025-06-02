@@ -2396,3 +2396,269 @@ void __fastcall TFormXML::DBGrid4XMLCard_ItemOnMouseEnter(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+object FormXML: TFormXML
+  Left = 0
+  Top = 0
+  Caption = 'XML - Picker'
+  ClientHeight = 483
+  ClientWidth = 1205
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnDestroy = TFormXMLOnDestroy
+  OnPaint = TFormXMLOnPaint
+  OnShow = XMLShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel
+    Left = 24
+    Top = 2
+    Width = 168
+    Height = 16
+    Alignment = taCenter
+    Caption = 'Ereignisse mit Zeitstempel'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 609
+    Top = 2
+    Width = 240
+    Height = 16
+    Alignment = taCenter
+    Caption = 'Keine Messreihe sondern Kommentar'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label3: TLabel
+    Left = 24
+    Top = 164
+    Width = 257
+    Height = 16
+    Alignment = taCenter
+    Caption = 'Messungen der angew'#228'hlten Messreihe'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label4: TLabel
+    Left = 609
+    Top = 164
+    Width = 147
+    Height = 16
+    Alignment = taCenter
+    Caption = 'L'#246'schen von Eintr'#228'gen'
+    Color = clBtnFace
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Gradient1: TGradient
+    Left = 0
+    Top = 0
+    Width = 1205
+    Height = 483
+    Align = alClient
+    ColorBegin = clYellow
+    Style = gsDiamond
+    ExplicitLeft = 504
+    ExplicitTop = 456
+    ExplicitWidth = 100
+    ExplicitHeight = 100
+  end
+  object DBGrid4XMLin: TDBGrid
+    Left = 24
+    Top = 24
+    Width = 553
+    Height = 120
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnCellClick = DBGrid4XMLinOnCellClick
+    OnDrawColumnCell = DBGrid4XMLinDrawColumnCell
+  end
+  object DBGrid4XMLCard_Item: TDBGrid
+    Left = 21
+    Top = 192
+    Width = 553
+    Height = 249
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnCellClick = DBGrid4XMLCard_ItemOnCellKlick
+    OnDrawColumnCell = DBGrid4XMLCard_ItemOndrawColumnCell
+    OnMouseDown = DBGrid4XMLCard_ItemMouseDown
+    OnMouseEnter = DBGrid4XMLCard_ItemOnMouseEnter
+    OnMouseUp = DBGrid4XMLCard_ItemMouseUp
+  end
+  object Memo1: TMemo
+    Left = 609
+    Top = 24
+    Width = 568
+    Height = 120
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 2
+  end
+  object DBGridUserChoice: TDBGrid
+    Left = 609
+    Top = 192
+    Width = 568
+    Height = 249
+    DragCursor = crHandPoint
+    TabOrder = 3
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnCellClick = DBGridUserChoiceOnCellClick
+    OnDrawColumnCell = DBGridUserChoiceOnDraw
+    OnMouseEnter = DBGridUserChoiceMouseEnter
+  end
+  object cbnLoescheAlles: TButton
+    Left = 992
+    Top = 161
+    Width = 185
+    Height = 25
+    Caption = 'Bitte alles l'#246'schen'
+    TabOrder = 4
+    OnClick = cbnLoescheAllesOnClick
+  end
+  object cbnLoescheSpalte: TButton
+    Left = 784
+    Top = 161
+    Width = 185
+    Height = 25
+    Caption = 'Bitte rote Spalten l'#246'schen'
+    TabOrder = 5
+    OnClick = cbnLoescheSpalteOnClick
+  end
+  object ComboBoxDBGridUserChoice: TComboBox
+    Left = 896
+    Top = 450
+    Width = 281
+    Height = 21
+    TabOrder = 6
+    Text = 'ComboBoxDBGridUserChoice'
+  end
+  object bnUebertrage: TButton
+    Left = 609
+    Top = 447
+    Width = 281
+    Height = 25
+    Caption = 'Bitte '#220'bertragen'
+    TabOrder = 7
+    OnClick = bnUebertrageOnClick
+  end
+  object ComboBoxVorauswahl: TComboBox
+    Left = 21
+    Top = 447
+    Width = 281
+    Height = 21
+    TabOrder = 8
+    Text = 'ComboBoxVorauswahl'
+    OnClick = ComboBoxVorAuswahlOnClick
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 696
+    Top = 376
+  end
+  object DataSource1: TDataSource
+    Left = 280
+    Top = 368
+  end
+  object ClientDataSet2: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 632
+    Top = 376
+  end
+  object DataSource2: TDataSource
+    Left = 408
+    Top = 368
+  end
+  object ClientDataSet3: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 896
+    Top = 376
+  end
+  object DataSource3: TDataSource
+    Left = 960
+    Top = 376
+  end
+  object DataSetProvider1: TDataSetProvider
+    Left = 72
+    Top = 368
+  end
+  object ClientDataSet4: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 152
+    Top = 368
+  end
+  object ClientDataSet5: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 216
+    Top = 368
+  end
+  object ClientDataSet6: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 344
+    Top = 368
+  end
+  object DataSource4: TDataSource
+    Left = 768
+    Top = 376
+  end
+  object DataSource5: TDataSource
+    Left = 832
+    Top = 376
+  end
+  object DataSource6: TDataSource
+    Left = 1024
+    Top = 376
+  end
+end
+
