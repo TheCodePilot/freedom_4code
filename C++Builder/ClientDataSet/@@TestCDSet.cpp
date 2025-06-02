@@ -1,5 +1,168 @@
 //---------------------------------------------------------------------------
 
+
+#ifndef Neu_XML_TDBGridH
+#define Neu_XML_TDBGridH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Data.DB.hpp>
+#include <Vcl.DBGrids.hpp>
+#include <Vcl.Grids.hpp>
+#include <Datasnap.DBClient.hpp>
+#include <Vcl.Dialogs.hpp>
+#include <Vcl.ExtDlgs.hpp>
+//---------------------------------------------------------------------------
+#include <Datasnap.Provider.hpp>
+#include <Vcl.Buttons.hpp>
+#include "Gradient.hpp"
+#include "rr_system.h"
+class TFrameX10K;
+class TFormXML : public TForm
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TDBGrid *DBGrid4XMLin;
+	TClientDataSet *ClientDataSet1;
+	TDBGrid *DBGrid4XMLCard_Item;
+	TDataSource *DataSource1;
+	TClientDataSet *ClientDataSet2;
+	TDataSource *DataSource2;
+	TMemo *Memo1;
+	TClientDataSet *ClientDataSet3;
+	TDataSource *DataSource3;
+	TDBGrid *DBGridUserChoice;
+	TButton *cbnLoescheAlles;
+	TButton *cbnLoescheSpalte;
+	TComboBox *ComboBoxDBGridUserChoice;
+	TButton *bnUebertrage;
+	TDataSetProvider *DataSetProvider1;
+	TLabel *Label1;
+	TLabel *Label2;
+	TLabel *Label3;
+	TLabel *Label4;
+	TClientDataSet *ClientDataSet4;
+	TClientDataSet *ClientDataSet5;
+	TClientDataSet *ClientDataSet6;
+	TDataSource *DataSource4;
+	TDataSource *DataSource5;
+	TDataSource *DataSource6;
+	TComboBox *ComboBoxVorauswahl;
+	TGradient *Gradient1;
+	void __fastcall DBGrid4XMLinOnCellClick(TColumn *Column);
+	void __fastcall DBGrid4XMLinDrawColumnCell(TObject *Sender, const TRect &Rect, int DataCol,
+		  TColumn *Column, TGridDrawState State);
+	void __fastcall DBGrid4XMLCard_ItemOnCellKlick(TColumn *Column);
+	void __fastcall DBGridUserChoiceMouseEnter(TObject *Sender);
+	void __fastcall DBGrid4XMLCard_ItemMouseDown(TObject *Sender, TMouseButton Button,
+		  TShiftState Shift, int X, int Y);
+	void __fastcall DBGrid4XMLCard_ItemMouseUp(TObject *Sender, TMouseButton Button,
+		  TShiftState Shift, int X, int Y);
+	void __fastcall DBGridUserChoiceOnCellClick(TColumn *Column);
+	void __fastcall DBGrid4XMLCard_ItemOndrawColumnCell(TObject *Sender, const TRect &Rect,
+		  int DataCol, TColumn *Column, TGridDrawState State);
+	void __fastcall cbnLoescheSpalteOnClick(TObject *Sender);
+	void __fastcall DBGridUserChoiceOnDraw(TObject *Sender, const TRect &Rect, int DataCol,
+          TColumn *Column, TGridDrawState State);
+	void __fastcall cbnLoescheAllesOnClick(TObject *Sender);
+	void __fastcall bnUebertrageOnClick(TObject *Sender);
+	void __fastcall XMLShow(TObject *Sender);
+	void __fastcall TFormXMLOnDestroy(TObject *Sender);
+	void __fastcall ComboBoxVorAuswahlOnClick(TObject *Sender);
+	void __fastcall TFormXMLOnPaint(TObject *Sender);
+	void __fastcall DBGrid4XMLCard_ItemOnMouseEnter(TObject *Sender);
+
+private:	// Benutzer-Deklarationen
+
+	void __fastcall FillTDBGridFromXML(RRClasses::XMLBasic* xmlProcess);
+	void __fastcall NewColumnName();
+	void __fastcall NewColumnNameVorAusWahl();
+	std::wstring  __fastcall ConvertXMLNameToDBHeader(std::wstring wstr);
+
+	void __fastcall UpdateDBGridUserChoice();
+	void __fastcall XML2Grid(RRClasses::XMLBasic* xmlProcess);
+	void __fastcall BuildRestOfFieldDefs();
+	bool __fastcall AllreadyChosed();
+	void __fastcall IniCard_Item();
+	int  __fastcall SomeFieldsExist();
+	void __fastcall G3ToGrid2Synchron(std::wstring wstr);
+
+	//Absichtlich Konstruktor privat (Pseudo Single Instance)
+	__fastcall TFormXML(TComponent* Owner); //echtes Single Instance unterstützt BCC32 nicht :(
+
+	std::unique_ptr<RRClasses::XMLBasic> xmlProcess;
+	RRClasses::XMLData* xmlData;
+
+	//steuert DBGridUserChoiceMouseEnter
+	bool fromDBGrid4XMLCard_Item;
+	bool cbnLöscheSpalten;
+	bool ersteSpalte;
+
+	int currentRowCard_Item;
+	int fieldCounterToDelete;
+	AnsiString clickMeasureCard_Item;
+
+    std::wstring fixeVorAuswahl;
+
+	//Achtung hier ist das zweite also .second der WString sorry historisch gewachsen wenn Zeit ändere ich dies
+	std::vector<std::pair<int, std::wstring> > selectedRowsDBGrid4XMLCard_Item; // RecNo, Spalten - Name
+	std::vector<std::pair<int, int> > selectedColumnsUserDBGrid4Draw; //Nummer der Spalte [aktuell angeklickt], Ereignis = 1 : für eventuelles Löschen angeklickt
+	std::vector<std::pair<std::wstring, int> > fieldDefsColumnsUserDBGridAsStr;
+	//Für Kundenwunsch
+	std::vector<std::pair<std::wstring, int> > vorauswahl4ComboBox;
+	std::vector<std::wstring> indexBereiche; //Für ComboBox
+
+	//Neu nun auch per Userwahl zunächst nur eine einzige Auswahl möglich
+	std::vector<std::pair<std::wstring, int> > fieldDefsColumnsVorauswahlAsStr;
+	std::vector < std::pair < std::wstring, std::wstring > > XML_Name2DataBase_Name_;
+	void __fastcall GeneratePairs4Header_();
+	void __fastcall UpdateDBGridUserChoiceVorAusWahl();
+
+	bool __fastcall Transfer2DB_C1();
+	bool __fastcall Transfer2DB_MA();
+	bool __fastcall Transfer2DB_TAP();
+
+    void __fastcall AddOtherRowsDB_C1();
+	void __fastcall AddOtherRowsDB_MA();
+	void __fastcall AddOtherRowsDB_TAP();
+
+	void __fastcall AddOtherRowsVorAusWahlDB_C1();
+	void __fastcall AddOtherRowsVorAusWahlDB_MA();
+	void __fastcall AddOtherRowsVorAusWahlDB_TAP();
+
+	bool __fastcall InitCDS(int clientNumber);
+
+	AnsiString __fastcall WStrToAnsiString4FieldName(std::wstring wstrin);
+	std::wstring __fastcall ValueOfXMLMeasure(std::wstring wstrOriginal, int indexOfXML);
+
+public:		// Benutzer-Deklarationen
+
+    //indirekter Konstruktor
+	void __fastcall TFormXML_(TComponent* Owner);
+    void __fastcall InitializeVorAusWahl(std::wstring vorauswahl);
+	void __fastcall GenerateVorausWahl();
+
+	TFrameX10K* pFX10K;
+	std::unique_ptr<TOpenTextFileDialog> OpenTextFileDialog;
+	bool showWindow;
+
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TFormXML *FormXML ;
+//---------------------------------------------------------------------------
+#endif
+
+
+
+
+
+
+
+
+
+//---------------------------------------------------------------------------
+
 #include <vcl.h>
 #pragma hdrstop
 
