@@ -1,0 +1,6 @@
+Turbo Dump  Version 6.6.1.0 Copyright (c) 1988-2020 Embarcadero Technologies, Inc.
+                   Display of File mytestdll.dll
+
+EXPORT ord:0001='_Add'
+EXPORT ord:0002='___CPPdebugHook'
+
