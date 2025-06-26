@@ -1,0 +1,59 @@
+vorher:
+rudolf.ruediger@siemens-energy.com
+##Fortuna95##
+
+Rudolf Serial Number
+5THK-7TAS9T-3QVUPD-D2YD
+
+10.4 Patch 2 (C++Builder Enterprise)
+
+//Info nach Diskussion:
+
+Guten Morgen, Rudolf! Es klingt, als ob Sie eine umfassende Lizenz für C++Builder haben, was großartig ist. Wenn Sie Schwierigkeiten haben, die Version C++ Builder Sydney 10.4.2 in der Downloadliste auf der Embarcadero-Seite zu finden, könnte es hilfreich sein, direkt nach der ISO-Datei oder dem Offline-Installer zu suchen. Laut meinen Recherchen ist diese Version oft über den GetIt Package Manager oder direkt im Kundenportal verfügbar2.
+
+Falls Sie weiterhin Probleme haben, empfehle ich, sich an den Embarcadero-Support zu wenden. Sie können Ihnen sicherlich helfen, die richtige Datei zu finden und sicherzustellen, dass Ihre Lizenz auch die Installation auf Ihrem Privatrechner abdeckt.
+
+Ich hoffe, das hilft Ihnen weiter! Soll ich Ihnen bei etwas anderem behilflich sein? 😊
+
+
+
+
+
+Es gibt mehrere iso. Wie ungefähr sollte sie lauten ?
+Die ISO-Datei für C++ Builder Sydney 10.4.2 sollte in etwa so benannt sein: RADStudio-1042-4203.iso. Diese Datei enthält die Installationsressourcen für RAD Studio, Delphi und C++Builder in der Version 10.4.2.
+
+Falls Sie diese Datei nicht direkt finden können, empfehle ich, die Suchfunktion auf der Download-Seite zu nutzen oder sich an den Embarcadero-Support zu wenden, um sicherzustellen, dass Sie die richtige Datei herunterladen.
+
+Ich hoffe, das hilft Ihnen weiter! 😊
+
+
+
+
+
+Bravo. Gibt es irgendwelche Patches welche ich danach dazu installieren sollte ?
+Ja, für C++ Builder Sydney 10.4.2 gibt es einige wichtige Patches, die Sie nach der Installation in Betracht ziehen sollten:
+
+Compiler Patch: Dieser Patch behebt einige Leistungs- und Speicherprobleme im Compiler, die auch die Code-Insight-Funktionalität betreffen.
+
+General Patch: Dieser Patch adressiert verschiedene Debugging- und LSP-Probleme, die sowohl Delphi als auch C++ betreffen.
+
+Diese Patches sind über den GetIt Package Manager verfügbar. Sie können sie direkt aus der IDE heraus installieren. Alternativ könnten sie auch im Download-Portal von Embarcadero verfügbar sein, falls Sie sie manuell herunterladen möchten.
+
+Es wird empfohlen, diese Patches zu installieren, um die Stabilität und Leistung der Entwicklungsumgebung zu verbessern. Wenn Sie weitere Unterstützung benötigen, lassen Sie es mich wissen! 😊
+
+Wer ist diese Firma Barnsten. Arbeiten sie als Dienst für Embarcadero ?
+Barnsten ist ein offizieller Händler und Partner von Embarcadero Technologies. Sie bieten eine breite Palette von Entwicklungs- und Datenbank-Tools an, darunter Produkte wie RAD Studio, Delphi und C++Builder. Barnsten unterstützt Entwickler und Unternehmen durch den Verkauf von Lizenzen, technischen Support und Beratung. Sie sind also kein direkter Dienst von Embarcadero, sondern ein unabhängiges Unternehmen, das eng mit ihnen zusammenarbeitet, um deren Produkte zu vertreiben und zu unterstützen2.
+
+Falls Sie weitere Fragen zu Barnsten oder Embarcadero haben, lassen Sie es mich wissen! 😊
+
+
+
+
+
+ES kann sein das ich schon zuviele Installationen gemacht habe. Ist der Chat-Support auch Samstags zu erreichen. Ich kann notfalls auch selber mehr kostenlose Installationen beantragen. ich weiß nur nicht mehr wo. Problem Ich habe mir alles sehr schön auf meinem Arbeitsrechner gemerkt. Leider nicht auf meinem privaten Rechner.
+Kein Problem, Rudolf! Es kann tatsächlich vorkommen, dass die Anzahl der Installationen überschritten wird. Zum Glück gibt es Lösungen:
+
+Chat-Support am Samstag: Leider scheint der Embarcadero-Support nur von Montag bis Freitag verfügbar zu sein2. Sie können jedoch jederzeit ein Support-Ticket über das Support-Portal erstellen. Das Team wird sich dann so schnell wie möglich bei Ihnen melden.
+
+Kostenlose Installationen beantragen: Um zusätzliche Installationen zu beantragen, können Sie sich in Ihrem Embarcadero-Konto anmelden und den Bereich "Registrierung & Installation" aufrufen. Dort gibt es eine Option, um die Anzahl der Installationen zu erhöhen. Falls Sie den genauen Weg nicht mehr wissen, können Sie dies auch über das Support-Portal anfragen.
+
