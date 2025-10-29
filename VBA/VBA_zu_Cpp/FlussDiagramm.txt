@@ -1,0 +1,118 @@
+Flussdiagramm-Aufbau: „Auftragsvorauswahl“
+Start
+  │
+  ▼
+Initialisierung:
+- kesselName = "9"
+- Zielblatt vorbereiten (leeren / neu erstellen)
+- Regeltabelle laden
+  │
+  ▼
+Für jede Regelzeile r in Regeltabelle:
+  │
+  ├─ Prüfen: Regel für kesselName?
+  │      │
+  │      ├─ Nein → nächste r
+  │      │
+  │      ▼
+  │    Regelwerte laden:
+  │    dmMin, dmMax, lMin, lMax, erlaubteHoehenDiff, segmentTyp
+  │
+  ▼
+  Für jede Zeile i in Kesselverteilung (ab Zeile 42):
+      │
+      ├─ Prüfen: dm & Länge im Bereich?
+      │      │
+      │      ├─ Nein → nächste i
+      │      │
+      │      ▼
+      │    Wenn segmentTyp = "v":
+      │        Prüfen: erlaubteHoehenDiff
+      │        │
+      │        └─ Überschreitung → nächste Regel
+      │
+      ▼
+      Volumen- und Gewichtssumme berechnen (j = 42..letzteZeile)
+          │
+          ├─ Prüfen: volSum + vol <= maxVol && gewSum + gew <= maxGew
+          │      │
+          │      ├─ Ja → addieren
+          │      └─ Nein → Schleife beenden
+          │
+          ▼
+      Prüfen: volSum >= minVol & volSum > bestVolSum
+          │
+          └─ Ja → bestVolSum = volSum, bestR = r, bestStartZeile = i
+
+Nach allen Regelzeilen:
+  │
+  ├─ Prüfen: bestR = 0?
+  │      │
+  │      ├─ Ja → MsgBox „Keine passende Regel“ → Ende
+  │      │
+  │      ▼
+  │    Beste Regel verwenden:
+  │    - dmMin, dmMax, lMin, lMax, erlaubteHoehenDiff, segmentTyp laden
+  │
+  ▼
+Für jede Zeile i ab Zeile 42:
+    │
+    ├─ Prüfen: dm & Länge im Bereich?
+    │      │
+    │      ├─ Nein → nächste i
+    │      │
+    │      ▼
+    │    Prüfen: segmentTyp "v" & erlaubteHoehenDiff
+    │    │
+    │    └─ Überschreitung → nächste i
+    │
+    ▼
+    Zeile in Zielblatt schreiben
+    - Spalten A..Y setzen
+
+Volumen- und Gewichtsbeschränkung:
+  │
+  Für jede Zeile im Zielblatt:
+    │
+    ├─ Prüfen: volSum + zVol <= maxVol && gewSum + zGew <= maxGew
+    │      │
+    │      ├─ Ja → Zeile kopieren, laufSumme erhöhen
+    │      └─ Nein → nächste Zeile
+    │
+    ▼
+Segmentnummern berechnen:
+  │
+  Für jede Zeile:
+    │
+    ├─ Prüfen: SegmentTyp "f" oder "v"
+    │      │
+    │      ├─ "f": fortlaufend bis maxSegmente
+    │      └─ "v": Fläche aufsummieren, neue Segmentnummer bei Limit
+
+Segmentkopie nach BE:CF:
+  │
+  Für jede Zeile:
+    │
+    ├─ Prüfen: SegmentTypGlobal
+    │      │
+    │      └─ Kopie nur wenn zulässig (f/v)
+
+Segmentgewicht anpassen (nur "v"):
+  │
+  - Gesamtgewicht berechnen
+  - Zielgewicht pro Segment = Gesamtgewicht / maxSegmente
+  - Laufende Summe, neue Segmentnummer bei Überschreitung
+
+Status-Spalte AG setzen:
+  │
+  - verplantDict aufbauen aus BE-Spalte
+  - Für jede Zeile in Quelle:
+      - existiert in verplantDict? → "verplant" : "nicht verteilt"
+
+Spalten A..Y auto-fit
+  │
+  ▼
+Ende, MsgBox „Auftragsvorauswahl abgeschlossen“
+
+
+Dieses Diagramm lässt sich direkt in Visio, draw.io oder Lucidchart als Flussdiagramm umsetzen.
